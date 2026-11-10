@@ -244,6 +244,16 @@ antigravity-android/
 
 ---
 
+<p><font size="5"><b>Acknowledgments & Attribution</b></font></p>
+
+This project builds upon the foundational Android Bionic host architecture originally created by [werdio325-png/antigravity-android](https://github.com/werdio325-png/antigravity-android), with significant architectural upgrades and modifications in this repository (`v2.29.0`), including:
+
+* **Core Engine Upgrade (`v2.29.0`):** Updated ARM64 `language_server` (`go1.28`), Workbench UI bundle, and binary patch signatures.
+* **Real-Time Voice Chat & Audio Relay:** Native Android WebRTC/WebAudio microphone pipeline (`RECORD_AUDIO`, `MODIFY_AUDIO_SETTINGS`) and unlocked voice feature gates.
+* **ARMv8.0-A CPU & SIMD Emulation (`liblse_compat.so`):** Custom trap-and-emulate (`SIGILL`) compatibility layer for `FEAT_LSE` atomics, `FEAT_RDM`, and `FEAT_FCMA` instructions on legacy ARMv8.0-A processors.
+
+---
+
 <div align="center">
   <p><font color="#7d8590">Distributed under the <a href="LICENSE">Apache License 2.0</a></font></p>
 </div>
