@@ -1,0 +1,14 @@
+#!/system/bin/sh
+# AGY glibc wrapper for embedded ELF #2 (webp_encoder / webm_encoder)
+unset LD_PRELOAD
+unset LD_LIBRARY_PATH
+RBIN="$(cd "$(dirname "$0")" && pwd)"
+RLIB="$(cd "$RBIN/../lib" && pwd)"
+LOADER="$RBIN/libloader.so"
+PRELOAD="$RLIB/liblse_compat.so"
+ELF_BIN="$RBIN/webm_encoder.elf"
+if [ -f "$PRELOAD" ]; then
+  exec "$LOADER" --library-path "$RLIB" --preload "$PRELOAD" "$ELF_BIN" "$@"
+else
+  exec "$LOADER" --library-path "$RLIB" "$ELF_BIN" "$@"
+fi

@@ -1,0 +1,34 @@
+#!/system/bin/sh
+# AGY smart browser shim: supports both headless/CDP Chromium and OAuth URL opening.
+RBIN="$(cd "$(dirname "$0")" && pwd)"
+FILES_DIR="$(cd "$RBIN/../.." && pwd)"
+PREFIX="${PREFIX:-$FILES_DIR/usr}"
+WANT_HEADLESS=0
+for arg in "$@"; do
+  case "$arg" in
+    --headless*|--remote-debugging*|--user-data-dir*|--dump-dom*|--screenshot*|--version|--product-version)
+      WANT_HEADLESS=1
+      break
+      ;;
+  esac
+done
+if [ "$WANT_HEADLESS" = "1" ]; then
+  for cand in "$PREFIX/bin/chromium" "$PREFIX/bin/chromium-browser" "$PREFIX/bin/google-chrome"; do
+    if [ -x "$cand" ]; then
+      export PREFIX
+      if [ -f "$PREFIX/lib/libtermux-exec.so" ]; then
+        export LD_PRELOAD="$PREFIX/lib/libtermux-exec.so"
+      else
+        unset LD_PRELOAD
+      fi
+      export LD_LIBRARY_PATH="$PREFIX/lib"
+      export PATH="$PREFIX/bin:$RBIN:/system/bin"
+      export OPENSSL_CONF="$PREFIX/etc/tls/openssl.cnf"
+      export SSL_CERT_FILE="$PREFIX/etc/tls/cert.pem"
+      export CURL_CA_BUNDLE="$PREFIX/etc/tls/cert.pem"
+      exec "$cand" --no-sandbox --disable-gpu --disable-dev-shm-usage "$@"
+    fi
+  done
+fi
+exec "$RBIN/xdg-open" "$@"
+
