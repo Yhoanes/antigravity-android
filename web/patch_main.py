@@ -27,7 +27,7 @@ def patch_main(file_path):
     with open(file_path, "r", encoding="utf-8") as f:
         content = f.read()
 
-    if "ag_desktop_mode" in content and "__agCustSelect" in content and "__agLoadMarketplaceCatalog" in content:
+    if "Android.getTheme" in content and "__agLoadMarketplaceCatalog" in content:
         updated = False
         if 'initialPath:b?b.fsPath:$g?"C:/":"/"' in content:
             content = must_replace(
@@ -47,6 +47,29 @@ def patch_main(file_path):
             )
             updated = True
             print("[web-patch] Patched puc planModel fallback to 1018")
+        if "Di=Ce=>{var Gg=Mc.current?.getRootElement();Gg&&document.activeElement===Gg&&!Gg.contains(Ce.target)&&Ce.preventDefault()}" in content:
+            content = must_replace(
+                content,
+                "Di=Ce=>{var Gg=Mc.current?.getRootElement();Gg&&document.activeElement===Gg&&!Gg.contains(Ce.target)&&Ce.preventDefault()}",
+                'Di=Ce=>{var Gg=Mc.current?.getRootElement();Gg&&document.activeElement===Gg&&!Gg.contains(Ce.target)&&!(Ce.target instanceof Element&&Ce.target.closest(\'button,[role="button"],[aria-haspopup],[data-testid="project-selector-trigger"],[data-testid="model-selector-trigger"]\'))&&Ce.preventDefault()}',
+                "QOc_Di_allow_menu_triggers",
+            )
+            updated = True
+            print("[web-patch] Patched QOc pointerdown Di to allow menu/button triggers while editor focused")
+        old_bw = (
+            'return{onPointerDown(x){p.current=x.pointerType},\n'
+            'onMouseDown(x){var y=p.current,z=x.nativeEvent,A=m.select("open");if(!(x.button!==0||d==="click"||Iv(y,!0)&&g)){var D=w(A,x.currentTarget,F=>F==="click"||F==="mousedown");A=Av(z);if(Ev(A))v(D,z,A,y);else{var C=x.currentTarget;q.request(()=>{v(D,z,C,y)})}}},onClick(x){if(d!=="mousedown-only"){var y=p.current;if(d==="mousedown"&&y)p.current=void 0;else if(!Iv(y,!0)||!g){var z=m.select("open");z=w(z,x.currentTarget,A=>A==="click"||A==="mousedown"||A==="keydown"||A==="keyup");v(z,x.nativeEvent,x.currentTarget,\n'
+            'y)}}},onKeyDown(){p.current=void 0}}'
+        )
+        new_bw = (
+            'return{onPointerDown(x){p.current=x.pointerType;p.md=!1},\n'
+            'onMouseDown(x){var y=p.current,z=x.nativeEvent,A=m.select("open");if(!(x.button!==0||d==="click"||Iv(y,!0)&&g)){p.md=!0;var D=w(A,x.currentTarget,F=>F==="click"||F==="mousedown");A=Av(z);if(Ev(A))v(D,z,A,y);else{var C=x.currentTarget;q.request(()=>{v(D,z,C,y)})}}},onClick(x){if(d!=="mousedown-only"){var y=p.current;if(d==="mousedown"&&y&&p.md)p.current=void 0,p.md=!1;else if(p.current=void 0,p.md=!1,!Iv(y,!0)||!g){var z=m.select("open");z=w(z,x.currentTarget,A=>A==="click"||A==="mousedown"||A==="keydown"||A==="keyup");v(z,x.nativeEvent,x.currentTarget,\n'
+            'y)}}},onKeyDown(){p.current=void 0;p.md=!1}}'
+        )
+        if old_bw in content:
+            content = must_replace(content, old_bw, new_bw, "Bw_click_fallback_when_mousedown_prevented")
+            updated = True
+            print("[web-patch] Patched Base UI Bw trigger to fallback to onClick if mousedown was suppressed")
         if updated:
             with open(file_path, "w", encoding="utf-8", newline="\n") as f:
                 f.write(content)
