@@ -17,6 +17,7 @@ export GIT_SSL_CAINFO="$PREFIX/etc/tls/cert.pem"
 export OPENSSL_CONF="$PREFIX/etc/tls/openssl.cnf"
 export LANG="${LANG:-C.UTF-8}"
 export TZ="${TZ:-UTC}"
+export JDK_JAVA_OPTIONS="-Duser.home=$HOME -Djava.io.tmpdir=$PREFIX/tmp"
 # CPU & toolchain compatibility: baseline ARMv8.0-A with dynamic outline atomics
 export CFLAGS="-march=armv8-a -moutline-atomics ${CFLAGS:-}"
 export CXXFLAGS="-march=armv8-a -moutline-atomics ${CXXFLAGS:-}"

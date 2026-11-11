@@ -80,7 +80,7 @@ cmd_update() {
 
 # ---------------------------------------------------------------- install
 install_one() {
-    local name="$1" entry base line ver arch fn sha url cache
+    local name="$1" entry base line ver arch fn sha url cache stage
     entry="$(index_lookup "$name")"
     [ -n "$entry" ] || die "unknown package: $name"
     base="${entry%%	*}"; line="${entry#*	}"
@@ -95,12 +95,18 @@ install_one() {
     local cver; cver="$(deb_field "$cache" Version)"
     [ -n "$cver" ] && ver="$cver"
     log "install: $name $ver"
-    deb_extract_data "$cache" "$PREFIX" "${PKG_DEB_STRIP:-6}" || die "$name: extract failed"
-    # Rewrite every Termux prefix in the freshly extracted tree (bin/helpers,
-    # dpkg .list, python/npm console scripts) before recording the package.
-    rewrite_prefix "$PREFIX"
-    deb_files "$cache" | db_put "$name" "$ver" "$arch"
-    sync_runtime_bridges
+    stage="$PKG_ROOT/stage"
+    rm -rf "$stage"
+    mkdir -p "$stage"
+    deb_extract_data "$cache" "$stage" "${PKG_DEB_STRIP:-6}" || { rm -rf "$stage"; die "$name: extract failed"; }
+    # Rewrite every Termux prefix in the freshly extracted stage tree (<20ms)
+    # before recording the package and merging into $PREFIX.
+    rewrite_prefix "$stage"
+    (
+        cd "$stage" && find . \( -type f -o -type l \) | sed 's|^\./||' | sort -u
+    ) | db_put "$name" "$ver" "$arch"
+    cp -a "$stage"/. "$PREFIX"/
+    rm -rf "$stage" "$cache"
 }
 
 # Filter out standard apt/apt-get/pkg flags (-y, --yes, -q, --no-install-recommends, etc.)
@@ -135,6 +141,17 @@ cmd_install() {
     filter_pkg_args "$@"
     set -- "${PKG_ARGS[@]}"
     [ "$#" -ge 1 ] || die "install: need package name(s)"
+    local req_pkgs=("$@") p
+    for p in "$@"; do
+        case "$p" in
+            openjdk-21|openjdk-17)
+                if [ -n "$(index_lookup "ca-certificates-java")" ]; then
+                    req_pkgs+=("ca-certificates-java")
+                fi
+                ;;
+        esac
+    done
+    set -- "${req_pkgs[@]}"
     local order n name refresh_repos=0
     for name in "$@"; do
         [ -n "$(index_lookup "$name")" ] || [ -n "$(index_provider "$name")" ] \
@@ -151,6 +168,7 @@ cmd_install() {
     done <<EOF
 $order
 EOF
+    sync_runtime_bridges
     if [ "$refresh_repos" -eq 1 ]; then
         log "refreshing repository indexes after installing *-repo package..."
         cmd_update
@@ -187,6 +205,7 @@ cmd_upgrade() {
         db_remove "$name"
         install_one "$name"
     done
+    sync_runtime_bridges
 }
 
 cmd_clean() {

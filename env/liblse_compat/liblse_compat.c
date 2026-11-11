@@ -6,7 +6,6 @@
 #include <string.h>
 #include <unistd.h>
 #include <sys/auxv.h>
-#include <sys/prctl.h>
 #include <dlfcn.h>
 
 #ifndef HWCAP_ATOMICS
@@ -789,7 +788,6 @@ int sigaction(int signum, const struct sigaction *act, struct sigaction *oldact)
 }
 
 __attribute__((constructor(101))) static void init_lse_compat(void) {
-    prctl(PR_SET_DUMPABLE, 0, 0, 0, 0);
     log_raw("[lse_compat] INIT: installing kernel SIGILL handler\n");
     lse_handler_installed = true;
 

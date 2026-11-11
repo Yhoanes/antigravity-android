@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/data/data/com.agy/files/usr/bin/bash
 # bus.sh - modular shell bus for AGY (Antigravity on Android, Termux-like).
 #
 #   bus list                              list profiles, modules, elements

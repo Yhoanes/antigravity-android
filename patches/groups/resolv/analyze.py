@@ -31,3 +31,11 @@ def analyze(data):
         repl.append(pos)
         pos += len(REPLACEMENT)
     return clean, rejected, repl
+
+
+def apply_inplace(data):
+    """Patch a bytearray in place; return (clean_count, rejected_count)."""
+    clean, rejected, _ = analyze(data)
+    for pos in clean:
+        data[pos:pos + len(REPLACEMENT)] = REPLACEMENT
+    return len(clean), len(rejected)

@@ -30,3 +30,5 @@ migrations: {
   key: 5
   value: MIGRATION_STATUS_COMPLETED
 }
+user_config_migrated: true
+# user_settings: { enable_terminal_sandbox: false }

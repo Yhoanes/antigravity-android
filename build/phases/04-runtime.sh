@@ -7,7 +7,15 @@ mkdir -p "$RT/bin" "$RT/lib" "$RT/certs" "$RT/seed"
 # bin: loader + patched core + tools/shim (app RuntimeManager reads these from bin/)
 cp -f "$CORE_GLIBC/$GLIBC_LOADER" "$RT/bin/$LOADER_NAME"
 cp -f "$STAGED_CORE" "$RT/bin/$CORE_NAME"
+# tools/: skip start-antigravity (Termux-only launcher, hardcodes
+# /data/data/com.termux/files/usr/bin/bash; unused by Java and bus).
 for tool in "$TOOLS_SRC_DIR"/*; do
+    case "$(basename "$tool")" in
+        start-antigravity)
+            log "  skipping tools/start-antigravity (Termux-only, unused)"
+            continue
+            ;;
+    esac
     cp -f "$tool" "$RT/bin/"
 done
 # lib: glibc shared objects for the loader --library-path

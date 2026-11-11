@@ -44,12 +44,12 @@ public final class ShellBridgeInstaller {
     };
 
     /** Known file offset of embedded ELF #2 (webm_encoder / webp_encoder) in liblanguage_server.so. */
-    private static final long KNOWN_ELF2_OFFSET = 0xA440C27L;
+    private static final long KNOWN_ELF2_OFFSET = 0xAE42039L;
 
     /** Records which prefix the bulk bridges were generated for. Bump when the
      *  bridge script format changes so a warm launch regenerates them once. */
     private static final String BRIDGE_MARKER = ".agy-bridges";
-    private static final int BRIDGE_FORMAT = 9;
+    private static final int BRIDGE_FORMAT = 10;
 
     private ShellBridgeInstaller() {
     }
@@ -527,6 +527,7 @@ public final class ShellBridgeInstaller {
                     + "export OPENSSL_CONF=\"$PREFIX/etc/tls/openssl.cnf\"\n"
                     + "export SSL_CERT_FILE=\"$PREFIX/etc/tls/cert.pem\"\n"
                     + "export CURL_CA_BUNDLE=\"$PREFIX/etc/tls/cert.pem\"\n"
+                    + "export JDK_JAVA_OPTIONS=\"-Duser.home=$HOME -Djava.io.tmpdir=$PREFIX/tmp\"\n"
                     + "PS1='\\[\\033[01;32m\\]agy\\[\\033[00m\\]:\\[\\033[01;34m\\]\\w\\[\\033[00m\\]\\$ '\n";
             writeScript(new File(etcDir, "agy.bashrc"), rc);
             writeScript(new File(etcDir, "profile"), rc);
@@ -667,7 +668,8 @@ public final class ShellBridgeInstaller {
      * script before PATH is set, as runtime/bin/dirname is itself a bridge script!
      */
     private static void writeBridge(File bridge, File prefix, String target) {
-        if ("npm".equals(target) || "npx".equals(target)) {
+        if ("npm".equals(target) || "npx".equals(target) || "analyzeHeadless".equals(target)
+                || "craft-anything-cli".equals(target) || "craft-ghidra-setup".equals(target)) {
             return;
         }
         String p = ShellQuote.quote(prefix.getAbsolutePath());
@@ -682,6 +684,7 @@ public final class ShellBridgeInstaller {
         sb.append("export PREFIX\n");
         sb.append("export HOME=").append(h).append('\n');
         sb.append("export TMPDIR=\"$PREFIX/tmp\"\n");
+        sb.append("export JDK_JAVA_OPTIONS=\"-Duser.home=$HOME -Djava.io.tmpdir=$PREFIX/tmp\"\n");
         sb.append("export TERM=\"xterm-256color\"\n");
         sb.append("if [ -f \"$PREFIX/lib/libtermux-exec.so\" ]; then\n");
         sb.append("  export LD_PRELOAD=\"$PREFIX/lib/libtermux-exec.so\"\n");

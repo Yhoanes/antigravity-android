@@ -52,13 +52,15 @@ public class MainActivity extends Activity
     private static final int REQUEST_STORAGE = 100;
     private static final int REQUEST_FILE_CHOOSER = 1002;
     private static final int REQUEST_AUDIO_PERMISSION = 1003;
-    private static final long SPLASH_TIMEOUT_MS = 65000;
+    private static final long SPLASH_TIMEOUT_MS = 45000;
     private static final long POLL_INTERVAL_MS = 50;
 
     public static volatile MainActivity activeActivity;
 
     private ValueCallback<Uri[]> filePathCallback;
     private android.webkit.PermissionRequest pendingWebPermissionRequest;
+    private String pendingMicJsCallbackId;
+    private boolean startupAudioPermissionRequested = false;
 
     private ThemeManager themeManager;
     private OAuthManager oauthManager;
@@ -276,6 +278,34 @@ public class MainActivity extends Activity
             AppLifecycle.resume(webViewHost.getWebView());
         }
         refreshTheme();
+        handler.postDelayed(this::requestStartupRuntimePermissionsIfNeeded, 700);
+    }
+
+    private void requestStartupRuntimePermissionsIfNeeded() {
+        if (startupAudioPermissionRequested || Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            return;
+        }
+        if (!hasWindowFocus()) {
+            return;
+        }
+        List<String> needed = new ArrayList<>();
+        if (checkSelfPermission(android.Manifest.permission.RECORD_AUDIO)
+                != PackageManager.PERMISSION_GRANTED) {
+            needed.add(android.Manifest.permission.RECORD_AUDIO);
+        }
+        if (Build.VERSION.SDK_INT >= 33) {
+            if (checkSelfPermission("android.permission.POST_NOTIFICATIONS")
+                    != PackageManager.PERMISSION_GRANTED) {
+                needed.add("android.permission.POST_NOTIFICATIONS");
+            }
+        }
+        if (!needed.isEmpty()) {
+            startupAudioPermissionRequested = true;
+            try {
+                requestPermissions(needed.toArray(new String[0]), REQUEST_AUDIO_PERMISSION);
+            } catch (Throwable ignored) {
+            }
+        }
     }
 
     private void refreshTheme() {
@@ -319,6 +349,25 @@ public class MainActivity extends Activity
                         android.Manifest.permission.READ_EXTERNAL_STORAGE,
                         android.Manifest.permission.WRITE_EXTERNAL_STORAGE
                 }, REQUEST_STORAGE);
+            }
+        }
+        requestBatteryOptimizationExemption();
+    }
+
+    private void requestBatteryOptimizationExemption() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            try {
+                android.os.PowerManager pm =
+                        (android.os.PowerManager) getSystemService(POWER_SERVICE);
+                String pkg = getPackageName();
+                if (pm != null && !pm.isIgnoringBatteryOptimizations(pkg)) {
+                    Intent intent = new Intent(
+                            android.provider.Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
+                    intent.setData(Uri.parse("package:" + pkg));
+                    startActivity(intent);
+                }
+            } catch (Exception e) {
+                Log.w(TAG, "cannot request battery optimization exemption: " + e.getMessage());
             }
         }
     }
@@ -449,22 +498,62 @@ public class MainActivity extends Activity
         }
     }
 
+    public void requestMicAccessFromJs(final String callbackId) {
+        handler.post(() -> {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
+                    && checkSelfPermission(android.Manifest.permission.RECORD_AUDIO)
+                    != PackageManager.PERMISSION_GRANTED) {
+                this.pendingMicJsCallbackId = callbackId;
+                requestPermissions(new String[]{android.Manifest.permission.RECORD_AUDIO}, REQUEST_AUDIO_PERMISSION);
+            } else {
+                resolveMicJsCallback(callbackId, "granted");
+            }
+        });
+    }
+
+    private void resolveMicJsCallback(final String callbackId, final String status) {
+        if (callbackId == null || webViewHost == null || webViewHost.getWebView() == null) {
+            return;
+        }
+        handler.post(() -> {
+            try {
+                webViewHost.getWebView().evaluateJavascript(
+                        "window.__agResolveMicAccess&&window.__agResolveMicAccess("
+                                + org.json.JSONObject.quote(callbackId) + ","
+                                + org.json.JSONObject.quote(status) + ");",
+                        null);
+            } catch (Throwable ignored) {
+            }
+        });
+    }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == REQUEST_AUDIO_PERMISSION) {
+            boolean granted = false;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                granted = checkSelfPermission(android.Manifest.permission.RECORD_AUDIO)
+                        == PackageManager.PERMISSION_GRANTED;
+            } else if (grantResults != null && grantResults.length > 0) {
+                granted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
+            }
             android.webkit.PermissionRequest req = this.pendingWebPermissionRequest;
             this.pendingWebPermissionRequest = null;
             if (req != null) {
                 try {
-                    if (grantResults != null && grantResults.length > 0
-                            && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    if (granted) {
                         req.grant(req.getResources());
                     } else {
                         req.deny();
                     }
                 } catch (Throwable ignored) {
                 }
+            }
+            String cbId = this.pendingMicJsCallbackId;
+            this.pendingMicJsCallbackId = null;
+            if (cbId != null) {
+                resolveMicJsCallback(cbId, granted ? "granted" : "denied");
             }
             return;
         }

@@ -54,25 +54,7 @@ public final class TermuxPrefixRewriter {
     }
 
     private static boolean rewriteFile(File file, String newPrefix) {
-        long len = file.length();
-        // Shell/config scripts are small; never read multi-MB ELF binaries into Java heap.
-        if (len <= 4 || len > 512 * 1024) {
-            return false;
-        }
         byte[] full;
-        try (InputStream in = new FileInputStream(file)) {
-            byte[] head = new byte[(int) Math.min(len, 512)];
-            int n = IoUtil.readFully(in, head);
-            if (n < 4) {
-                return false;
-            }
-            byte[] headSlice = (n == head.length) ? head : java.util.Arrays.copyOf(head, n);
-            if (!TextFileDetector.isTextFile(headSlice)) {
-                return false;
-            }
-        } catch (IOException e) {
-            return false;
-        }
         try (InputStream in = new FileInputStream(file)) {
             full = IoUtil.readAllBytes(in);
         } catch (IOException e) {

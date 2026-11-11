@@ -21,6 +21,7 @@ from patch_lib import module_base as base
 from patch_lib.report import hex_list
 from groups.resolv import signatures as sig
 from groups.resolv.analyze import analyze
+from groups.resolv.selftest import _selftest
 
 GROUP_ID = "resolv"
 GROUP = "resolv"
@@ -90,6 +91,6 @@ def run(target_path, verify=False, dry_run=False, allow_missing=False, log=print
 
 
 if __name__ == "__main__":
-    sys.exit(_cli.main(run,
+    sys.exit(_cli.main(run, selftest=_selftest,
                        usage="Usage: python3 -m groups.resolv.module <binary> "
-                             "[--verify|--dry-run|--allow-missing]"))
+                             "[--verify|--dry-run|--allow-missing|--selftest]"))

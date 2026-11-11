@@ -44,8 +44,6 @@ public final class CoreEnvironment {
                 ? "netdns=go" : godebug + ",netdns=go");
         // Soft memory limit for the Go runtime GC: keeps RSS bounded on mobile
         // without dropping features or causing OOM when the heap is below the limit.
-        env.put("GOGC", "50");
-        env.put("GOMAXPROCS", "4");
         String goMemLimit = env.get("GOMEMLIMIT");
         if (goMemLimit == null || goMemLimit.isEmpty()) {
             goMemLimit = resolveGoMemLimit(rm.appContext());
@@ -83,16 +81,19 @@ public final class CoreEnvironment {
                 long totalMb = mi.totalMem / (1024L * 1024L);
                 if (totalMb > 0) {
                     if (totalMb <= 4200) {
-                        return "250MiB";
-                    } else if (totalMb <= 6400) {
                         return "300MiB";
+                    } else if (totalMb <= 6400) {
+                        return "450MiB";
+                    } else if (totalMb <= 8600) {
+                        return "650MiB";
                     } else {
-                        return "350MiB";
+                        return "1024MiB";
                     }
                 }
             }
         } catch (Throwable ignored) {
         }
-        return "300MiB";
+        return "450MiB";
     }
 }
+

@@ -6,22 +6,23 @@
 
   <p><font size="6"><b>Antigravity for Android</b></font></p>
 
-  <p><font color="#7d8590">Autonomous agentic development environment engineered natively for Android and ARM64.</font></p>
+  <p><font color="#7d8590">Autonomous agentic development &amp; native reverse-engineering environment engineered for Android ARM64.</font></p>
 
   <p>
+    <code>v2.31.0</code> &nbsp;&bull;&nbsp;
     <code>Android 7.0+</code> &nbsp;&bull;&nbsp;
     <code>ARM64 v8.0-A+</code> &nbsp;&bull;&nbsp;
+    <code>Craft Anything + Ghidra 12.1.4</code> &nbsp;&bull;&nbsp;
+    <code>Live Voice Mode</code> &nbsp;&bull;&nbsp;
     <code>Shizuku Ready</code> &nbsp;&bull;&nbsp;
-    <code>Native Bionic</code> &nbsp;&bull;&nbsp;
-    <code>Consistent Keystore</code> &nbsp;&bull;&nbsp;
     <code>Apache 2.0</code>
   </p>
 
   <br/>
 
   <!-- Hero Visual -->
-  <img alt="Antigravity v2.29.0 Interface in Action" src="docs/assets/voice_home.png" width="100%" style="border-radius: 14px; border: 1px solid rgba(128, 128, 128, 0.2); box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);" />
-  <p align="center"><font size="2" color="#7d8590">Antigravity v2.29.0 autonomous agent development interface on Android with Gemini 4 Argon High & Live Voice Mode</font></p>
+  <img alt="Antigravity v2.31.0 Interface in Action" src="docs/assets/hero_home.jpg" width="100%" style="border-radius: 14px; border: 1px solid rgba(128, 128, 128, 0.2); box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);" />
+  <p align="center"><font size="2" color="#7d8590">Antigravity v2.31.0 autonomous agent workspace on Android with Gemini 4 Carbon High &amp; Live Voice Mode</font></p>
 
 </div>
 
@@ -29,12 +30,12 @@
 
 <p><font size="5"><b>Architectural Overview</b></font></p>
 
-**Antigravity for Android** brings Google's autonomous agentic coding engine directly to mobile operating systems.
+**Antigravity for Android (`v2.31.0`)** brings Google's autonomous agentic coding engine and a full native binary reverse-engineering suite directly to mobile operating systems.
 
-Unlike terminal-based chat wrappers or virtualized environments (PRoot, QEMU, chroot), Antigravity executes **natively inside Android userspace (Bionic)** within the application process. Powered by Gemini models, the agent autonomously inspects codebases, edits project trees, executes build tools, and validates results directly on the physical mobile hardware.
+Unlike terminal-based chat wrappers or virtualized environments (PRoot, QEMU, chroot), Antigravity executes **natively inside Android userspace (Bionic)** within the application process. Powered by next-generation models (**Gemini 4 Carbon**, **Gemini 4 Argon**, **Gemini 3.8 Flash**, **Claude Opus 5.5**, **Claude Sonnet 5.5**, and **GPT-OSS 120B**), the agent autonomously inspects codebases, decompiles multi-architecture binaries, edits project trees, executes build tools, and validates results directly on physical mobile hardware.
 
 > [!NOTE]
-> **Bare-Metal Execution with Transparent Compatibility:** Processes run directly on the host CPU via a hybrid Bionic/Glibc loader without virtualization penalties, taking full advantage of UFS storage throughput and ARMv8.1-A+ Large System Extension (LSE) atomics (with transparent userspace emulation for ARMv8.0-A CPUs via `liblse_compat.so`).
+> **Bare-Metal Execution with Transparent Compatibility:** Processes run directly on the host CPU via a hybrid Bionic/Glibc loader without virtualization penalties, taking full advantage of UFS storage throughput and ARMv8.1-A+ Large System Extension (LSE) atomics (with transparent userspace `SIGILL` emulation for ARMv8.0-A CPUs via `liblse_compat.so`).
 
 ---
 
@@ -43,32 +44,32 @@ Unlike terminal-based chat wrappers or virtualized environments (PRoot, QEMU, ch
 <table width="100%" style="border-collapse: separate; border-spacing: 8px; border: none;">
   <tr>
     <td width="50%" valign="top" style="border: 1px solid rgba(128, 128, 128, 0.2); border-radius: 12px; padding: 16px;">
-      <p><font size="4"><b>Autonomous Gemini Agent</b></font></p>
-      <p><font color="#7d8590">End-to-end development: task planning, multi-file editing, test execution, compilation, and automatic build diagnosis.</font></p>
+      <p><font size="4"><b>Autonomous Multi-Model Agent</b></font></p>
+      <p><font color="#7d8590">End-to-end engineering with <b>Gemini 4 Carbon/Argon</b>, <b>Claude 5.5</b>, and parallel subagents (<code>self</code>, <code>research</code>): task planning, multi-file refactoring, compilation, and automated diagnosis.</font></p>
     </td>
     <td width="50%" valign="top" style="border: 1px solid rgba(128, 128, 128, 0.2); border-radius: 12px; padding: 16px;">
-      <p><font size="4"><b>Shizuku (Rish) Elevation</b></font></p>
-      <p><font color="#7d8590">Privilege elevation to ADB shell level (<code>uid=2000</code>) without root: direct APK management (<code>pm install</code>), system logs, and shared storage access.</font></p>
-    </td>
-  </tr>
-  <tr>
-    <td width="50%" valign="top" style="border: 1px solid rgba(128, 128, 128, 0.2); border-radius: 12px; padding: 16px;">
-      <p><font size="4"><b>Native <code>pkg</code> Manager</b></font></p>
-      <p><font color="#7d8590">Lightweight package manager (tlx) written in Bash and AWK. Installs development runtimes (<code>git</code>, <code>python</code>, <code>node</code>, <code>clang</code>) from Termux repositories.</font></p>
-    </td>
-    <td width="50%" valign="top" style="border: 1px solid rgba(128, 128, 128, 0.2); border-radius: 12px; padding: 16px;">
-      <p><font size="4"><b>Mobile & Desktop Viewports</b></font></p>
-      <p><font color="#7d8590">Touch-first mobile UI by default, with dynamic switching to a desktop viewport with custom User-Agent for tablets, keyboards, and Samsung DeX.</font></p>
+      <p><font size="4"><b>Craft Anything + Ghidra 12.1.4 ARM64</b></font></p>
+      <p><font color="#7d8590">Preinstalled native reverse-engineering suite with <b>320 MCP tools</b> in Rust plus on-demand native Android ARM64 <b>Ghidra 12.1.4</b> (<code>decompile</code> &amp; <code>sleigh</code>) for ELF, PE, Mach-O, APK/DEX, .NET, and WASM analysis.</font></p>
     </td>
   </tr>
   <tr>
     <td width="50%" valign="top" style="border: 1px solid rgba(128, 128, 128, 0.2); border-radius: 12px; padding: 16px;">
-      <p><font size="4"><b>Environment Awareness</b></font></p>
-      <p><font color="#7d8590">Auto-seeded system rules (<code>AGENTS.md</code>) instruct the agent on Android filesystem paths, package syntax, and prevent desktop sandbox traps.</font></p>
+      <p><font size="4"><b>Zero-Friction Terminal Execution</b></font></p>
+      <p><font color="#7d8590">Binary-patched <code>language_server</code> (<code>exebox</code> / <code>urpc.Fork</code> bypass) and Bionic bridge wrappers execute commands directly without <code>CLONE_NEWUSER</code> or <code>seccomp</code> sandbox failures on unrooted Android kernels.</font></p>
     </td>
     <td width="50%" valign="top" style="border: 1px solid rgba(128, 128, 128, 0.2); border-radius: 12px; padding: 16px;">
-      <p><font size="4"><b>Seamless Upgrades</b></font></p>
-      <p><font color="#7d8590">Consistent signing keystore: upgrade APK releases in-place without uninstalling or losing conversation history and project data.</font></p>
+      <p><font size="4"><b>Stage-Isolated <code>pkg</code> Manager</b></font></p>
+      <p><font color="#7d8590">Fast $O(1)$ per-package staging in <code>$PKG_ROOT/stage</code> (<code>&lt;20 ms</code> prefix rewrite), automatic <code>.deb</code> cache cleanup, pre-bundled OpenJDK 21 TLS <code>cacerts</code>, and single-pass bridge syncing.</font></p>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" valign="top" style="border: 1px solid rgba(128, 128, 128, 0.2); border-radius: 12px; padding: 16px;">
+      <p><font size="4"><b>Real-Time Voice &amp; Native Encoders</b></font></p>
+      <p><font color="#7d8590">Bidirectional WebRTC/WebAudio voice sessions with live transcription, paired with native Bionic ARM64 <code>webp_encoder</code> and <code>webm_encoder</code> binaries for zero-dependency media processing.</font></p>
+    </td>
+    <td width="50%" valign="top" style="border: 1px solid rgba(128, 128, 128, 0.2); border-radius: 12px; padding: 16px;">
+      <p><font size="4"><b>Shizuku (Rish) &amp; Async Daemon</b></font></p>
+      <p><font color="#7d8590">Single-call Shizuku elevation (<code>uid=2000</code>) for system notifications (<code>agy-notify</code>) and APK installs, backed by a non-blocking multithreaded scheduler (<code>agy-daemon</code>) with 1 MB log rotation.</font></p>
     </td>
   </tr>
 </table>
@@ -77,35 +78,74 @@ Unlike terminal-based chat wrappers or virtualized environments (PRoot, QEMU, ch
 
 <p><font size="5"><b>Visual Feature Walkthrough</b></font></p>
 
-### 1. Real-Time Voice Chat & Audio Relay (`v2.29.0`)
+### 1. Next-Generation Models & Touch Reasoning Controls (`v2.31.0`)
 
-Speak directly with the autonomous agent in real time. Powered by native WebRTC/WebAudio microphone bridging (`RECORD_AUDIO`, `MODIFY_AUDIO_SETTINGS`) and unlocked `v2.29.0` voice relay feature gates (`cascade-enable-voice`, `send_voice_button_variant`).
+Select between **Gemini 4 Carbon High**, **Gemini 4 Argon**, **Gemini 3.8 Flash**, **Claude Opus 5.5**, **Claude Sonnet 5.5**, and **GPT-OSS 120B**. Touch-engineered submenu patches allow effortless selection of reasoning effort levels (`Low`, `Medium`, `High`) on mobile and tablet screens without requiring desktop hover events.
 
 <br/>
 
-<img alt="Antigravity Live Voice Chat" src="docs/assets/voice_chat.jpg" width="100%" style="border-radius: 12px; border: 1px solid rgba(128, 128, 128, 0.2); box-shadow: 0 8px 24px rgba(0,0,0,0.25);" />
-<p align="center"><font size="2" color="#7d8590">Active bidirectional voice session with live transcript, audio controls, and workspace overview drawer</font></p>
+<img alt="Model Selector and Reasoning Effort Submenu" src="docs/assets/model_selector.jpg" width="100%" style="border-radius: 12px; border: 1px solid rgba(128, 128, 128, 0.2); box-shadow: 0 8px 24px rgba(0,0,0,0.25);" />
+<p align="center"><font size="2" color="#7d8590">v2.31.0 model selector with Gemini 4 Carbon/Argon, Claude 5.5, and touch-activated reasoning effort submenu</font></p>
 
 <br/>
 
 ---
 
-### 2. Multi-Agent Workspace & Parallel Subagents
+### 2. Native ARM64 Reverse Engineering: `Craft Anything` + `Ghidra 12.1.4`
+
+Antigravity for Android ships with **`craft-anything` (`v0.4.0-r6`)** preinstalled and ready to enable in **Customizations &rarr; Plugins**, combining two complementary reverse-engineering engines natively on ARM64:
+
+* **Tier 1 — Instant Rust Binary & App Engine (`<50 MB` RAM, 0 Downloads):** Exposes **320 MCP tools** (`craft-anything-cli --deep mcp --all-tools`, compiled for `aarch64-linux-android` with 16 KB page alignment) for static binary triage (`ELF`, `PE`, `Mach-O`, `APK/DEX`, `.NET`, `WASM`, `Electron/JS`), function disassembly, fast pseudo-C decompilation, string/symbol indexing, game asset inspection, and structured clean-room rebuilding.
+* **Tier 2 — On-Demand Native ARM64 Ghidra 12.1.4 (`craft-ghidra-setup`):** Pre-staged native Android Bionic ARM64 `decompile` and `sleigh` binaries paired with an automated 1-step installer (`craft-ghidra-setup`) that fetches `openjdk-21`, configures Java TLS `cacerts`, downloads & verifies **Ghidra 12.1.4 PUBLIC** (`SHA-256`), injects the ARM64 decompiler, configures SELinux-compatible dot-free temp directories (`$PREFIX/tmp/ghidra-*`), and exposes `analyzeHeadless` across the runtime.
+
+<br/>
+
+<img alt="Craft Anything + Ghidra 12.1.4 ARM64 Plugin Overview" src="docs/assets/craft_anything_overview.jpg" width="100%" style="border-radius: 12px; border: 1px solid rgba(128, 128, 128, 0.2); box-shadow: 0 8px 24px rgba(0,0,0,0.25);" />
+<p align="center"><font size="2" color="#7d8590">Preinstalled Craft Anything + Ghidra 12.1.4 ARM64 plugin overview and two-tier architecture</font></p>
+
+<br/>
+
+<img alt="Craft Anything 320 MCP Tools Enabled" src="docs/assets/craft_anything_mcp_tools.jpg" width="100%" style="border-radius: 12px; border: 1px solid rgba(128, 128, 128, 0.2); box-shadow: 0 8px 24px rgba(0,0,0,0.25);" />
+<p align="center"><font size="2" color="#7d8590">320 native MCP tools enabled for binary reverse engineering, call-graph recovery, and clean-room porting</font></p>
+
+<br/>
+
+<img alt="Live Reverse Engineering and Decompilation with Voice Readout" src="docs/assets/reverse_engineering_voice_demo.jpg" width="100%" style="border-radius: 12px; border: 1px solid rgba(128, 128, 128, 0.2); box-shadow: 0 8px 24px rgba(0,0,0,0.25);" />
+<p align="center"><font size="2" color="#7d8590">Real-world test: Craft Anything + Ghidra 12.1.4 ARM64 decompiling 32-bit Windows PE binaries (Warcraft III) directly on Android while narrating findings via Live Voice Chat</font></p>
+
+<br/>
+
+---
+
+### 3. Real-Time Bidirectional Voice Chat (`v2.31.0`)
+
+Speak directly with the autonomous agent in real time. Powered by native WebRTC/WebAudio microphone bridging (`RECORD_AUDIO`, `MODIFY_AUDIO_SETTINGS`) and unlocked `v2.31.0` voice relay feature gates (`cascade-enable-voice`, `send_voice_button_variant`).
+
+<br/>
+
+<img alt="Antigravity Live Voice Chat" src="docs/assets/voice_chat_live.jpg" width="100%" style="border-radius: 12px; border: 1px solid rgba(128, 128, 128, 0.2); box-shadow: 0 8px 24px rgba(0,0,0,0.25);" />
+<p align="center"><font size="2" color="#7d8590">Active bidirectional voice session with floating live transcript and audio controls</font></p>
+
+<br/>
+
+---
+
+### 4. Multi-Agent Workspace & Parallel Subagents
 
 Designed for autonomous multi-agent workflows: project sidebar, parallel subagent orchestration (`self`, `research`), live task status tracking, and integrated workspace overview (`Review`, `Files`, `Terminal`, `Extensions`).
 
 <br/>
 
 <img alt="Antigravity Multi-Agent Workspace" src="docs/assets/workspace_subagents.jpg" width="100%" style="border-radius: 12px; border: 1px solid rgba(128, 128, 128, 0.2); box-shadow: 0 8px 24px rgba(0,0,0,0.25);" />
-<p align="center"><font size="2" color="#7d8590">Parallel subagent spawning and live status tracking inside the v2.29.0 workspace</font></p>
+<p align="center"><font size="2" color="#7d8590">Parallel subagent spawning and live status tracking inside the v2.31.0 workspace</font></p>
 
 <br/>
 
 ---
 
-### 3. Customizations & Agent Marketplace
+### 5. Customizations & Agent Marketplace
 
-Browse and install official plugins, MCP servers, and skills directly from the built-in **Customizations Marketplace** — including **Google Workspace** (Docs, Sheets, Slides, Drive, Calendar), **Build with Google** (Gemini API, Chrome DevTools, Android CLI, Firebase, Science, Google Antigravity SDK), and third-party integrations.
+Browse and install official plugins, MCP servers, and skills directly from the built-in **Customizations Marketplace** — including **Google Workspace** (Docs, Sheets, Slides, Drive, Calendar), **Build with Google** (Gemini API, Chrome DevTools, Android CLI, Firebase, Science, Google Antigravity SDK), and third-party integrations. Preinstalled local plugins (`craft-anything`) load cleanly without remote catalog conflicts.
 
 <br/>
 
@@ -116,37 +156,33 @@ Browse and install official plugins, MCP servers, and skills directly from the b
 
 ---
 
-### 4. Appearance, Theme Engine & Desktop Mode
+### 6. Execution Policies, Interface Modes & Settings (`v2.31.0`)
 
-Inside Appearance settings, customize the theme palette, contrast, typography (`Google Sans`), and toggle **Desktop Mode** on demand:
-* **Mobile Mode (Default):** Touch-friendly controls optimized for one-handed operation and virtual keyboards.
-* **Desktop Mode:** Full desktop viewport with wide editor layout and desktop User-Agent (for tablets, physical keyboards, and Samsung DeX).
-* *Changes apply dynamically on the fly via automatic WebView reload.*
+Configure agent autonomy and workspace layout from **Settings**:
+* **Interface Layout:** Switch between **Knowledge Work** (streamlined research/writing view) and **Software Engineering** (full IDE, terminal, and multi-agent controls).
+* **Execution & Permissions:** Configure **Request Review** vs **Turbo** auto-execution, plan review policies, queued message delivery, and **Desktop Mode** viewport switching.
 
 <br/>
 
-<img alt="Appearance Settings and Desktop Mode Toggle" src="docs/assets/settings_appearance.jpg" width="100%" style="border-radius: 12px; border: 1px solid rgba(128, 128, 128, 0.2); box-shadow: 0 8px 24px rgba(0,0,0,0.25);" />
-<p align="center"><font size="2" color="#7d8590">v2.29.0 Appearance settings panel with Desktop Mode, Contrast, Font, and Dark Theme customization</font></p>
+<img alt="General Settings and Execution Policies" src="docs/assets/settings_general.jpg" width="100%" style="border-radius: 12px; border: 1px solid rgba(128, 128, 128, 0.2); box-shadow: 0 8px 24px rgba(0,0,0,0.25);" />
+<p align="center"><font size="2" color="#7d8590">v2.31.0 General settings panel with Knowledge Work / Software Engineering modes and execution policies</font></p>
 
 <br/>
 
 ---
 
-### 5. Autonomous Execution in Terminal
+### 7. Userspace & Production Runtime Optimizations
 
-The agent directly drives the environment: executing userspace binaries, creating workspace hierarchies, running compilation tasks, and inspecting diagnostics in real time.
+Every layer of the Android Bionic runtime has been hardened for low latency and zero storage bloat:
 
-```text
-~/ $ uname -a && python3 --version && df -h /data/user/0/com.agy/files
-Linux localhost 6.1.138-android14-11-g151cf2b6bfbe-ab13719792 #1 SMP PREEMPT aarch64 Android
-Python 3.14.6
-Filesystem            Size  Used Avail Use% Mounted on
-/dev/block/dm-61      227G  145G   82G  64% /data/user/0
-```
+* **Direct Terminal Execution (`exebox` / `urpc.Fork` Bypass):** Binary-level patches in `liblanguage_server.so` (`initEscapeSbox`, `sbox_prep`, `resolveSandbox`, `isSandboxEnabled`, `ApplySettingsToConfig`) disable Linux desktop `CLONE_NEWUSER` / `seccomp` re-exec forks (`libloader.so: invalid argument`), allowing `run_command` to execute directly on Android whether `BypassSandbox` is `false` or `true`.
+* **$O(1)$ Staged Package Installation (`pkg`):** `pkg install` extracts each `.deb` into an isolated staging directory (`$PKG_ROOT/stage`), rewrites hardcoded Termux prefixes in `<20 ms` (instead of rescanning the entire `$PREFIX` tree), indexes package files in a single pass, removes downloaded `.deb` archives immediately after extraction, and synchronizes `runtime/bin` bridges once per transaction.
+* **Out-of-the-Box OpenJDK 21 & Ghidra Support:** Pre-bundles the Java TLS truststore (`$PREFIX/etc/tls/certs/java/cacerts`), injects `JDK_JAVA_OPTIONS="-Duser.home=$HOME -Djava.io.tmpdir=$PREFIX/tmp"` across shells and runtime bridges, and uses self-safe glob patterns (`/data/[d]ata/...`) in `util.sh` and `agy-fix-paths`.
+* **Non-Blocking `agy-daemon` & Single-Call `agy-notify`:** Background scheduled tasks and webhooks execute in asynchronous daemon threads with concurrency guards (`_RUNNING_TASKS`) and automatic `1 MB` log rotation (`daemon.log.1`). System notifications cache the bundled app icon (`$PREFIX/share/antigravity/logo.png`) and post via `cmd notification` in a single `rish -c` call.
 
 ---
 
-### 6. Hardware Throughput & Diagnostics
+### 8. Hardware Throughput & Diagnostics
 
 Real-world test: the agent authored a custom Python I/O benchmark and executed multi-pass tests on physical storage. Sequential reads exceeded **1222 MB/s**, and random writes reached **84,395 IOPS**, proving native UFS throughput without emulation overhead.
 
@@ -159,28 +195,27 @@ Real-world test: the agent authored a custom Python I/O benchmark and executed m
 
 ---
 
-<p><font size="5"><b>Installation & Getting Started</b></font></p>
+<p><font size="5"><b>Installation &amp; Getting Started</b></font></p>
 
 <table width="100%" style="border-collapse: separate; border-spacing: 8px; border: none;">
   <tr>
     <td width="33%" valign="top" style="border: 1px solid rgba(128, 128, 128, 0.2); border-radius: 12px; padding: 16px;">
       <p><font size="4"><b>1. Download APK</b></font></p>
       <p><font color="#7d8590">Releases are available under <a href="https://github.com/Yhoanes/antigravity-android/releases">Releases</a>:<br/><br/>
-      &bull; <b><code>antigravity.apk</code></b> — standard release (port 45157).<br/>
-      &bull; <b><code>antigravity-bypass.apk</code></b> — region bypass edition.<br/><br/>
+      &bull; <b><code>Antigravity-v2.31.0.apk</code></b> — full signed release with bundled Bionic toolchain and <code>craft-anything</code>.<br/><br/>
       <i>Seamless in-place updates are supported across versions.</i></font></p>
     </td>
     <td width="33%" valign="top" style="border: 1px solid rgba(128, 128, 128, 0.2); border-radius: 12px; padding: 16px;">
       <p><font size="4"><b>2. Grant Permissions</b></font></p>
-      <p><font color="#7d8590">Grant storage access (<code>MANAGE_EXTERNAL_STORAGE</code>).<br/><br/>
+      <p><font color="#7d8590">Grant storage access (<code>MANAGE_EXTERNAL_STORAGE</code>) and microphone access for Live Voice Chat.<br/><br/>
       <i>(Optional)</i> Launch <b>Shizuku</b> and grant access for elevated ADB shell operations without root.</font></p>
     </td>
     <td width="33%" valign="top" style="border: 1px solid rgba(128, 128, 128, 0.2); border-radius: 12px; padding: 16px;">
-      <p><font size="4"><b>3. Bootstrap Environment</b></font></p>
-      <p><font color="#7d8590">Install preferred development toolchains via the agent or shell:<br/><br/>
-      <code>pkg update</code><br/>
-      <code>pkg install git python nodejs</code><br/><br/>
-      The environment is ready for development.</font></p>
+      <p><font size="4"><b>3. Bootstrap &amp; Decompile</b></font></p>
+      <p><font color="#7d8590">Install development toolchains or enable native Ghidra decompilation:<br/><br/>
+      <code>pkg update &amp;&amp; pkg install git python nodejs</code><br/>
+      <code>craft-ghidra-setup</code><br/><br/>
+      Enable <b>Craft Anything</b> in <i>Customizations &rarr; Plugins</i>.</font></p>
     </td>
   </tr>
 </table>
@@ -206,12 +241,12 @@ Real-world test: the agent authored a custom Python I/O benchmark and executed m
     <tr>
       <td style="padding: 12px 16px; border-bottom: 1px solid rgba(128, 128, 128, 0.2);"><b>RAM</b></td>
       <td style="padding: 12px 16px; border-bottom: 1px solid rgba(128, 128, 128, 0.2);">4 GB LPDDR4X</td>
-      <td style="padding: 12px 16px; border-bottom: 1px solid rgba(128, 128, 128, 0.2);">8 GB+ LPDDR5 / LPDDR5X</td>
+      <td style="padding: 12px 16px; border-bottom: 1px solid rgba(128, 128, 128, 0.2);">8 GB+ LPDDR5 / LPDDR5X (for Ghidra 12.1.4 headless analysis)</td>
     </tr>
     <tr>
       <td style="padding: 12px 16px; border-bottom: 1px solid rgba(128, 128, 128, 0.2);"><b>Free Storage</b></td>
-      <td style="padding: 12px 16px; border-bottom: 1px solid rgba(128, 128, 128, 0.2);">2 GB (runtime core)</td>
-      <td style="padding: 12px 16px; border-bottom: 1px solid rgba(128, 128, 128, 0.2);">8 GB+ UFS (packages and build caches)</td>
+      <td style="padding: 12px 16px; border-bottom: 1px solid rgba(128, 128, 128, 0.2);">2 GB (runtime core + Craft Anything Rust engine)</td>
+      <td style="padding: 12px 16px; border-bottom: 1px solid rgba(128, 128, 128, 0.2);">8 GB+ UFS (OpenJDK 21, Ghidra 12.1.4, and toolchains)</td>
     </tr>
     <tr>
       <td style="padding: 12px 16px; border-bottom: 1px solid rgba(128, 128, 128, 0.2);"><b>Android Version</b></td>
@@ -232,25 +267,28 @@ Real-world test: the agent authored a custom Python I/O benchmark and executed m
 
 ```text
 antigravity-android/
-├── app/        # Android Host, WebView, and process supervisors
+├── app/        # Android Host, WebView, OnboardingSeeder, and process supervisors
 ├── build/      # Gradle-free deterministic build pipeline (aapt, javac, d8, apksigner)
-├── bus/        # Shell bus, IPC daemons, and environment variable composers
+├── bus/        # Modular shell bus, IPC helpers, and environment variable composers
 ├── config/     # Centralized environment configs (app.env, paths.env, tools.env)
-├── docs/       # Architecture specifications, manuals, and media assets
-├── env/        # Bionic toolchain, rootfs overlay, and pkg package manager
-├── patches/    # Low-level binary patches (Go pclntab, seccomp bypass, AArch64 gates)
-└── web/        # Web UI, touch ergonomics, and dynamic patchers
+├── core/       # Glibc runtime manifest, seed states, and native media encoders
+├── docs/       # Architecture specifications, manuals, and high-res visual assets
+├── env/        # Bionic toolchain, rootfs overlay, TLS cacerts, and pkg manager
+├── patches/    # Low-level binary patches (Go pclntab, exebox/seccomp bypass, AArch64 gates)
+├── plugins/    # Preinstalled native Craft Anything MCP server + Ghidra 12.1.4 ARM64 suite
+└── web/        # Workbench v2.31.0 UI, touch submenu patches, and audio relay processor
 ```
 
 ---
 
-<p><font size="5"><b>Acknowledgments & Attribution</b></font></p>
+<p><font size="5"><b>Acknowledgments &amp; Attribution</b></font></p>
 
-This project builds upon the foundational Android Bionic host architecture originally created by [werdio325-png/antigravity-android](https://github.com/werdio325-png/antigravity-android), with significant architectural upgrades and modifications in this repository (`v2.29.0`), including:
+This project builds upon the foundational Android Bionic host architecture originally created by [werdio325-png/antigravity-android](https://github.com/werdio325-png/antigravity-android), with major architectural upgrades and expansions in this repository (`v2.31.0`), including:
 
-* **Core Engine Upgrade (`v2.29.0`):** Updated ARM64 `language_server` (`go1.28`), Workbench UI bundle, and binary patch signatures.
-* **Real-Time Voice Chat & Audio Relay:** Native Android WebRTC/WebAudio microphone pipeline (`RECORD_AUDIO`, `MODIFY_AUDIO_SETTINGS`) and unlocked voice feature gates.
-* **ARMv8.0-A CPU & SIMD Emulation (`liblse_compat.so`):** Custom trap-and-emulate (`SIGILL`) compatibility layer for `FEAT_LSE` atomics, `FEAT_RDM`, and `FEAT_FCMA` instructions on legacy ARMv8.0-A processors.
+* **Core Engine & Workbench Upgrade (`v2.31.0`):** Updated ARM64 `language_server` (`go1.28`), Workbench UI bundle (`Gemini 4 Carbon/Argon`, `Claude 5.5`), touch reasoning submenu patches, and native `webp_encoder` / `webm_encoder` binaries.
+* **Native ARM64 Reverse Engineering (`Craft Anything` + `Ghidra 12.1.4`):** Bundled 320-tool Rust MCP server (`craft-anything-cli`), native Android Bionic ARM64 Ghidra `decompile` & `sleigh` binaries, and automated on-demand `craft-ghidra-setup` installer.
+* **Direct Terminal Execution & Production Runtime Hardening:** Binary `exebox` / `urpc.Fork` sandbox bypass in `liblanguage_server.so`, $O(1)$ stage-isolated `pkg install`, pre-bundled OpenJDK 21 `cacerts`, multithreaded `agy-daemon` with log rotation, and single-call `agy-notify`.
+* **Real-Time Voice Chat & ARMv8.0-A Compatibility (`liblse_compat.so`):** Native WebRTC/WebAudio microphone pipeline and custom `SIGILL` trap-and-emulate layer for `FEAT_LSE` atomics, `FEAT_RDM`, and `FEAT_FCMA` SIMD instructions.
 
 ---
 

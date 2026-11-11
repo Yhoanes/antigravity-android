@@ -35,6 +35,9 @@ EXPECTED_COUNTS = {
     "voice_allowed": 1,
     "voice_cfg_s1": 1,
     "voice_cfg_s2": 1,
+    "sbox_avail": 1,
+    "sbox_init": 1,
+    "sbox_prep": 1,
 }
 TAG = "patch_gates"
 
@@ -57,6 +60,9 @@ def run(target_path, verify=False, dry_run=False, allow_missing=False, log=print
         "voice_allowed": len(st["raw_vall"]) + len(st["pat_vall"]),
         "voice_cfg_s1": len(st["raw_vc1"]) + len(st["pat_vc1"]),
         "voice_cfg_s2": len(st["raw_vc2"]) + len(st["pat_vc2"]),
+        "sbox_avail": len(st["raw_sbox_avail"]) + len(st["pat_sbox_avail"]),
+        "sbox_init": len(st["raw_sbox_init"]) + len(st["pat_sbox_init"]),
+        "sbox_prep": len(st["raw_sbox_prep"]) + len(st["pat_sbox_prep"]),
     }
     report["observed_counts"] = {
         "cli": {"raw": len(st["raw_cli"]), "patched": len(st["pat_cli"])},
@@ -65,6 +71,9 @@ def run(target_path, verify=False, dry_run=False, allow_missing=False, log=print
         "voice_allowed": {"raw": len(st["raw_vall"]), "patched": len(st["pat_vall"])},
         "voice_cfg_s1": {"raw": len(st["raw_vc1"]), "patched": len(st["pat_vc1"])},
         "voice_cfg_s2": {"raw": len(st["raw_vc2"]), "patched": len(st["pat_vc2"])},
+        "sbox_avail": {"raw": len(st["raw_sbox_avail"]), "patched": len(st["pat_sbox_avail"])},
+        "sbox_init": {"raw": len(st["raw_sbox_init"]), "patched": len(st["pat_sbox_init"])},
+        "sbox_prep": {"raw": len(st["raw_sbox_prep"]), "patched": len(st["pat_sbox_prep"])},
     }
     report["offsets"] = {
         "cli_raw": hex_list(st["raw_cli"]),
@@ -79,9 +88,15 @@ def run(target_path, verify=False, dry_run=False, allow_missing=False, log=print
         "voice_cfg_s1_patched": hex_list(st["pat_vc1"]),
         "voice_cfg_s2_raw": hex_list(st["raw_vc2"]),
         "voice_cfg_s2_patched": hex_list(st["pat_vc2"]),
+        "sbox_avail_raw": hex_list(st["raw_sbox_avail"]),
+        "sbox_avail_patched": hex_list(st["pat_sbox_avail"]),
+        "sbox_init_raw": hex_list(st["raw_sbox_init"]),
+        "sbox_init_patched": hex_list(st["pat_sbox_init"]),
+        "sbox_prep_raw": hex_list(st["raw_sbox_prep"]),
+        "sbox_prep_patched": hex_list(st["pat_sbox_prep"]),
     }
 
-    for shape in ("cli", "manager", "voice_relay", "voice_allowed", "voice_cfg_s1", "voice_cfg_s2"):
+    for shape in ("cli", "manager", "voice_relay", "voice_allowed", "voice_cfg_s1", "voice_cfg_s2", "sbox_avail", "sbox_init", "sbox_prep"):
         total = summary[shape]
         exp = EXPECTED_COUNTS[shape]
         if total == 0:
@@ -109,6 +124,12 @@ def run(target_path, verify=False, dry_run=False, allow_missing=False, log=print
             and len(st["pat_vc1"]) == EXPECTED_COUNTS["voice_cfg_s1"]
             and len(st["raw_vc2"]) == 0
             and len(st["pat_vc2"]) == EXPECTED_COUNTS["voice_cfg_s2"]
+            and len(st["raw_sbox_avail"]) == 0
+            and len(st["pat_sbox_avail"]) == EXPECTED_COUNTS["sbox_avail"]
+            and len(st["raw_sbox_init"]) == 0
+            and len(st["pat_sbox_init"]) == EXPECTED_COUNTS["sbox_init"]
+            and len(st["raw_sbox_prep"]) == 0
+            and len(st["pat_sbox_prep"]) == EXPECTED_COUNTS["sbox_prep"]
         )
         return base.run_verify(report, ok, TAG, log), report
 
@@ -119,14 +140,17 @@ def run(target_path, verify=False, dry_run=False, allow_missing=False, log=print
         + len(st["raw_vall"])
         + len(st["raw_vc1"])
         + len(st["raw_vc2"])
+        + len(st["raw_sbox_avail"])
+        + len(st["raw_sbox_init"])
+        + len(st["raw_sbox_prep"])
     )
     if n_changes == 0:
         return base.run_already(
             report, TAG, log,
             message="already patched, nothing to do",
             log_message="already patched",
-            detail=" (cli=%d, manager=%d, vrel=%d, vall=%d, vc1=%d, vc2=%d)" %
-            (len(st["pat_cli"]), len(st["pat_mgr"]), len(st["pat_vrel"]), len(st["pat_vall"]), len(st["pat_vc1"]), len(st["pat_vc2"]))), report
+            detail=" (cli=%d, manager=%d, vrel=%d, vall=%d, vc1=%d, vc2=%d, sbox=%d/%d/%d)" %
+            (len(st["pat_cli"]), len(st["pat_mgr"]), len(st["pat_vrel"]), len(st["pat_vall"]), len(st["pat_vc1"]), len(st["pat_vc2"]), len(st["pat_sbox_avail"]), len(st["pat_sbox_init"]), len(st["pat_sbox_prep"]))), report
 
     for off in st["raw_cli"]:
         data[off:off + 4] = sig.REPL_CLI
@@ -140,6 +164,12 @@ def run(target_path, verify=False, dry_run=False, allow_missing=False, log=print
         data[off:off + len(sig.REPL_VOICE_CFG_S1)] = sig.REPL_VOICE_CFG_S1
     for off in st["raw_vc2"]:
         data[off:off + len(sig.REPL_VOICE_CFG_S2)] = sig.REPL_VOICE_CFG_S2
+    for off in st["raw_sbox_avail"]:
+        data[off:off + len(sig.REPL_SBOX_AVAIL)] = sig.REPL_SBOX_AVAIL
+    for off in st["raw_sbox_init"]:
+        data[off:off + len(sig.REPL_SBOX_INIT)] = sig.REPL_SBOX_INIT
+    for off in st["raw_sbox_prep"]:
+        data[off:off + len(sig.REPL_SBOX_PREP)] = sig.REPL_SBOX_PREP
 
     report["state"] = "dry-run" if dry_run else "patched"
     report["changed"] = n_changes
@@ -150,8 +180,8 @@ def run(target_path, verify=False, dry_run=False, allow_missing=False, log=print
 
     base.commit_write(
         target_path, data, log, TAG,
-        "patched cli=%d manager=%d vrel=%d vall=%d vc1=%d vc2=%d" % (
-            len(st["raw_cli"]), len(st["raw_mgr"]), len(st["raw_vrel"]), len(st["raw_vall"]), len(st["raw_vc1"]), len(st["raw_vc2"])))
+        "patched cli=%d manager=%d vrel=%d vall=%d vc1=%d vc2=%d sbox=%d/%d/%d" % (
+            len(st["raw_cli"]), len(st["raw_mgr"]), len(st["raw_vrel"]), len(st["raw_vall"]), len(st["raw_vc1"]), len(st["raw_vc2"]), len(st["raw_sbox_avail"]), len(st["raw_sbox_init"]), len(st["raw_sbox_prep"])))
     return True, report
 
 

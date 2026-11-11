@@ -32,20 +32,20 @@ ensure_dirs() { mkdir -p "$PKG_DB" "$PKG_CACHE" "$PKG_INDEX" "$PKG_ROOT/tmp"; }
 rewrite_prefix() {
     local f esc link target suffix
     # Escape sed-replacement metacharacters in $PREFIX (never expected, cheap).
-    esc="$(printf '%s' "$PREFIX" | sed 's/[\\&|]/\\&/g')"
+    esc="$(printf '%s' "$PREFIX" | sed 's/[\\&#]/\\&/g')"
     # One grep walk finds every matching text file, then one sed per file.
     # Avoids spawning 2-3 processes per file and re-reads nothing.
-    grep -rIlZ -E '/data/(data|user/[0-9]+)/com\.[^/]*/files/usr' -- "$@" 2>/dev/null \
+    grep -rIlZ --exclude-dir=ghidra_12.1.4_PUBLIC -E '/data/(data|user/[0-9]+)/com\.[^/]*/files/usr' -- "$@" 2>/dev/null \
         | while IFS= read -r -d '' f; do
-            sed -i -E "s|/data/(data|user/[0-9]+)/com\.[^/]*/files/usr|$esc|g" "$f"
+            sed -i -E "s#/data/(data|user/[0-9]+)/com\.[^/]*/files/usr#$esc#g" "$f"
         done
     # Repoint absolute symlinks that point into a foreign Termux/app prefix.
-    find "$@" -type l -print0 2>/dev/null \
+    find "$@" -not -path '*/ghidra_12.1.4_PUBLIC/*' -type l -print0 2>/dev/null \
         | while IFS= read -r -d '' link; do
             target="$(readlink "$link" 2>/dev/null || true)"
             case "$target" in
-                /data/data/com.*/files/usr*|/data/user/*/com.*/files/usr*)
-                    suffix="$(printf '%s' "$target" | sed -E 's|^/data/(data|user/[0-9]+)/com\.[^/]*/files/usr||')"
+                /data/[d]ata/com.*/files/usr*|/data/[u]ser/*/com.*/files/usr*)
+                    suffix="$(printf '%s' "$target" | sed -E 's#^/data/(data|user/[0-9]+)/com\.[^/]*/files/usr##')"
                     ln -snf "$PREFIX$suffix" "$link" 2>/dev/null || true
                     ;;
             esac
@@ -65,7 +65,7 @@ sync_runtime_bridges() {
         name="$(basename "$tool")"
         count=$((count + 1))
         case "$name" in
-            rish|xdg-open|open|open_helper|sensible-browser|x-www-browser|gnome-open|google-chrome|chrome|chromium|chromium-browser|torch|termux-torch|termux-camera-torch|webp_encoder|webm_encoder|webm_encoder.elf)
+            rish|xdg-open|open|open_helper|sensible-browser|x-www-browser|gnome-open|google-chrome|chrome|chromium|chromium-browser|torch|termux-torch|termux-camera-torch|webp_encoder|webm_encoder|webm_encoder.elf|analyzeHeadless|craft-anything-cli|craft-ghidra-setup)
                 continue
                 ;;
         esac
@@ -76,6 +76,9 @@ sync_runtime_bridges() {
 # AGY bridge -> bionic \$PREFIX/bin/$name
 PREFIX='$PREFIX'
 export PREFIX
+export HOME="\$(dirname "\$PREFIX")"
+export TMPDIR="\$PREFIX/tmp"
+export JDK_JAVA_OPTIONS="-Duser.home=\$HOME -Djava.io.tmpdir=\$PREFIX/tmp"
 if [ -f "\$PREFIX/lib/libtermux-exec.so" ]; then
   export LD_PRELOAD="\$PREFIX/lib/libtermux-exec.so"
 else

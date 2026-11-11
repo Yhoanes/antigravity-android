@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/data/data/com.agy/files/usr/bin/bash
 # selftest - offline checks for the bus. Run: bus selftest [--profile P]
 # No Android, no network, no core required. Exits non-zero on any failure.
 set -uo pipefail

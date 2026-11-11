@@ -1,202 +1,37 @@
 {
-  "core": {
-    "path": "C:\\Users\\val-c\\OneDrive\\\u0414\u043e\u043a\u0443\u043c\u0435\u043d\u0442\u044b\\Antigravity\\antigravity-android\\build\\staging\\language_server",
-    "sha256_final": "c4d96cc7555730e44752c3a19a4d9983366d47c20a12cc2317fceb66a3ba509c",
-    "sha256_initial": "d62259ec41556629bb62b1accf2dee6d0e77c4f851d259665e9569b8c93b1c68",
-    "size": 174608568,
-    "version": "go1.28-20260721-RC03 cl/951519500 +3ebc191975 X:fieldtrack,boringcrypto,simd,mapsplitgroup"
+  "files": {
+    "bin/chrome": "b57c80d63fe10d8ab0ddfd3a419f47e11a8448c26621520a8813dfcdda36121b",
+    "bin/chromium": "b57c80d63fe10d8ab0ddfd3a419f47e11a8448c26621520a8813dfcdda36121b",
+    "bin/gnome-open": "8258a78e342dd041a0257a48df9bf96d9941848b06cc00d09b7c94acf0db8cc4",
+    "bin/google-chrome": "b57c80d63fe10d8ab0ddfd3a419f47e11a8448c26621520a8813dfcdda36121b",
+    "bin/liblanguage_server.so": "cd064934d7d34cc6317cba6b5c32314843e36c807bda4fee3d51edb887833179",
+    "bin/libloader.so": "ca4af7c4022222bb405b0b601d818506ea608a2242f3cce43bd0b56b71f94530",
+    "bin/open": "8258a78e342dd041a0257a48df9bf96d9941848b06cc00d09b7c94acf0db8cc4",
+    "bin/open_helper": "8258a78e342dd041a0257a48df9bf96d9941848b06cc00d09b7c94acf0db8cc4",
+    "bin/rish": "68a4c016907cd56e4830f69e8daf47800d37aff2fdc2392f5bc737e963d04a9c",
+    "bin/rish_shizuku.dex": "4ce491f33b1c667ee9bc3ca86aa71c31439ab9cfcebde721d635e2a745434792",
+    "bin/sensible-browser": "8258a78e342dd041a0257a48df9bf96d9941848b06cc00d09b7c94acf0db8cc4",
+    "bin/webm_encoder": "bda61e10cbfe7e5f9f3b81579e2468ed4b77b6b556d9d52bc632e97219daad97",
+    "bin/webp_encoder": "bda61e10cbfe7e5f9f3b81579e2468ed4b77b6b556d9d52bc632e97219daad97",
+    "bin/x-www-browser": "8258a78e342dd041a0257a48df9bf96d9941848b06cc00d09b7c94acf0db8cc4",
+    "bin/xdg-open": "0461043cf2d187cbaa69de4fe8bde28d068e48fc3933cbe30b9db33ef170998c",
+    "certs/ca-certificates.crt": "303daa9461b9617eb8e6209b272613fcf2923959ff32e9422eaaae195c55c780",
+    "lib/ld-linux-aarch64.so.1": "ca4af7c4022222bb405b0b601d818506ea608a2242f3cce43bd0b56b71f94530",
+    "lib/libc.so.6": "cb7b001c0d4030119eb9010ae2d747fcbc51108cfb1e0940fa78618d78dc9ae9",
+    "lib/libdl.so.2": "9c8504547ea2ae94146760551135ae49b19659ee3f6d913c1f2f055695a7fce7",
+    "lib/libgcc_s.so.1": "22d5db25fece632754f7a0fb1c6586eb6e93eab6a5866da487b86f115d4e389d",
+    "lib/liblse_compat.so": "ac24044fc180aa23fb1dcb347f75f97986a1d851f4fad768cbf3496cddf09fef",
+    "lib/libm.so.6": "6e070086457ddc46e8fbbd2ed11a63bb0a394e9eeb41bbfbe1825aa286f9cbb1",
+    "lib/libnss_dns.so.2": "1eaa206e5e1c7e5f983038de9c2c9aabb76337334c2f4e9fa46fe8058ebe7dbe",
+    "lib/libnss_files.so.2": "068976beb57afd439680a9c9ad72652562088efd50bd68e722144003632f5c96",
+    "lib/libpthread.so.0": "adf2a3b38694cdd6b8e6c08f56a64786420cb20d736ceece48c3871147357ff2",
+    "lib/libresolv.so.2": "490093f15e8f6a5966e89f61c01887657ababeb154b755c48d91a6e2ab9888f2",
+    "lib/librt.so.1": "a941a6c9eb45597c47597e7711e8cd24b039eb488f20337d2a96e35c22daf327",
+    "seed/AGENTS.md": "d5ef5ed56657fcb3e36da0a0fe6003ce7b16c4af8748681e9c3d7bacf3a0944e",
+    "seed/antigravity_state.gemini.pbtxt": "d0771e8da9b2cbcba7d993e391acc7e7e6ee4797b0f660dd51dd65ae5f6159cf",
+    "seed/antigravity_state.pbtxt": "ab5ba94e0414d5379d38722ad60849e9801a1fc21ca862ed7caec84cf2f9da3e",
+    "seed/jetski_state.pbtxt": "ab5ba94e0414d5379d38722ad60849e9801a1fc21ca862ed7caec84cf2f9da3e"
   },
-  "generated_at": "2026-10-10T14:55:45Z",
-  "groups": [
-    {
-      "changed": 0,
-      "description": "Force eligibility/auth gate bits (CLI + EnterpriseAuthValidator).",
-      "expected_counts": {
-        "cli": 2,
-        "manager": 1
-      },
-      "file": "gates",
-      "group": "eligibility",
-      "id": "eligibility",
-      "messages": [
-        "already patched, nothing to do"
-      ],
-      "observed_counts": {
-        "cli": {
-          "patched": 2,
-          "raw": 0
-        },
-        "manager": {
-          "patched": 1,
-          "raw": 0
-        }
-      },
-      "offsets": {
-        "cli_patched": [
-          "0x4ffbcfc",
-          "0x67eb684"
-        ],
-        "cli_raw": [],
-        "manager_patched": [
-          "0x6bd13e0"
-        ],
-        "manager_raw": []
-      },
-      "state": "already"
-    },
-    {
-      "changed": 0,
-      "description": "Retarget faccessat2(439)->faccessat(48) and fchmodat2(452)->fchmodat(53).",
-      "elves": [
-        {
-          "elf_base": "0x0",
-          "functions": {
-            "syscall.faccessat2": {
-              "entry": "0x4a668a0",
-              "new_count": 1,
-              "old_count": 0,
-              "present": true,
-              "size": 320,
-              "state": "already"
-            },
-            "syscall.fchmodat2": {
-              "entry": "0x4a66b10",
-              "new_count": 1,
-              "old_count": 0,
-              "present": true,
-              "size": 320,
-              "state": "already"
-            }
-          },
-          "is_primary": true,
-          "kind": "go",
-          "pclntab": {
-            "nfunc": 156100,
-            "offset": "0x138a198"
-          },
-          "region_end": "0x8eef6d3",
-          "text": {
-            "offset": "0x49bc000",
-            "size": "0x28be090"
-          }
-        },
-        {
-          "elf_base": "0x8eef6d3",
-          "is_primary": false,
-          "kind": "elf, no Go pclntab (skipped)",
-          "region_end": "0x96f32cb",
-          "text": {
-            "offset": "0x90fa293",
-            "size": "0x2c345c"
-          }
-        },
-        {
-          "elf_base": "0x96f32cb",
-          "functions": {
-            "syscall.faccessat2": {
-              "entry": "0x98a103b",
-              "new_count": 1,
-              "old_count": 0,
-              "present": true,
-              "size": 320,
-              "state": "already"
-            },
-            "syscall.fchmodat2": {
-              "present": false,
-              "state": "absent"
-            }
-          },
-          "is_primary": false,
-          "kind": "go",
-          "pclntab": {
-            "nfunc": 19519,
-            "offset": "0x9d09c4b"
-          },
-          "region_end": "0xa6850b8",
-          "text": {
-            "offset": "0x96f42cb",
-            "size": "0x5ce404"
-          }
-        }
-      ],
-      "expected": {
-        "helper_go_elfs": {
-          "faccessat2": 1
-        },
-        "main": {
-          "faccessat2": 1,
-          "fchmodat2": 1
-        }
-      },
-      "file": "syscalls",
-      "group": "seccomp",
-      "id": "seccomp",
-      "messages": [
-        "go elf @0x0: .text@0x49bc000 pclntab@0x138a198 nfunc=156100",
-        "syscall.faccessat2: already patched (48)",
-        "syscall.fchmodat2: already patched (53)",
-        "go elf @0x96f32cb: .text@0x96f42cb pclntab@0x9d09c4b nfunc=19519",
-        "syscall.faccessat2: already patched (48)"
-      ],
-      "offsets": {},
-      "state": "already"
-    },
-    {
-      "changed": 0,
-      "description": "Relative resolver path; /etc/resolv.conf -> etc//resolv.conf.",
-      "expected_counts": {
-        "clean": 2
-      },
-      "file": "resolv",
-      "group": "resolv",
-      "id": "resolv",
-      "messages": [
-        "already patched"
-      ],
-      "observed_counts": {
-        "clean": 0,
-        "rejected": 0,
-        "replacement": 2
-      },
-      "offsets": {
-        "clean": [],
-        "rejected": [],
-        "replacement": [
-          "0x4074c79",
-          "0x9cca78d"
-        ]
-      },
-      "state": "already"
-    },
-    {
-      "changed": 2,
-      "description": "Preserve LD_PRELOAD SIGILL handler by skipping Go rt_sigaction for SIGILL (4).",
-      "expected_counts": {
-        "raw": 2
-      },
-      "file": "sigill",
-      "group": "sigill",
-      "id": "sigill",
-      "messages": [],
-      "observed_counts": {
-        "raw": 2,
-        "replacement": 0
-      },
-      "offsets": {
-        "raw": [
-          "0x4a52e20",
-          "0x9884eab"
-        ],
-        "replacement": []
-      },
-      "state": "patched"
-    }
-  ],
-  "mode": {
-    "allow_missing": false,
-    "dry_run": false,
-    "verify": false
-  },
-  "ok": true,
+  "generated_at": "2026-11-11T00:30:54Z",
   "schema": 1
 }

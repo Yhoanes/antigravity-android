@@ -36,22 +36,11 @@ public final class AgyWebViewClient extends WebViewClient {
         this.listener = listener;
     }
 
-    private volatile long lastRpcErrorReloadMs = 0L;
-
     @Override
     public void onReceivedError(WebView v, WebResourceRequest req, WebResourceError err) {
         if (req != null && req.getUrl() != null) {
-            String urlStr = req.getUrl().toString();
-            CharSequence desc = err != null ? err.getDescription() : "unknown";
-            Log.w(TAG, "Resource load error: " + urlStr + " err=" + desc);
-            if (urlStr.contains("127.0.0.1") && urlStr.contains("LanguageServerService/GetServerConfiguration")) {
-                long now = System.currentTimeMillis();
-                if (now - lastRpcErrorReloadMs > 3000L && v != null) {
-                    lastRpcErrorReloadMs = now;
-                    Log.i(TAG, "Auto-reloading WebView after initial GetServerConfiguration timeout/error");
-                    v.postDelayed(v::reload, 1200);
-                }
-            }
+            Log.w(TAG, "Resource load error: " + req.getUrl() + " err="
+                    + (err != null ? err.getDescription() : "unknown"));
         }
     }
 
@@ -146,11 +135,5 @@ public final class AgyWebViewClient extends WebViewClient {
         if (listener != null) {
             listener.onPageFinished(url);
         }
-    }
-
-    @Override
-    public boolean onRenderProcessGone(WebView view, android.webkit.RenderProcessGoneDetail detail) {
-        Log.w(TAG, "WebView render process gone; recovering without crashing app");
-        return true;
     }
 }

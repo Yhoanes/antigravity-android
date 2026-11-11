@@ -1,0 +1,163 @@
+#!/system/bin/sh
+# craft-ghidra-setup - Install OpenJDK 21 + Ghidra 12.1.4 on demand and inject native ARM64 decompile/sleigh.
+set -eu
+
+SELF_REAL="$0"
+if command -v readlink >/dev/null 2>&1; then
+    RESOLVED="$(readlink -f "$0" 2>/dev/null || true)"
+    if [ -n "$RESOLVED" ]; then
+        SELF_REAL="$RESOLVED"
+    fi
+fi
+SCRIPT_DIR="$(CDPATH= cd -- "$(dirname -- "$SELF_REAL")" && pwd)"
+
+if [ -z "${HOME:-}" ]; then
+    case "$SCRIPT_DIR" in
+        */.gemini/*) HOME="${SCRIPT_DIR%%/.gemini/*}" ;;
+        *) HOME="/data/user/0/com.agy/files" ;;
+    esac
+fi
+PREFIX="${PREFIX:-$HOME/usr}"
+export HOME PREFIX
+export PATH="$HOME/runtime/bin:$PREFIX/bin:/system/bin"
+export LD_LIBRARY_PATH="$PREFIX/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
+if [ -f "$PREFIX/etc/tls/cert.pem" ]; then
+    export SSL_CERT_FILE="$PREFIX/etc/tls/cert.pem"
+fi
+if [ -f "$PREFIX/etc/tls/openssl.cnf" ]; then
+    export OPENSSL_CONF="$PREFIX/etc/tls/openssl.cnf"
+fi
+export TMPDIR="${TMPDIR:-$PREFIX/tmp}"
+mkdir -p "$TMPDIR" "$PREFIX/opt" "$PREFIX/bin"
+
+GHIDRA_VER="12.1.4"
+GHIDRA_SUB="ghidra_12.1.4_PUBLIC"
+GHIDRA_URL="https://github.com/NationalSecurityAgency/ghidra/releases/download/Ghidra_12.1.4_build/ghidra_12.1.4_PUBLIC_20260921.zip"
+GHIDRA_SHA256="ddac49f903da9d5bac833e5cc79395098b9c33cfd3279be5f31bd00387d2d4db"
+
+echo "[1/4] Verificando OpenJDK 21 ARM64 y certificados TLS (cacerts)..."
+if [ ! -x "$PREFIX/lib/jvm/java-21-openjdk/bin/java" ] && [ ! -x "$PREFIX/bin/java" ]; then
+    if [ -x "$HOME/runtime/bin/pkg" ]; then
+        "$HOME/runtime/bin/pkg" update
+        "$HOME/runtime/bin/pkg" install ca-certificates-java openjdk-21
+    elif [ -x "$PREFIX/bin/pkg" ]; then
+        "$PREFIX/bin/pkg" update
+        "$PREFIX/bin/pkg" install ca-certificates-java openjdk-21
+    else
+        echo "ERROR: No se encontro 'pkg' en $HOME/runtime/bin/pkg ni $PREFIX/bin/pkg" >&2
+        exit 1
+    fi
+elif [ ! -e "$PREFIX/lib/jvm/java-21-openjdk/lib/security/cacerts" ]; then
+    if [ -x "$HOME/runtime/bin/pkg" ]; then
+        "$HOME/runtime/bin/pkg" install ca-certificates-java || true
+    elif [ -x "$PREFIX/bin/pkg" ]; then
+        "$PREFIX/bin/pkg" install ca-certificates-java || true
+    fi
+fi
+
+# Limpiar carpeta residual $PREFIX/Ghidra de pruebas previas si existe
+rm -rf "$PREFIX/Ghidra" 2>/dev/null || true
+
+GHIDRA_ROOT="$PREFIX/opt/ghidra/$GHIDRA_SUB"
+if [ ! -f "$GHIDRA_ROOT/support/analyzeHeadless" ]; then
+    echo "[2/4] Descargando Ghidra $GHIDRA_VER (~450 MB)..."
+    ZIP_TMP="$TMPDIR/ghidra_${GHIDRA_VER}.zip"
+    rm -f "$ZIP_TMP"
+    curl -fL --retry 3 -o "$ZIP_TMP" "$GHIDRA_URL"
+
+    echo "[2/4] Verificando SHA-256..."
+    ACTUAL="$(sha256sum "$ZIP_TMP" | awk '{print $1}')"
+    if [ "$ACTUAL" != "$GHIDRA_SHA256" ]; then
+        rm -f "$ZIP_TMP"
+        echo "ERROR: SHA-256 invalido (esperado $GHIDRA_SHA256, obtenido $ACTUAL)" >&2
+        exit 1
+    fi
+
+    echo "[3/4] Extrayendo Ghidra $GHIDRA_VER y eliminando el .zip de inmediato..."
+    rm -rf "$PREFIX/opt/ghidra"
+    mkdir -p "$PREFIX/opt/ghidra"
+    unzip -q "$ZIP_TMP" -d "$PREFIX/opt/ghidra"
+    rm -f "$ZIP_TMP"
+else
+    echo "[2/4] Ghidra $GHIDRA_VER ya esta extraido en $GHIDRA_ROOT"
+fi
+
+echo "[4/4] Inyectando binarios nativos Android ARM64 (decompile + sleigh)..."
+NATIVE_SRC=""
+for cand in \
+    "$SCRIPT_DIR/ghidra-arm64" \
+    "$HOME/.gemini/config/plugins/craft-anything/mcp/bin/ghidra-arm64" \
+    "$PREFIX/share/ghidra-arm64/os/linux_arm_64"
+do
+    if [ -f "$cand/decompile" ] && [ -f "$cand/sleigh" ]; then
+        NATIVE_SRC="$cand"
+        break
+    fi
+done
+
+if [ -z "$NATIVE_SRC" ]; then
+    echo "ERROR: No se encontraron los binarios ARM64 decompile/sleigh del plugin." >&2
+    exit 1
+fi
+
+NATIVE_DST="$GHIDRA_ROOT/Ghidra/Features/Decompiler/os/linux_arm_64"
+SHARE_DST="$PREFIX/share/ghidra-arm64/os/linux_arm_64"
+mkdir -p "$NATIVE_DST" "$SHARE_DST"
+for bin in decompile sleigh; do
+    cp -f "$NATIVE_SRC/$bin" "$NATIVE_DST/$bin"
+    chmod 0755 "$NATIVE_DST/$bin"
+    if [ "$NATIVE_SRC" != "$SHARE_DST" ]; then
+        cp -f "$NATIVE_SRC/$bin" "$SHARE_DST/$bin"
+        chmod 0755 "$SHARE_DST/$bin"
+    fi
+done
+
+for sh_file in "$GHIDRA_ROOT/ghidraRun" "$GHIDRA_ROOT"/support/*; do
+    if [ -f "$sh_file" ] && [ -x "$PREFIX/bin/bash" ]; then
+        sed -i "1s|^#!/usr/bin/env bash|#!$PREFIX/bin/bash|; 1s|^#!/bin/bash|#!$PREFIX/bin/bash|" "$sh_file" 2>/dev/null || true
+        chmod 0755 "$sh_file" 2>/dev/null || true
+    fi
+done
+
+if [ -d "$PREFIX/lib/jvm/java-21-openjdk" ] && [ -f "$GHIDRA_ROOT/support/launch.properties" ]; then
+    sed -i "s|^JAVA_HOME_OVERRIDE=.*|JAVA_HOME_OVERRIDE=$PREFIX/lib/jvm/java-21-openjdk|" "$GHIDRA_ROOT/support/launch.properties"
+    grep -q '^VMARGS=-Dapplication.tempdir=' "$GHIDRA_ROOT/support/launch.properties" 2>/dev/null || cat >> "$GHIDRA_ROOT/support/launch.properties" <<EOF
+
+# Antigravity Android dot-free writable directories
+VMARGS=-Duser.home=$HOME
+VMARGS=-Djava.io.tmpdir=$PREFIX/tmp
+VMARGS=-Dapplication.tempdir=$PREFIX/tmp/ghidra-temp
+VMARGS=-Dapplication.cachedir=$PREFIX/tmp/ghidra-cache
+VMARGS=-Dapplication.settingsdir=$PREFIX/tmp/ghidra-settings
+EOF
+fi
+
+mkdir -p "$PREFIX/tmp/ghidra-temp" "$PREFIX/tmp/ghidra-cache" "$PREFIX/tmp/ghidra-settings"
+ln -sfn "$GHIDRA_ROOT/support" "$PREFIX/opt/ghidra/support"
+
+for jb in java javac jar keytool; do
+    if [ -x "$PREFIX/lib/jvm/java-21-openjdk/bin/$jb" ]; then
+        rm -f "$PREFIX/bin/$jb"
+        ln -sf "$PREFIX/lib/jvm/java-21-openjdk/bin/$jb" "$PREFIX/bin/$jb"
+    fi
+done
+
+rm -f "$PREFIX/bin/analyzeHeadless" "$HOME/runtime/bin/analyzeHeadless"
+for dst in "$PREFIX/bin/analyzeHeadless" "$HOME/runtime/bin/analyzeHeadless"; do
+    [ -d "$(dirname "$dst")" ] || continue
+    cat > "$dst" <<EOF
+#!/system/bin/sh
+export HOME="$HOME"
+export PREFIX="$PREFIX"
+export JAVA_HOME="$PREFIX/lib/jvm/java-21-openjdk"
+export LD_LIBRARY_PATH="$PREFIX/lib\${LD_LIBRARY_PATH:+:\$LD_LIBRARY_PATH}"
+export PATH="$PREFIX/bin:$HOME/runtime/bin:\$JAVA_HOME/bin:/system/bin"
+export TMPDIR="\${TMPDIR:-$PREFIX/tmp}"
+export JDK_JAVA_OPTIONS="-Duser.home=$HOME -Djava.io.tmpdir=$PREFIX/tmp"
+mkdir -p "\$TMPDIR/ghidra-temp" "\$TMPDIR/ghidra-cache" "\$TMPDIR/ghidra-settings"
+exec "$PREFIX/bin/bash" "$GHIDRA_ROOT/support/analyzeHeadless" "\$@"
+EOF
+    chmod 0755 "$dst"
+done
+
+echo "Listo: Ghidra $GHIDRA_VER nativo ARM64 configurado en $GHIDRA_ROOT"

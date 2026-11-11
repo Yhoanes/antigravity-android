@@ -16,6 +16,7 @@ import com.agy.ui.MainActivity;
  */
 public final class AndroidBridge {
 
+    private final Context appContext;
     private final UiBridge ui = new UiBridge();
     private final ThemeBridge themeBridge;
     private final EngineBridge engine;
@@ -28,6 +29,7 @@ public final class AndroidBridge {
                          ShizukuBridge shizuku, OAuthManager oauth,
                          ThemeManager theme) {
         Context appContext = context.getApplicationContext();
+        this.appContext = appContext;
         this.themeBridge = new ThemeBridge(theme);
         this.engine = new EngineBridge(runtime);
         this.config = new EngineConfigJson(appContext, runtime, engine, shizuku, themeBridge);
@@ -156,5 +158,47 @@ public final class AndroidBridge {
     @JavascriptInterface
     public boolean uninstallMarketplacePlugin(String pluginName) {
         return engine.uninstallMarketplacePlugin(pluginName);
+    }
+
+    @JavascriptInterface
+    public String getMicAccessStatus() {
+        try {
+            if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.M) {
+                return "granted";
+            }
+            MainActivity act = MainActivity.activeActivity;
+            Context ctx = act != null ? act : appContext;
+            if (ctx != null && ctx.checkSelfPermission(android.Manifest.permission.RECORD_AUDIO)
+                    == android.content.pm.PackageManager.PERMISSION_GRANTED) {
+                return "granted";
+            }
+            return "not-determined";
+        } catch (Throwable t) {
+            return "granted";
+        }
+    }
+
+    @JavascriptInterface
+    public void requestMicAccess(final String callbackId) {
+        MainActivity act = MainActivity.activeActivity;
+        if (act != null) {
+            act.requestMicAccessFromJs(callbackId);
+        }
+    }
+
+    @JavascriptInterface
+    public void openAppSettings() {
+        try {
+            MainActivity act = MainActivity.activeActivity;
+            Context ctx = act != null ? act : appContext;
+            if (ctx != null) {
+                android.content.Intent intent = new android.content.Intent(
+                        android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                intent.setData(android.net.Uri.parse("package:" + ctx.getPackageName()));
+                intent.addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK);
+                ctx.startActivity(intent);
+            }
+        } catch (Throwable ignored) {
+        }
     }
 }

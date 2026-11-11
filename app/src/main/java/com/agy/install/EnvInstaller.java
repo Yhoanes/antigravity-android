@@ -61,7 +61,17 @@ public final class EnvInstaller {
         // Order matters: an already-installed prefix wins over the asset check so
         // a missing/renamed bootstrap asset cannot block boot on an installed env.
         if (isInstalled(ctx)) {
-            Log.i(TAG, "env already installed at " + prefix + "; skipping rewrite scan");
+            Log.i(TAG, "env already installed at " + prefix);
+            try {
+                PkgInstaller.install(assets, prefix);
+                OverlayCopier.overlay(assets, EnvPaths.ASSET_OVERLAY, prefix);
+                BusInstaller.install(assets, prefix);
+                TermuxShebangRewriter.rewrite(prefix);
+                TermuxPrefixRewriter.rewrite(prefix);
+                FileModeUtil.recursiveSetExec(new File(prefix, "bin"));
+            } catch (Exception e) {
+                Log.w(TAG, "best-effort pkg/overlay refresh skipped: " + e.getMessage());
+            }
             return false;
         }
 
@@ -86,6 +96,7 @@ public final class EnvInstaller {
 
         OverlayCopier.overlay(assets, EnvPaths.ASSET_OVERLAY, prefix);
         PkgInstaller.install(assets, prefix);
+        BusInstaller.install(assets, prefix);
         // Repoint termux shebangs/symlinks before anything (shell bridges, user
         // tools) can exec from the prefix. Runs once per extraction (install is
         // marker-guarded); idempotent if run again.
@@ -103,7 +114,6 @@ public final class EnvInstaller {
         } else {
             Log.w(TAG, "path fixer missing (asset overlay/bin/agy-fix-paths): " + fixPaths);
         }
-        BusInstaller.install(assets, prefix);
         TermuxHooksRemover.remove(prefix);
         writeMarker(prefix);
 

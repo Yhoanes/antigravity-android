@@ -13,6 +13,7 @@ from patch_lib import module_base as base
 from patch_lib.report import hex_list
 from groups.auth import signatures as sig
 from groups.auth.analyze import analyze
+from groups.auth.selftest import _selftest
 
 GROUP_ID = "auth"
 GROUP = "auth"
@@ -88,6 +89,6 @@ def run(target_path, verify=False, dry_run=False, allow_missing=False, log=print
 
 
 if __name__ == "__main__":
-    sys.exit(_cli.main(run,
+    sys.exit(_cli.main(run, selftest=_selftest,
                        usage="Usage: python3 -m groups.auth.module <binary> "
-                             "[--verify|--dry-run|--allow-missing]"))
+                             "[--verify|--dry-run|--allow-missing|--selftest]"))

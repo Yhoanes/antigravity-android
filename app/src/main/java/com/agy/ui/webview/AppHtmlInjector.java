@@ -37,6 +37,17 @@ public final class AppHtmlInjector {
                     + "window.__AG_RESOLVED_THEME__="
                     + JSONObject.quote(theme != null ? theme.getTheme() : "light") + ";"
                     + "window.AndroidBridge=window.Android;"
+                    + "window.__agMicCallbacks={};"
+                    + "window.__agResolveMicAccess=function(id,st){var fn=window.__agMicCallbacks[id];if(fn){delete window.__agMicCallbacks[id];fn(st);}};"
+                    + "window.desktopMic={"
+                    + "getAccessStatus:function(){try{if(window.Android&&typeof window.Android.getMicAccessStatus==='function')return Promise.resolve(window.Android.getMicAccessStatus());}catch(e){}return Promise.resolve('granted');},"
+                    + "requestAccess:function(){return new Promise(function(resolve){try{if(window.Android&&typeof window.Android.getMicAccessStatus==='function'){if(window.Android.getMicAccessStatus()==='granted'){resolve('granted');return;}var id='mic_'+Date.now()+'_'+Math.random().toString(36).slice(2);window.__agMicCallbacks[id]=resolve;window.Android.requestMicAccess(id);return;}}catch(e){}resolve('granted');});},"
+                    + "openSystemPreferences:function(){try{if(window.Android&&typeof window.Android.openAppSettings==='function')window.Android.openAppSettings();}catch(e){}return Promise.resolve();}"
+                    + "};"
+                    + "if(navigator.permissions&&typeof navigator.permissions.query==='function'){"
+                    + "var _agOrigPermQuery=navigator.permissions.query.bind(navigator.permissions);"
+                    + "navigator.permissions.query=function(d){try{if(d&&d.name==='microphone'&&window.Android&&typeof window.Android.getMicAccessStatus==='function'&&window.Android.getMicAccessStatus()==='granted'){return Promise.resolve({state:'granted',onchange:null,addEventListener:function(){},removeEventListener:function(){}});}}catch(e){}return _agOrigPermQuery(d);};"
+                    + "}"
                     + "})();</script>"
                     // Signals first paint back to native (AndroidBridge.onUiReady)
                     // so the splash is dismissed on real content, not a timer.

@@ -36,6 +36,10 @@ public final class BusInstaller {
         } else {
             Log.w(TAG, "bus.sh missing after install: " + busSh);
         }
+        File selftest = new File(busDir, "selftest");
+        if (selftest.isFile()) {
+            FileModeUtil.setExec(selftest);
+        }
         Log.i(TAG, "bus installed: " + busDir);
     }
 }

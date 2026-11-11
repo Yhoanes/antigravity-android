@@ -18,11 +18,10 @@ public final class CoreInstaller {
     private CoreInstaller() {
     }
 
-    public static synchronized void installCore(RuntimeManager rm) {
+    public static void installCore(RuntimeManager rm) {
         Context ctx = rm.appContext();
         File runtimeDir = rm.getRuntimeDir();
         String expectedHash = getAssetManifestHash(ctx);
-        refreshLseCompatIfCorePresent(ctx, rm, expectedHash);
         boolean upToDate = isRuntimeUpToDate(rm, expectedHash);
 
         if (!upToDate) {
@@ -67,31 +66,8 @@ public final class CoreInstaller {
         ShellBridgeInstaller.installOpenUrlShims(rm.getBinDir(), ctx);
         // If the env prefix survived a previous launch, its bridges are cheap to
         // (re)write now. A fresh env install rewrites them when it finishes.
-        if (EnvInstaller.isInstalled(ctx) || new File(EnvInstaller.prefix(ctx), "bin/bash").isFile()) {
+        if (EnvInstaller.isInstalled(ctx)) {
             ShellBridgeInstaller.install(rm);
-        }
-    }
-
-    private static void refreshLseCompatIfCorePresent(Context ctx, RuntimeManager rm, String expectedHash) {
-        File core = new File(rm.getBinDir(), RuntimePaths.CORE_NAME);
-        File loader = new File(rm.getBinDir(), RuntimePaths.LOADER_NAME);
-        if (!core.isFile() || !loader.isFile()) {
-            return;
-        }
-        File lseCompat = new File(rm.getLibDir(), "liblse_compat.so");
-        try (java.io.InputStream in = ctx.getAssets().open(RuntimePaths.RUNTIME_ASSET + "/lib/liblse_compat.so");
-             java.io.FileOutputStream out = new java.io.FileOutputStream(lseCompat)) {
-            byte[] buf = new byte[8192];
-            int n;
-            while ((n = in.read(buf)) > 0) {
-                out.write(buf, 0, n);
-            }
-            lseCompat.setReadable(true, false);
-            lseCompat.setExecutable(true, false);
-            if (expectedHash != null && !expectedHash.isEmpty()) {
-                writeMarker(rm.getRuntimeDir(), RuntimePaths.RUNTIME_MARKER, expectedHash);
-            }
-        } catch (Exception ignored) {
         }
     }
 

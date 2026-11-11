@@ -18,13 +18,18 @@ public final class AppLifecycle {
     }
 
     public static void pauseTimers(WebView webView) {
-        // Keep JS/timers alive so active agent streams and WebSockets are uninterrupted in background
+        WebViewLifecycle.resumeTimers(webView);
     }
 
     public static void trimMemory(int level, Handler handler, WebViewHost host) {
-        // Intentionally do NOT call deprecated WebView.freeMemory(): on Xiaomi HyperOS,
-        // background trim callbacks fire immediately on minimize and calling freeMemory()
-        // purges V8 bytecode/GPU tiles, causing a massive CPU/RAM spike and reload on resume.
+        if (level >= ComponentCallbacks2.TRIM_MEMORY_MODERATE && host != null) {
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    host.freeMemory();
+                }
+            });
+        }
     }
 
     public static void destroy(Handler handler) {

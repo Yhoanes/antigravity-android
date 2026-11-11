@@ -74,19 +74,21 @@ if [ "$CMD" = "post" ]; then
     fi
 
     if [ -n "$RISH_BIN" ] && [ -x "$RISH_BIN" ]; then
-        # Cache original Antigravity logo into /data/local/tmp for high-res notification icon
+        # Cache bundled Antigravity logo into /data/local/tmp and post in a single rish call
         LOGO_CACHE="/data/local/tmp/agy_logo.png"
-        SRC_LOGO="/storage/emulated/0/Documents/antigravity_release/docs/assets/logo.png"
-        if [ ! -f "$LOGO_CACHE" ] && [ -f "$SRC_LOGO" ]; then
-            "$RISH_BIN" -c "cp -f $(printf %q "$SRC_LOGO") $(printf %q "$LOGO_CACHE") && chmod 644 $(printf %q "$LOGO_CACHE")" 2>/dev/null || true
+        SRC_LOGO="$PREFIX/share/antigravity/logo.png"
+        if [ -f "$SRC_LOGO" ]; then
+            "$RISH_BIN" -c "
+                if [ ! -s '$LOGO_CACHE' ]; then
+                    cat > '$LOGO_CACHE' 2>/dev/null && chmod 644 '$LOGO_CACHE' 2>/dev/null || true
+                fi
+                ICON_OPT=''
+                [ -s '$LOGO_CACHE' ] && ICON_OPT='-I file://$LOGO_CACHE'
+                cmd notification post -S bigtext \$ICON_OPT -t $(printf %q "$TITLE") $(printf %q "$TAG") $(printf %q "$BODY_TEXT")
+            " < "$SRC_LOGO" 2>/dev/null && exit 0
+        else
+            "$RISH_BIN" -c "cmd notification post -S bigtext -t $(printf %q "$TITLE") $(printf %q "$TAG") $(printf %q "$BODY_TEXT")" 2>/dev/null && exit 0
         fi
-
-        LARGE_ICON_OPT=""
-        if "$RISH_BIN" -c "test -f $LOGO_CACHE" 2>/dev/null; then
-            LARGE_ICON_OPT="-I file://$LOGO_CACHE"
-        fi
-
-        "$RISH_BIN" -c "cmd notification post -S bigtext $LARGE_ICON_OPT -t $(printf %q "$TITLE") $(printf %q "$TAG") $(printf %q "$BODY_TEXT")" 2>/dev/null && exit 0
     fi
 
     # Fallback if without rish

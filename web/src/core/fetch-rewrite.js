@@ -10,6 +10,9 @@
  * Rewrite file:// or relative ConnectRPC URLs onto the core origin, preserving
  * method/headers/body and attaching the CSRF token. Idempotent and a no-op for
  * non-RPC / already-absolute http(s) URLs.
+ *
+ * The original periodic HEAD ping is not ported (it referenced an undefined
+ * helper; see docs/DEADCODE.md).
  */
 var RPC_MARKERS = ['exa.language_server_pb.', 'exa.host_bridge_pb.', '/exa.'];
 
@@ -33,10 +36,7 @@ function installFetchRewrite() {
   var origFetch = global.fetch.bind(global);
 
   function fetchWithStartupRetry(u, opts, retries) {
-    return origFetch(u, opts).then(function (res) {
-      if (CONFIG) CONFIG.engineReady = true;
-      return res;
-    }).catch(function (err) {
+    return origFetch(u, opts).catch(function (err) {
       if (retries > 0) {
         return new Promise(function (resolve) {
           setTimeout(function () {
@@ -80,8 +80,7 @@ function installFetchRewrite() {
                 body: bodyData,
                 credentials: 'omit'
               };
-              var maxRetries = (CONFIG && CONFIG.engineReady) ? 2 : 30;
-              return fetchWithStartupRetry(targetUrl, nextOpts, maxRetries);
+              return fetchWithStartupRetry(targetUrl, nextOpts, 30);
             });
           } catch (e) { warn('fetch rewrite (Request)', e); }
         }
@@ -103,8 +102,7 @@ function installFetchRewrite() {
           }
           next.headers = headers;
 
-          var maxRetriesStr = (CONFIG && CONFIG.engineReady) ? 2 : 30;
-          return fetchWithStartupRetry(url, next, maxRetriesStr);
+          return fetchWithStartupRetry(url, next, 30);
         }
       }
     } catch (e) { warn('fetch rewrite', e); }

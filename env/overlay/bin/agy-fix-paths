@@ -23,13 +23,13 @@ else
     targets=("$PREFIX")
 fi
 
-esc="$(printf '%s' "$PREFIX" | sed 's/[\\&|]/\\&/g')"
+esc="$(printf '%s' "$PREFIX" | sed 's/[\\&#]/\\&/g')"
 count=0
 
 while IFS= read -r -d '' f; do
     [ -n "$f" ] || continue
     tmp="$f.agyfix.$$"
-    if sed -E "s|$PATTERN|$esc|g" "$f" > "$tmp" 2>/dev/null; then
+    if sed -E "s#$PATTERN#$esc#g" "$f" > "$tmp" 2>/dev/null; then
         if cmp -s "$f" "$tmp"; then
             rm -f "$tmp"
         else
@@ -44,62 +44,27 @@ while IFS= read -r -d '' f; do
     else
         rm -f "$tmp"
     fi
-done < <(grep -rIlZ -E "$PATTERN" -- "${targets[@]}" 2>/dev/null)
+done < <(grep -rIlZ --exclude-dir=ghidra_12.1.4_PUBLIC -E "$PATTERN" -- "${targets[@]}" 2>/dev/null)
 
 # Repoint any absolute symlinks pointing into a foreign Termux/app prefix.
 while IFS= read -r -d '' link; do
     [ -n "$link" ] || continue
     target="$(readlink "$link" 2>/dev/null || true)"
     case "$target" in
-        /data/data/com.*/files/usr*|/data/user/*/com.*/files/usr*)
-            suffix="$(printf '%s' "$target" | sed -E 's|^/data/(data|user/[0-9]+)/com\.[^/]*/files/usr||')"
+        /data/[d]ata/com.*/files/usr*|/data/[u]ser/*/com.*/files/usr*)
+            suffix="$(printf '%s' "$target" | sed -E 's#^/data/(data|user/[0-9]+)/com\.[^/]*/files/usr##')"
             if ln -snf "$PREFIX$suffix" "$link" 2>/dev/null; then
                 count=$((count + 1))
             fi
             ;;
     esac
-done < <(find "${targets[@]}" -type l -print0 2>/dev/null)
+done < <(find "${targets[@]}" -not -path '*/ghidra_12.1.4_PUBLIC/*' -type l -print0 2>/dev/null)
 
 # Sync runtime/bin bridges so newly installed console scripts (pip/npm/make)
 # in $PREFIX/bin are immediately visible on language_server's PATH.
-rbin="$(cd "$(dirname "$PREFIX")" 2>/dev/null && pwd)/runtime/bin"
-if [ -d "$rbin" ] && [ -d "$PREFIX/bin" ]; then
-    bcount=0
-    for tool in "$PREFIX/bin"/*; do
-        [ -f "$tool" ] || continue
-        name="$(basename "$tool")"
-        bcount=$((bcount + 1))
-        case "$name" in
-            rish|xdg-open|open|open_helper|sensible-browser|x-www-browser|gnome-open|google-chrome|chrome|chromium|chromium-browser|torch|termux-torch|termux-camera-torch)
-                continue
-                ;;
-        esac
-        bridge="$rbin/$name"
-        [ -f "$bridge" ] && continue
-        cat > "$bridge" <<EOF
-#!/system/bin/sh
-# AGY bridge -> bionic \$PREFIX/bin/$name
-PREFIX='$PREFIX'
-export PREFIX
-if [ -f "\$PREFIX/lib/libtermux-exec.so" ]; then
-  export LD_PRELOAD="\$PREFIX/lib/libtermux-exec.so"
-else
-  unset LD_PRELOAD
-fi
-export LD_LIBRARY_PATH="\$PREFIX/lib"
-export PATH="\$PREFIX/bin:$rbin:/system/bin"
-export OPENSSL_CONF="\$PREFIX/etc/tls/openssl.cnf"
-export SSL_CERT_FILE="\$PREFIX/etc/tls/cert.pem"
-export CURL_CA_BUNDLE="\$PREFIX/etc/tls/cert.pem"
-if [ -x "\$PREFIX/bin/$name" ]; then
-  exec "\$PREFIX/bin/$name" "\$@"
-else
-  exec /system/bin/sh "\$@"
-fi
-EOF
-        chmod 755 "$bridge" 2>/dev/null || true
-    done
-    printf '2\n%s\n%d\n' "$PREFIX" "$bcount" > "$rbin/.agy-bridges" 2>/dev/null || true
+if [ -f "$PREFIX/libexec/pkg/lib/util.sh" ]; then
+    . "$PREFIX/libexec/pkg/lib/util.sh"
+    sync_runtime_bridges
 fi
 
 printf 'agy-fix-paths: rewrote %d file(s) -> %s\n' "$count" "$PREFIX"

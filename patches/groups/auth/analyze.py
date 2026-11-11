@@ -27,3 +27,11 @@ def analyze(data):
         pos += len(REPLACEMENT)
     missing = [s for s in DO_NOT_PATCH if s not in data]
     return targets, repl, missing
+
+
+def apply_inplace(data):
+    targets, _repl, missing = analyze(data)
+    assert not missing, "do_not_patch string(s) already missing: %r" % missing
+    for pos in targets:
+        data[pos:pos + len(REPLACEMENT)] = REPLACEMENT
+    return len(targets)
