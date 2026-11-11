@@ -1,3 +1,63 @@
+================================================================================
+PART I: DERIVATIVE WORK & MODIFICATIONS LICENSE
+        (Non-Commercial & Mandatory Attribution License)
+================================================================================
+
+Copyright (c) 2026 Yhoanes (https://github.com/Yhoanes/antigravity-android)
+All rights reserved over the v2.29.0 - v2.31.0 modifications, additions,
+documentation, visual assets, and compiled APK distributions.
+
+Pursuant to Section 4 ("Redistribution") of the Apache License, Version 2.0,
+the author (Yhoanes) provides additional and different license terms and
+conditions for the use, reproduction, and distribution of all modifications
+and additions authored by Yhoanes, as well as for this Derivative Work as a
+whole ("Antigravity for Android v2.29.0 - v2.31.0"):
+
+1. Grant of Non-Commercial License.
+   Permission is hereby granted, free of charge, to any person obtaining a copy
+   of this Derivative Work and its associated files, to use, study, copy, modify,
+   and redistribute the Work solely for PERSONAL, EDUCATIONAL, RESEARCH, or
+   NON-COMMERCIAL purposes, subject to the conditions below.
+
+2. Mandatory Attribution (BY).
+   Any copy, fork, redistribution, modified version, or binary/APK build of this
+   Work MUST:
+   (a) Retain this LICENSE file and the accompanying NOTICE file intact in all
+       source and binary distributions;
+   (b) Clearly and prominently credit "Yhoanes" as the author of the v2.29.0 -
+       v2.31.0 engineering, reverse-engineering suite integration, voice relay,
+       and runtime optimizations; and
+   (c) Include a visible, clickable link to the official repository:
+       https://github.com/Yhoanes/antigravity-android
+
+3. Strict Non-Commercial Restriction (NC).
+   You may NOT use, reproduce, package, or distribute this Derivative Work, its
+   modifications, or its compiled APK binaries for any commercial purpose
+   whatsoever without prior written authorization from Yhoanes. Prohibited
+   commercial uses include, without limitation:
+   (a) Selling, leasing, licensing, or charging any fee or subscription for the
+       application, its APK binaries, or modified/rebranded builds thereof;
+   (b) Bundling or pre-installing the Work in commercial hardware, paid software
+       distributions, or paid cloud/hosting services;
+   (c) Removing or replacing the author attribution or rebranding the Work as a
+       proprietary commercial product.
+
+4. Upstream Compliance.
+   The foundational upstream host code derived from
+   werdio325-png/antigravity-android remains governed by the Apache License,
+   Version 2.0, reproduced in full in Part II below.
+
+5. Disclaimer of Warranty.
+   THIS DERIVATIVE WORK AND ITS MODIFICATIONS ARE PROVIDED "AS IS", WITHOUT
+   WARRANTY OF ANY KIND, EXPRESS OR IMPLIED. IN NO EVENT SHALL THE AUTHOR
+   (YHOANES) OR CONTRIBUTORS BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER
+   LIABILITY ARISING FROM THE USE OR DISTRIBUTION OF THE WORK.
+
+
+================================================================================
+PART II: APACHE LICENSE, VERSION 2.0 (Upstream Foundational Code)
+================================================================================
+
                                  Apache License
                            Version 2.0, January 2004
                         http://www.apache.org/licenses/

@@ -1,0 +1,46 @@
+Antigravity for Android (v2.31.0)
+Copyright (c) 2026 Yhoanes (https://github.com/Yhoanes/antigravity-android)
+
+========================================================================
+ATTRIBUTION & DERIVATIVE WORK NOTICE (Apache License 2.0, Section 4)
+========================================================================
+
+This product and derivative distribution ("Antigravity for Android v2.29.0 - v2.31.0")
+was engineered, expanded, and maintained by Yhoanes:
+  https://github.com/Yhoanes/antigravity-android
+
+Pursuant to Section 4(d) of the Apache License, Version 2.0, any reproduction,
+fork, redistribution, or derivative work of this repository or its compiled
+APK binaries MUST retain this NOTICE file intact and provide clear, prominent
+attribution to Yhoanes, including a direct link to the official repository:
+  https://github.com/Yhoanes/antigravity-android
+
+Proprietary / Non-Commercial Modifications by Yhoanes (2026):
+  - Core Engine & Workbench v2.31.0 integration, binary patch signatures,
+    and touch reasoning submenu patches.
+  - Direct terminal execution bypass (exebox / urpc.Fork binary patches in
+    liblanguage_server.so and Android sandbox migration seeder).
+  - Native ARM64 Reverse Engineering Suite integration (Craft Anything MCP
+    server + native Android Bionic ARM64 Ghidra 12.1.4 decompile/sleigh
+    binaries + craft-ghidra-setup automated installer).
+  - Real-time bidirectional Live Voice Chat pipeline (WebRTC / WebAudio
+    microphone bridge and audio relay processor) and native ARM64 media
+    encoders (webp_encoder, webm_encoder).
+  - ARMv8.0-A trap-and-emulate compatibility layer (liblse_compat.so) for
+    FEAT_LSE atomics, FEAT_RDM, and FEAT_FCMA SIMD instructions.
+  - Production Bionic runtime optimizations (O(1) staged pkg installer,
+    pre-bundled OpenJDK 21 TLS cacerts, multithreaded agy-daemon with log
+    rotation, single-call Shizuku agy-notify, and visual documentation).
+
+All modifications, additions, documentation, visual assets, and compiled APK
+distributions authored by Yhoanes are licensed strictly under the
+Non-Commercial & Mandatory Attribution terms set forth in the LICENSE file.
+Commercial sale, paid redistribution, or removal of author attribution is
+strictly prohibited without prior written permission from Yhoanes.
+
+------------------------------------------------------------------------
+Upstream Foundation Notice:
+  Portions of the foundational Android Bionic host architecture are derived
+  from werdio325-png/antigravity-android
+  (https://github.com/werdio325-png/antigravity-android), licensed under
+  the Apache License, Version 2.0.
