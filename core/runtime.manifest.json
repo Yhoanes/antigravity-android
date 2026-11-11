@@ -4,7 +4,7 @@
     "bin/chromium": "b57c80d63fe10d8ab0ddfd3a419f47e11a8448c26621520a8813dfcdda36121b",
     "bin/gnome-open": "8258a78e342dd041a0257a48df9bf96d9941848b06cc00d09b7c94acf0db8cc4",
     "bin/google-chrome": "b57c80d63fe10d8ab0ddfd3a419f47e11a8448c26621520a8813dfcdda36121b",
-    "bin/liblanguage_server.so": "8405ed6e34ba0dc935a6ae489debc43d830ecd6ba4b2cf270a67bbb0ddba0436",
+    "bin/liblanguage_server.so": "8c1e5859f7423586cf884d20d56400054beb711baab7bb968e3936672e1def10",
     "bin/libloader.so": "ca4af7c4022222bb405b0b601d818506ea608a2242f3cce43bd0b56b71f94530",
     "bin/open": "8258a78e342dd041a0257a48df9bf96d9941848b06cc00d09b7c94acf0db8cc4",
     "bin/open_helper": "8258a78e342dd041a0257a48df9bf96d9941848b06cc00d09b7c94acf0db8cc4",
