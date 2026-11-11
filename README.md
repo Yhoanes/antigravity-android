@@ -59,7 +59,7 @@ Unlike terminal-based chat wrappers or virtualized environments (PRoot, QEMU, ch
     </td>
     <td width="50%" valign="top" style="border: 1px solid rgba(128, 128, 128, 0.2); border-radius: 12px; padding: 16px;">
       <p><font size="4"><b>Stage-Isolated <code>pkg</code> Manager</b></font></p>
-      <p><font color="#7d8590">Fast $O(1)$ per-package staging in <code>$PKG_ROOT/stage</code> (<code>&lt;20 ms</code> prefix rewrite), automatic <code>.deb</code> cache cleanup, pre-bundled OpenJDK 21 TLS <code>cacerts</code>, and single-pass bridge syncing.</font></p>
+      <p><font color="#7d8590">Fast <code>O(1)</code> per-package staging in <code>$PKG_ROOT/stage</code> (<code>&lt;20 ms</code> prefix rewrite), automatic <code>.deb</code> cache cleanup, pre-bundled OpenJDK 21 TLS <code>cacerts</code>, and single-pass bridge syncing.</font></p>
     </td>
   </tr>
   <tr>
@@ -176,7 +176,7 @@ Configure agent autonomy and workspace layout from **Settings**:
 Every layer of the Android Bionic runtime has been hardened for low latency and zero storage bloat:
 
 * **Direct Terminal Execution (`exebox` / `urpc.Fork` Bypass):** Binary-level patches in `liblanguage_server.so` (`initEscapeSbox`, `sbox_prep`, `resolveSandbox`, `isSandboxEnabled`, `ApplySettingsToConfig`) disable Linux desktop `CLONE_NEWUSER` / `seccomp` re-exec forks (`libloader.so: invalid argument`), allowing `run_command` to execute directly on Android whether `BypassSandbox` is `false` or `true`.
-* **$O(1)$ Staged Package Installation (`pkg`):** `pkg install` extracts each `.deb` into an isolated staging directory (`$PKG_ROOT/stage`), rewrites hardcoded Termux prefixes in `<20 ms` (instead of rescanning the entire `$PREFIX` tree), indexes package files in a single pass, removes downloaded `.deb` archives immediately after extraction, and synchronizes `runtime/bin` bridges once per transaction.
+* **`O(1)` Staged Package Installation (`pkg`):** `pkg install` extracts each `.deb` into an isolated staging directory (`$PKG_ROOT/stage`), rewrites hardcoded Termux prefixes in `<20 ms` (instead of rescanning the entire `$PREFIX` tree), indexes package files in a single pass, removes downloaded `.deb` archives immediately after extraction, and synchronizes `runtime/bin` bridges once per transaction.
 * **Out-of-the-Box OpenJDK 21 & Ghidra Support:** Pre-bundles the Java TLS truststore (`$PREFIX/etc/tls/certs/java/cacerts`), injects `JDK_JAVA_OPTIONS="-Duser.home=$HOME -Djava.io.tmpdir=$PREFIX/tmp"` across shells and runtime bridges, and uses self-safe glob patterns (`/data/[d]ata/...`) in `util.sh` and `agy-fix-paths`.
 * **Non-Blocking `agy-daemon` & Single-Call `agy-notify`:** Background scheduled tasks and webhooks execute in asynchronous daemon threads with concurrency guards (`_RUNNING_TASKS`) and automatic `1 MB` log rotation (`daemon.log.1`). System notifications cache the bundled app icon (`$PREFIX/share/antigravity/logo.png`) and post via `cmd notification` in a single `rish -c` call.
 
@@ -287,7 +287,7 @@ This project builds upon the foundational Android Bionic host architecture origi
 
 * **Core Engine & Workbench Upgrade (`v2.31.0`):** Updated ARM64 `language_server` (`go1.28`), Workbench UI bundle (`Gemini 4 Carbon/Argon`, `Claude 5.5`), touch reasoning submenu patches, and native `webp_encoder` / `webm_encoder` binaries.
 * **Native ARM64 Reverse Engineering (`Craft Anything` + `Ghidra 12.1.4`):** Bundled 320-tool Rust MCP server (`craft-anything-cli`), native Android Bionic ARM64 Ghidra `decompile` & `sleigh` binaries, and automated on-demand `craft-ghidra-setup` installer.
-* **Direct Terminal Execution & Production Runtime Hardening:** Binary `exebox` / `urpc.Fork` sandbox bypass in `liblanguage_server.so`, $O(1)$ stage-isolated `pkg install`, pre-bundled OpenJDK 21 `cacerts`, multithreaded `agy-daemon` with log rotation, and single-call `agy-notify`.
+* **Direct Terminal Execution & Production Runtime Hardening:** Binary `exebox` / `urpc.Fork` sandbox bypass in `liblanguage_server.so`, `O(1)` stage-isolated `pkg install`, pre-bundled OpenJDK 21 `cacerts`, multithreaded `agy-daemon` with log rotation, and single-call `agy-notify`.
 * **Real-Time Voice Chat & ARMv8.0-A Compatibility (`liblse_compat.so`):** Native WebRTC/WebAudio microphone pipeline and custom `SIGILL` trap-and-emulate layer for `FEAT_LSE` atomics, `FEAT_RDM`, and `FEAT_FCMA` SIMD instructions.
 
 ---
