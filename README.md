@@ -9,7 +9,7 @@
   <p><font color="#7d8590">Autonomous agentic development &amp; native reverse-engineering environment engineered for Android ARM64.</font></p>
 
   <p>
-    <code>v2.31.0</code> &nbsp;&bull;&nbsp;
+    <code>v2.31.1</code> &nbsp;&bull;&nbsp;
     <code>Android 7.0+</code> &nbsp;&bull;&nbsp;
     <code>ARM64 v8.0-A+</code> &nbsp;&bull;&nbsp;
     <code>Craft Anything + Ghidra 12.1.4</code> &nbsp;&bull;&nbsp;
@@ -21,8 +21,8 @@
   <br/>
 
   <!-- Hero Visual -->
-  <img alt="Antigravity v2.31.0 Interface in Action" src="docs/assets/hero_home.jpg" width="100%" style="border-radius: 14px; border: 1px solid rgba(128, 128, 128, 0.2); box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);" />
-  <p align="center"><font size="2" color="#7d8590">Antigravity v2.31.0 autonomous agent workspace on Android with Gemini 4 Carbon High &amp; Live Voice Mode</font></p>
+  <img alt="Antigravity v2.31.1 Interface in Action" src="docs/assets/hero_home.jpg" width="100%" style="border-radius: 14px; border: 1px solid rgba(128, 128, 128, 0.2); box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);" />
+  <p align="center"><font size="2" color="#7d8590">Antigravity v2.31.1 autonomous agent workspace on Android with Gemini 4 Carbon High &amp; Live Voice Mode</font></p>
 
 </div>
 
@@ -30,7 +30,7 @@
 
 <p><font size="5"><b>Architectural Overview</b></font></p>
 
-**Antigravity for Android (`v2.31.0`)** brings Google's autonomous agentic coding engine and a full native binary reverse-engineering suite directly to mobile operating systems.
+**Antigravity for Android (`v2.31.1`)** brings Google's autonomous agentic coding engine and a full native binary reverse-engineering suite directly to mobile operating systems.
 
 Unlike terminal-based chat wrappers or virtualized environments (PRoot, QEMU, chroot), Antigravity executes **natively inside Android userspace (Bionic)** within the application process. Powered by next-generation models (**Gemini 4 Carbon**, **Gemini 4 Argon**, **Gemini 3.8 Flash**, **Claude Opus 5.5**, **Claude Sonnet 5.5**, and **GPT-OSS 120B**), the agent autonomously inspects codebases, decompiles multi-architecture binaries, edits project trees, executes build tools, and validates results directly on physical mobile hardware.
 
@@ -78,14 +78,14 @@ Unlike terminal-based chat wrappers or virtualized environments (PRoot, QEMU, ch
 
 <p><font size="5"><b>Visual Feature Walkthrough</b></font></p>
 
-### 1. Next-Generation Models & Touch Reasoning Controls (`v2.31.0`)
+### 1. Next-Generation Models & Touch Reasoning Controls (`v2.31.1`)
 
 Select between **Gemini 4 Carbon High**, **Gemini 4 Argon**, **Gemini 3.8 Flash**, **Claude Opus 5.5**, **Claude Sonnet 5.5**, and **GPT-OSS 120B**. Touch-engineered submenu patches allow effortless selection of reasoning effort levels (`Low`, `Medium`, `High`) on mobile and tablet screens without requiring desktop hover events.
 
 <br/>
 
 <img alt="Model Selector and Reasoning Effort Submenu" src="docs/assets/model_selector.jpg" width="100%" style="border-radius: 12px; border: 1px solid rgba(128, 128, 128, 0.2); box-shadow: 0 8px 24px rgba(0,0,0,0.25);" />
-<p align="center"><font size="2" color="#7d8590">v2.31.0 model selector with Gemini 4 Carbon/Argon, Claude 5.5, and touch-activated reasoning effort submenu</font></p>
+<p align="center"><font size="2" color="#7d8590">v2.31.1 model selector with Gemini 4 Carbon/Argon, Claude 5.5, and touch-activated reasoning effort submenu</font></p>
 
 <br/>
 
@@ -117,9 +117,9 @@ Antigravity for Android ships with **`craft-anything` (`v0.4.0-r6`)** preinstall
 
 ---
 
-### 3. Real-Time Bidirectional Voice Chat (`v2.31.0`)
+### 3. Real-Time Bidirectional Voice Chat (`v2.31.1`)
 
-Speak directly with the autonomous agent in real time. Powered by native WebRTC/WebAudio microphone bridging (`RECORD_AUDIO`, `MODIFY_AUDIO_SETTINGS`) and unlocked `v2.31.0` voice relay feature gates (`cascade-enable-voice`, `send_voice_button_variant`).
+Speak directly with the autonomous agent in real time. Powered by native WebRTC/WebAudio microphone bridging (`RECORD_AUDIO`, `MODIFY_AUDIO_SETTINGS`) and unlocked `v2.31.1` voice relay feature gates (`cascade-enable-voice`, `send_voice_button_variant`).
 
 <br/>
 
@@ -137,7 +137,7 @@ Designed for autonomous multi-agent workflows: project sidebar, parallel subagen
 <br/>
 
 <img alt="Antigravity Multi-Agent Workspace" src="docs/assets/workspace_subagents.jpg" width="100%" style="border-radius: 12px; border: 1px solid rgba(128, 128, 128, 0.2); box-shadow: 0 8px 24px rgba(0,0,0,0.25);" />
-<p align="center"><font size="2" color="#7d8590">Parallel subagent spawning and live status tracking inside the v2.31.0 workspace</font></p>
+<p align="center"><font size="2" color="#7d8590">Parallel subagent spawning and live status tracking inside the v2.31.1 workspace</font></p>
 
 <br/>
 
@@ -156,7 +156,7 @@ Browse and install official plugins, MCP servers, and skills directly from the b
 
 ---
 
-### 6. Execution Policies, Interface Modes & Settings (`v2.31.0`)
+### 6. Execution Policies, Interface Modes & Settings (`v2.31.1`)
 
 Configure agent autonomy and workspace layout from **Settings**:
 * **Interface Layout:** Switch between **Knowledge Work** (streamlined research/writing view) and **Software Engineering** (full IDE, terminal, and multi-agent controls).
@@ -165,7 +165,7 @@ Configure agent autonomy and workspace layout from **Settings**:
 <br/>
 
 <img alt="General Settings and Execution Policies" src="docs/assets/settings_general.jpg" width="100%" style="border-radius: 12px; border: 1px solid rgba(128, 128, 128, 0.2); box-shadow: 0 8px 24px rgba(0,0,0,0.25);" />
-<p align="center"><font size="2" color="#7d8590">v2.31.0 General settings panel with Knowledge Work / Software Engineering modes and execution policies</font></p>
+<p align="center"><font size="2" color="#7d8590">v2.31.1 General settings panel with Knowledge Work / Software Engineering modes and execution policies</font></p>
 
 <br/>
 
@@ -202,7 +202,7 @@ Real-world test: the agent authored a custom Python I/O benchmark and executed m
     <td width="33%" valign="top" style="border: 1px solid rgba(128, 128, 128, 0.2); border-radius: 12px; padding: 16px;">
       <p><font size="4"><b>1. Download APK</b></font></p>
       <p><font color="#7d8590">Releases are available under <a href="https://github.com/Yhoanes/antigravity-android/releases">Releases</a>:<br/><br/>
-      &bull; <b><code>Antigravity-v2.31.0.apk</code></b> — full signed release with bundled Bionic toolchain and <code>craft-anything</code>.<br/><br/>
+      &bull; <b><code>Antigravity-v2.31.1.apk</code></b> — full signed release with bundled Bionic toolchain and <code>craft-anything</code>.<br/><br/>
       <i>Seamless in-place updates are supported across versions.</i></font></p>
     </td>
     <td width="33%" valign="top" style="border: 1px solid rgba(128, 128, 128, 0.2); border-radius: 12px; padding: 16px;">
@@ -276,16 +276,16 @@ antigravity-android/
 ├── env/        # Bionic toolchain, rootfs overlay, TLS cacerts, and pkg manager
 ├── patches/    # Low-level binary patches (Go pclntab, exebox/seccomp bypass, AArch64 gates)
 ├── plugins/    # Preinstalled native Craft Anything MCP server + Ghidra 12.1.4 ARM64 suite
-└── web/        # Workbench v2.31.0 UI, touch submenu patches, and audio relay processor
+└── web/        # Workbench v2.31.1 UI, touch submenu patches, and audio relay processor
 ```
 
 ---
 
 <p><font size="5"><b>Acknowledgments &amp; Attribution</b></font></p>
 
-This project builds upon the foundational Android Bionic host architecture originally created by [werdio325-png/antigravity-android](https://github.com/werdio325-png/antigravity-android), with major architectural upgrades and expansions in this repository (`v2.31.0`), including:
+This project builds upon the foundational Android Bionic host architecture originally created by [werdio325-png/antigravity-android](https://github.com/werdio325-png/antigravity-android), with major architectural upgrades and expansions in this repository (`v2.31.1`), including:
 
-* **Core Engine & Workbench Upgrade (`v2.31.0`):** Updated ARM64 `language_server` (`go1.28`), Workbench UI bundle (`Gemini 4 Carbon/Argon`, `Claude 5.5`), touch reasoning submenu patches, and native `webp_encoder` / `webm_encoder` binaries.
+* **Core Engine & Workbench Upgrade (`v2.31.1`):** Updated ARM64 `language_server` (`go1.28`), Workbench UI bundle (`Gemini 4 Carbon/Argon`, `Claude 5.5`), touch reasoning submenu patches, and native `webp_encoder` / `webm_encoder` binaries.
 * **Native ARM64 Reverse Engineering (`Craft Anything` + `Ghidra 12.1.4`):** Bundled 320-tool Rust MCP server (`craft-anything-cli`), native Android Bionic ARM64 Ghidra `decompile` & `sleigh` binaries, and automated on-demand `craft-ghidra-setup` installer.
 * **Direct Terminal Execution & Production Runtime Hardening:** Binary `exebox` / `urpc.Fork` sandbox bypass in `liblanguage_server.so`, `O(1)` stage-isolated `pkg install`, pre-bundled OpenJDK 21 `cacerts`, multithreaded `agy-daemon` with log rotation, and single-call `agy-notify`.
 * **Real-Time Voice Chat & ARMv8.0-A Compatibility (`liblse_compat.so`):** Native WebRTC/WebAudio microphone pipeline and custom `SIGILL` trap-and-emulate layer for `FEAT_LSE` atomics, `FEAT_RDM`, and `FEAT_FCMA` SIMD instructions.
@@ -294,11 +294,11 @@ This project builds upon the foundational Android Bionic host architecture origi
 
 <p><font size="5"><b>License, Copyright &amp; Attribution Terms</b></font></p>
 
-**Copyright &copy; 2026 [Yhoanes](https://github.com/Yhoanes)** (`v2.29.0` – `v2.31.0` modifications, reverse-engineering suite integration, voice relay, runtime optimizations, documentation, and compiled APK distributions).
+**Copyright &copy; 2026 [Yhoanes](https://github.com/Yhoanes)** (`v2.29.0` – `v2.31.1` modifications, reverse-engineering suite integration, voice relay, runtime optimizations, documentation, and compiled APK distributions).
 
 Pursuant to **Section 4 of the Apache License, Version 2.0**, all modifications, additions, and the derivative distribution in this repository are licensed under the **Non-Commercial &amp; Mandatory Attribution License** (see [`LICENSE`](LICENSE) and [`NOTICE`](NOTICE)):
 
-* **Mandatory Attribution (`BY`):** Any fork, redistribution, modified version, or binary/APK distribution **must** retain the [`LICENSE`](LICENSE) and [`NOTICE`](NOTICE) files intact, credit **Yhoanes** as the author of the `v2.29.0` – `v2.31.0` engineering and expansions, and link back to [https://github.com/Yhoanes/antigravity-android](https://github.com/Yhoanes/antigravity-android).
+* **Mandatory Attribution (`BY`):** Any fork, redistribution, modified version, or binary/APK distribution **must** retain the [`LICENSE`](LICENSE) and [`NOTICE`](NOTICE) files intact, credit **Yhoanes** as the author of the `v2.29.0` – `v2.31.1` engineering and expansions, and link back to [https://github.com/Yhoanes/antigravity-android](https://github.com/Yhoanes/antigravity-android).
 * **Non-Commercial Use Only (`NC`):** Commercial sale, paid redistribution, paid bundling, or commercial monetization of this derivative work, its modifications, or its compiled APK binaries is **strictly prohibited** without prior written permission from **Yhoanes**.
 * **Upstream Foundation:** The foundational Android Bionic host code derived from [werdio325-png/antigravity-android](https://github.com/werdio325-png/antigravity-android) remains licensed under the [Apache License 2.0](LICENSE).
 
