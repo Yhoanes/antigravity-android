@@ -156,6 +156,11 @@ public final class AndroidBridge {
     }
 
     @JavascriptInterface
+    public String postProcessInstalledPlugin(String pluginName) {
+        return engine.postProcessInstalledPlugin(pluginName);
+    }
+
+    @JavascriptInterface
     public boolean uninstallMarketplacePlugin(String pluginName) {
         return engine.uninstallMarketplacePlugin(pluginName);
     }

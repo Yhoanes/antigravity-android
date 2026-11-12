@@ -21,10 +21,9 @@ import java.nio.charset.Charset;
  * EnvInstaller.install() (it provides $PREFIX/bin/bash). Idempotent; only tools
  * that actually exist at runtime get a bridge (missing tools are skipped).
  *
- * The external-URL openers (xdg-open/open_helper/sensible-browser) are NOT
- * bridged to the prefix: the core execs them to open the OAuth browser and the
- * native OpenUrlWatcher listens for the "AGY_OPEN_URL=" line they print. A
- * bionic bridge would swallow that line and no browser would open.
+ * The external-URL openers (xdg-open/open_helper/sensible-browser/termux-open)
+ * write to both stdout ("AGY_OPEN_URL=") and $HOME/.open_url_queue so OpenUrlWatcher
+ * dispatches the browser reliably even inside PTY/run_command subshells.
  */
 public final class ShellBridgeInstaller {
 
@@ -32,7 +31,7 @@ public final class ShellBridgeInstaller {
 
     private static final String[] OPEN_URL_SHIMS = {
             "xdg-open", "open", "open_helper", "sensible-browser",
-            "x-www-browser", "gnome-open"
+            "x-www-browser", "gnome-open", "termux-open", "termux-open-url"
     };
 
     private static final String[] BROWSER_SHIMS = {
@@ -40,7 +39,7 @@ public final class ShellBridgeInstaller {
     };
 
     private static final String[] ENCODER_SHIMS = {
-            "webp_encoder", "webm_encoder", "webm_encoder.elf"
+            "webp_encoder", "webm_encoder", "webm_encoder.elf", "agy-node"
     };
 
     /** Known file offset of embedded ELF #2 (webm_encoder / webp_encoder) in liblanguage_server.so. */
@@ -49,9 +48,21 @@ public final class ShellBridgeInstaller {
     /** Records which prefix the bulk bridges were generated for. Bump when the
      *  bridge script format changes so a warm launch regenerates them once. */
     private static final String BRIDGE_MARKER = ".agy-bridges";
-    private static final int BRIDGE_FORMAT = 10;
+    private static final int BRIDGE_FORMAT = 11;
 
     private ShellBridgeInstaller() {
+    }
+
+    private static String buildLdPreloadSnippet() {
+        return "if [ -f \"$PREFIX/lib/libagy-go-dns.so\" ] && [ -f \"$PREFIX/lib/libtermux-exec.so\" ]; then\n"
+                + "  export LD_PRELOAD=\"$PREFIX/lib/libagy-go-dns.so:$PREFIX/lib/libtermux-exec.so\"\n"
+                + "elif [ -f \"$PREFIX/lib/libtermux-exec.so\" ]; then\n"
+                + "  export LD_PRELOAD=\"$PREFIX/lib/libtermux-exec.so\"\n"
+                + "elif [ -f \"$PREFIX/lib/libagy-go-dns.so\" ]; then\n"
+                + "  export LD_PRELOAD=\"$PREFIX/lib/libagy-go-dns.so\"\n"
+                + "else\n"
+                + "  unset LD_PRELOAD\n"
+                + "fi\n";
     }
 
     public static synchronized void installFallbackBridges(File bin) {
@@ -75,8 +86,70 @@ public final class ShellBridgeInstaller {
         if (!sh.isFile()) {
             writeScript(sh, fallbackShell);
         }
+        writeAgyNodeShim(bin, context);
         writeTorchShims(bin, context);
         installEmbeddedEncoder(bin, context);
+    }
+
+    private static void writeAgyNodeShim(File bin, android.content.Context context) {
+        File filesDir = (context != null) ? context.getFilesDir() : bin.getParentFile().getParentFile();
+        File prefix = new File(filesDir, "usr");
+        String p = ShellQuote.quote(prefix.getAbsolutePath());
+        String h = ShellQuote.quote(filesDir.getAbsolutePath());
+        String rbin = bin.getAbsolutePath();
+        String script = "#!/system/bin/sh\n"
+                + "# AGY node wrapper for plugins invoking agy-node\n"
+                + "PREFIX=" + p + "\n"
+                + "export PREFIX\n"
+                + "export HOME=" + h + "\n"
+                + "export ANTIGRAVITY_APP_DATA_DIR=\"$HOME/.gemini/antigravity-app\"\n"
+                + "export TMPDIR=\"$PREFIX/tmp\"\n"
+                + buildLdPreloadSnippet()
+                + "export LD_LIBRARY_PATH=\"$PREFIX/lib\"\n"
+                + "export PATH=\"$PREFIX/bin:" + rbin + ":$HOME/.gemini/antigravity-app/bin:$HOME/.local/bin:/system/bin\"\n"
+                + "export OPENSSL_CONF=\"$PREFIX/etc/tls/openssl.cnf\"\n"
+                + "export SSL_CERT_FILE=\"$PREFIX/etc/tls/cert.pem\"\n"
+                + "export CURL_CA_BUNDLE=\"$PREFIX/etc/tls/cert.pem\"\n"
+                + "if [ -x \"$PREFIX/bin/node\" ]; then\n"
+                + "  exec \"$PREFIX/bin/node\" \"$@\"\n"
+                + "fi\n"
+                + "echo \"agy-node: nodejs is not installed in Android userspace (run: pkg install nodejs)\" >&2\n"
+                + "exit 127\n";
+        writeScript(new File(bin, "agy-node"), script);
+    }
+
+    private static void ensureGoDnsPreloadLib(android.content.Context context, File prefix) {
+        if (context == null || prefix == null) return;
+        File libDir = new File(prefix, "lib");
+        if (!libDir.isDirectory() && !libDir.mkdirs()) return;
+        File dst = new File(libDir, "libagy-go-dns.so");
+        try (InputStream in = context.getAssets().open("env/overlay/lib/libagy-go-dns.so")) {
+            byte[] buf = new byte[16384];
+            java.io.ByteArrayOutputStream bos = new java.io.ByteArrayOutputStream();
+            int n;
+            while ((n = in.read(buf)) > 0) {
+                bos.write(buf, 0, n);
+            }
+            byte[] raw = bos.toByteArray();
+            if (raw.length > 0 && (!dst.isFile() || dst.length() != raw.length)) {
+                File tmp = new File(libDir, "libagy-go-dns.so.tmp");
+                try (OutputStream out = new FileOutputStream(tmp)) {
+                    out.write(raw);
+                }
+                tmp.setReadable(true, false);
+                tmp.setExecutable(true, false);
+                try {
+                    android.system.Os.chmod(tmp.getAbsolutePath(), 0755);
+                } catch (Throwable ignored) {
+                }
+                if (!tmp.renameTo(dst)) {
+                    dst.delete();
+                    tmp.renameTo(dst);
+                }
+            }
+        } catch (Throwable t) {
+            Log.w(TAG, "ensureGoDnsPreloadLib notice: " + t.getMessage());
+        }
     }
 
     /**
@@ -123,9 +196,11 @@ public final class ShellBridgeInstaller {
         writeScript(new File(bin, "webp_encoder"), wrapper);
         writeScript(new File(bin, "webm_encoder"), wrapper);
         if (context != null) {
-            File appBin = new File(context.getFilesDir(), "home/.gemini/antigravity-app/bin");
-            if (appBin.isDirectory() || appBin.mkdirs()) {
-                writeScript(new File(appBin, "webm_encoder"), wrapper);
+            for (String rel : new String[]{".gemini/antigravity-app/bin", "home/.gemini/antigravity-app/bin"}) {
+                File appBin = new File(context.getFilesDir(), rel);
+                if (appBin.isDirectory() || appBin.mkdirs()) {
+                    writeScript(new File(appBin, "webm_encoder"), wrapper);
+                }
             }
         }
     }
@@ -283,6 +358,16 @@ public final class ShellBridgeInstaller {
         for (String browser : BROWSER_SHIMS) {
             writeBrowserShim(new File(bin, browser), context);
         }
+        if (context != null) {
+            File prefixBin = new File(context.getFilesDir(), "usr/bin");
+            if (prefixBin.isDirectory()) {
+                for (String opener : OPEN_URL_SHIMS) {
+                    File pf = new File(prefixBin, opener);
+                    pf.delete();
+                    writeOpenUrlShim(pf, context);
+                }
+            }
+        }
     }
 
     public static synchronized void install(RuntimeManager rm) {
@@ -301,11 +386,13 @@ public final class ShellBridgeInstaller {
             Log.w(TAG, "cannot create " + bin + "; skipping shell bridges");
             return;
         }
+        File prefix = EnvInstaller.prefix(rm.appContext());
+        ensureGoDnsPreloadLib(rm.appContext(), prefix);
+
         // Always ensure fallback shells and shims exist FIRST
         installFallbackBridges(bin, rm.appContext());
         installOpenUrlShims(bin, rm.appContext());
 
-        File prefix = EnvInstaller.prefix(rm.appContext());
         File workspaceDir = new File(prefix.getParentFile(), "workspace");
         if (!workspaceDir.isDirectory()) {
             workspaceDir.mkdirs();
@@ -342,7 +429,8 @@ public final class ShellBridgeInstaller {
         File[] prefixLibs = new File(prefix, "lib").listFiles();
         if (prefixLibs != null) {
             for (File libFile : prefixLibs) {
-                if (libFile.isFile() && libFile.getName().contains(".so")) {
+                if (libFile.isFile() && libFile.getName().contains(".so")
+                        && !"libagy-go-dns.so".equals(libFile.getName())) {
                     patchTermuxBinaryPrefixInPlace(libFile);
                 }
             }
@@ -409,16 +497,18 @@ public final class ShellBridgeInstaller {
     }
 
     /**
-     * Writes the AGY URL opener shim. It prints "AGY_OPEN_URL=<url>" and
-     * "ANTIGRAVITY_OPEN_URL: <url>" for the core stdout reader and attempts direct
-     * broadcast/intent dispatch via /system/bin/am when available.
+     * Writes the AGY URL opener shim. Prints "AGY_OPEN_URL=<url>", appends to
+     * $HOME/.open_url_queue (watched by OpenUrlWatcher for PTY/run_command shells),
+     * and attempts direct broadcast/intent dispatch via /system/bin/am.
      */
     private static void writeOpenUrlShim(File bridge, android.content.Context context) {
         String pkg = (context != null) ? context.getPackageName() : "com.agy";
+        File filesDir = (context != null) ? context.getFilesDir() : bridge.getParentFile().getParentFile();
+        String queuePath = ShellQuote.quote(new File(filesDir, ".open_url_queue").getAbsolutePath());
 
         StringBuilder sb = new StringBuilder();
         sb.append("#!/system/bin/sh\n");
-        sb.append("# AGY URL opener shim (xdg-open / open / sensible-browser).\n");
+        sb.append("# AGY URL opener shim (xdg-open / open / termux-open / sensible-browser).\n");
         sb.append("unset LD_PRELOAD\n");
         sb.append("unset LD_LIBRARY_PATH\n");
         sb.append("URL=\"\"\n");
@@ -432,6 +522,7 @@ public final class ShellBridgeInstaller {
         sb.append("[ -z \"$URL\" ] && exit 0\n");
         sb.append("echo \"AGY_OPEN_URL=$URL\"\n");
         sb.append("echo \"ANTIGRAVITY_OPEN_URL: $URL\"\n");
+        sb.append("printf '%s\\n' \"$URL\" >> ").append(queuePath).append(" 2>/dev/null || true\n");
         sb.append("if [ -x /system/bin/am ]; then\n");
         sb.append("  /system/bin/am broadcast -a com.agy.ACTION_OPEN_URL -p ").append(pkg).append(" --es url \"$URL\" >/dev/null 2>&1 || true\n");
         if (!"com.agy".equals(pkg)) {
@@ -448,13 +539,15 @@ public final class ShellBridgeInstaller {
      * When invoked with headless/CDP/CLI flags and a real Chromium binary is
      * installed in $PREFIX/bin, it sets up the bionic environment and execs it
      * with Android-compatible headless flags (--no-sandbox --disable-gpu
-     * --disable-dev-shm-usage). Otherwise it delegates to the URL opener shim.
+     * --disable-dev-shm-usage). If headless was explicitly requested and Chromium
+     * is missing, fails cleanly with exit 127 and an actionable pkg hint.
      */
     private static void writeBrowserShim(File bridge, android.content.Context context) {
         File filesDir = (context != null) ? context.getFilesDir() : bridge.getParentFile().getParentFile();
         File prefix = new File(filesDir, "usr");
         File runtimeBinDir = bridge.getParentFile();
         String p = ShellQuote.quote(prefix.getAbsolutePath());
+        String h = ShellQuote.quote(filesDir.getAbsolutePath());
         String rbin = runtimeBinDir != null ? runtimeBinDir.getAbsolutePath() : "";
         String xdgOpenPath = ShellQuote.quote(new File(runtimeBinDir, "xdg-open").getAbsolutePath());
 
@@ -462,6 +555,7 @@ public final class ShellBridgeInstaller {
         sb.append("#!/system/bin/sh\n");
         sb.append("# AGY smart browser shim: supports both headless/CDP Chromium and OAuth URL opening.\n");
         sb.append("PREFIX=").append(p).append('\n');
+        sb.append("HOME=").append(h).append('\n');
         sb.append("WANT_HEADLESS=0\n");
         sb.append("for arg in \"$@\"; do\n");
         sb.append("  case \"$arg\" in\n");
@@ -480,31 +574,22 @@ public final class ShellBridgeInstaller {
         sb.append("    fi\n");
         sb.append("  done\n");
         sb.append("  if [ -n \"$REAL_CHROME\" ]; then\n");
-        sb.append("    export PREFIX\n");
-        sb.append("    if [ -f \"$PREFIX/lib/libtermux-exec.so\" ]; then\n");
-        sb.append("      export LD_PRELOAD=\"$PREFIX/lib/libtermux-exec.so\"\n");
-        sb.append("    else\n");
-        sb.append("      unset LD_PRELOAD\n");
-        sb.append("    fi\n");
+        sb.append("    export PREFIX HOME\n");
+        sb.append(buildLdPreloadSnippet());
         sb.append("    export LD_LIBRARY_PATH=\"$PREFIX/lib\"\n");
-        sb.append("    export PATH=\"$PREFIX/bin:").append(rbin).append(":/system/bin\"\n");
+        sb.append("    export PATH=\"$PREFIX/bin:").append(rbin).append(":$HOME/.gemini/antigravity-app/bin:$HOME/.local/bin:/system/bin\"\n");
         sb.append("    export OPENSSL_CONF=\"$PREFIX/etc/tls/openssl.cnf\"\n");
         sb.append("    export SSL_CERT_FILE=\"$PREFIX/etc/tls/cert.pem\"\n");
         sb.append("    export CURL_CA_BUNDLE=\"$PREFIX/etc/tls/cert.pem\"\n");
         sb.append("    exec \"$REAL_CHROME\" --no-sandbox --disable-gpu --disable-dev-shm-usage \"$@\"\n");
         sb.append("  fi\n");
+        sb.append("  echo \"chrome: headless/CDP requested but Chromium is not installed in Android userspace. Run: pkg update && pkg install chromium\" >&2\n");
+        sb.append("  exit 127\n");
         sb.append("fi\n");
         sb.append("exec ").append(xdgOpenPath).append(" \"$@\"\n");
         writeScript(bridge, sb.toString());
     }
 
-    /**
-     * Writes one 755 bridge script. It is run by Android's /system/bin/sh (a
-     * POSIX shell, no bionic env needed), which then sets PREFIX/LD_LIBRARY_PATH/
-     * LD_PRELOAD/PATH for the bionic child only and execs it.
-     * IMPORTANT: Never invoke external binaries (like dirname or mkdir) inside this
-     * script before PATH is set, as runtime/bin/dirname is itself a bridge script!
-     */
     private static void writeAgyBashrc(File prefix, File runtimeBinDir) {
         try {
             File etcDir = new File(prefix, "etc");
@@ -513,17 +598,20 @@ public final class ShellBridgeInstaller {
             if (!tmpDir.isDirectory()) tmpDir.mkdirs();
             String p = ShellQuote.quote(prefix.getAbsolutePath());
             String rbin = runtimeBinDir != null ? runtimeBinDir.getAbsolutePath() : "";
+            String chromePath = runtimeBinDir != null
+                    ? ShellQuote.quote(new File(runtimeBinDir, "chrome").getAbsolutePath()) : "\"chrome\"";
             String rc = "# Antigravity Terminal Environment\n"
                     + "export PREFIX=" + p + "\n"
+                    + "export ANTIGRAVITY_APP_DATA_DIR=\"$HOME/.gemini/antigravity-app\"\n"
                     + "export TMPDIR=\"$PREFIX/tmp\"\n"
                     + "export TERM=\"xterm-256color\"\n"
                     + "export LANG=\"C.UTF-8\"\n"
                     + "export LC_ALL=\"C.UTF-8\"\n"
                     + "export LD_LIBRARY_PATH=\"$PREFIX/lib\"\n"
-                    + "if [ -f \"$PREFIX/lib/libtermux-exec.so\" ]; then\n"
-                    + "  export LD_PRELOAD=\"$PREFIX/lib/libtermux-exec.so\"\n"
-                    + "fi\n"
-                    + "export PATH=\"$PREFIX/bin:" + rbin + ":/system/bin\"\n"
+                    + buildLdPreloadSnippet()
+                    + "export PATH=\"$PREFIX/bin:" + rbin + ":$HOME/.gemini/antigravity-app/bin:$HOME/.local/bin:/system/bin\"\n"
+                    + "export CHROME_PATH=" + chromePath + "\n"
+                    + "export PUPPETEER_EXECUTABLE_PATH=" + chromePath + "\n"
                     + "export OPENSSL_CONF=\"$PREFIX/etc/tls/openssl.cnf\"\n"
                     + "export SSL_CERT_FILE=\"$PREFIX/etc/tls/cert.pem\"\n"
                     + "export CURL_CA_BUNDLE=\"$PREFIX/etc/tls/cert.pem\"\n"
@@ -621,6 +709,8 @@ public final class ShellBridgeInstaller {
             File filesDir = prefix.getParentFile();
             String h = ShellQuote.quote(filesDir != null ? filesDir.getAbsolutePath() : prefix.getAbsolutePath());
             String rbin = runtimeBinDir != null ? runtimeBinDir.getAbsolutePath() : "";
+            String chromePath = runtimeBinDir != null
+                    ? ShellQuote.quote(new File(runtimeBinDir, "chrome").getAbsolutePath()) : "\"chrome\"";
 
             for (String tool : new String[]{"npm", "npx"}) {
                 String cliJs = "npm".equals(tool) ? "npm-cli.js" : "npx-cli.js";
@@ -629,14 +719,13 @@ public final class ShellBridgeInstaller {
                         + "PREFIX=" + p + "\n"
                         + "export PREFIX\n"
                         + "export HOME=" + h + "\n"
+                        + "export ANTIGRAVITY_APP_DATA_DIR=\"$HOME/.gemini/antigravity-app\"\n"
                         + "export TMPDIR=\"$PREFIX/tmp\"\n"
-                        + "if [ -f \"$PREFIX/lib/libtermux-exec.so\" ]; then\n"
-                        + "  export LD_PRELOAD=\"$PREFIX/lib/libtermux-exec.so\"\n"
-                        + "else\n"
-                        + "  unset LD_PRELOAD\n"
-                        + "fi\n"
+                        + buildLdPreloadSnippet()
                         + "export LD_LIBRARY_PATH=\"$PREFIX/lib\"\n"
-                        + "export PATH=\"$PREFIX/bin:" + rbin + ":/system/bin\"\n"
+                        + "export PATH=\"$PREFIX/bin:" + rbin + ":$HOME/.gemini/antigravity-app/bin:$HOME/.local/bin:/system/bin\"\n"
+                        + "export CHROME_PATH=" + chromePath + "\n"
+                        + "export PUPPETEER_EXECUTABLE_PATH=" + chromePath + "\n"
                         + "export OPENSSL_CONF=\"$PREFIX/etc/tls/openssl.cnf\"\n"
                         + "export SSL_CERT_FILE=\"$PREFIX/etc/tls/cert.pem\"\n"
                         + "export CURL_CA_BUNDLE=\"$PREFIX/etc/tls/cert.pem\"\n"
@@ -669,7 +758,8 @@ public final class ShellBridgeInstaller {
      */
     private static void writeBridge(File bridge, File prefix, String target) {
         if ("npm".equals(target) || "npx".equals(target) || "analyzeHeadless".equals(target)
-                || "craft-anything-cli".equals(target) || "craft-ghidra-setup".equals(target)) {
+                || "craft-anything-cli".equals(target) || "craft-ghidra-setup".equals(target)
+                || "agy-video-mcp".equals(target) || "agy-video-setup".equals(target)) {
             return;
         }
         String p = ShellQuote.quote(prefix.getAbsolutePath());
@@ -677,22 +767,23 @@ public final class ShellBridgeInstaller {
         String h = ShellQuote.quote(filesDir != null ? filesDir.getAbsolutePath() : prefix.getAbsolutePath());
         File runtimeBinDir = bridge.getParentFile();
         String rbin = runtimeBinDir != null ? runtimeBinDir.getAbsolutePath() : "";
+        String chromePath = runtimeBinDir != null
+                ? ShellQuote.quote(new File(runtimeBinDir, "chrome").getAbsolutePath()) : "\"chrome\"";
         StringBuilder sb = new StringBuilder();
         sb.append("#!/system/bin/sh\n");
         sb.append("# AGY bridge -> bionic $PREFIX/bin/").append(target).append('\n');
         sb.append("PREFIX=").append(p).append('\n');
         sb.append("export PREFIX\n");
         sb.append("export HOME=").append(h).append('\n');
+        sb.append("export ANTIGRAVITY_APP_DATA_DIR=\"$HOME/.gemini/antigravity-app\"\n");
         sb.append("export TMPDIR=\"$PREFIX/tmp\"\n");
         sb.append("export JDK_JAVA_OPTIONS=\"-Duser.home=$HOME -Djava.io.tmpdir=$PREFIX/tmp\"\n");
         sb.append("export TERM=\"xterm-256color\"\n");
-        sb.append("if [ -f \"$PREFIX/lib/libtermux-exec.so\" ]; then\n");
-        sb.append("  export LD_PRELOAD=\"$PREFIX/lib/libtermux-exec.so\"\n");
-        sb.append("else\n");
-        sb.append("  unset LD_PRELOAD\n");
-        sb.append("fi\n");
+        sb.append(buildLdPreloadSnippet());
         sb.append("export LD_LIBRARY_PATH=\"$PREFIX/lib\"\n");
-        sb.append("export PATH=\"$PREFIX/bin:").append(rbin).append(":/system/bin\"\n");
+        sb.append("export PATH=\"$PREFIX/bin:").append(rbin).append(":$HOME/.gemini/antigravity-app/bin:$HOME/.local/bin:/system/bin\"\n");
+        sb.append("export CHROME_PATH=").append(chromePath).append('\n');
+        sb.append("export PUPPETEER_EXECUTABLE_PATH=").append(chromePath).append('\n');
         sb.append("export OPENSSL_CONF=\"$PREFIX/etc/tls/openssl.cnf\"\n");
         sb.append("export SSL_CERT_FILE=\"$PREFIX/etc/tls/cert.pem\"\n");
         sb.append("export CURL_CA_BUNDLE=\"$PREFIX/etc/tls/cert.pem\"\n");

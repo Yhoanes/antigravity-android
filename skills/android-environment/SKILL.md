@@ -114,3 +114,7 @@ rish -c "<command>"
    - Always quote paths when referencing external storage (Android paths frequently contain spaces, e.g. `antigravity v2`).
 3. **Hardware Awareness:**
    - Compile code with `-march=armv8.1-a` or higher for optimal performance on the device's CPU.
+4. **Browser & URL Handling on Android (`--standalone`):**
+   - Never invoke the desktop `browser` subagent (`mcp_browser_page_snapshot` is unavailable on Android).
+   - Use `xdg-open "<url>"` via `run_command` to open web pages or OAuth URLs directly in the user's Android browser.
+   - For headless DOM/screenshot automation, install `nodejs` and `chromium` via `pkg install nodejs chromium` and use `$CHROME_PATH` or the `Chrome DevTools` Marketplace plugin.

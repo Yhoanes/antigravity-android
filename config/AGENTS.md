@@ -21,3 +21,8 @@
   - Read/write system or shared files blocked by Android sandbox permissions.
   - Install or manage APK packages (`pm install`, `pm uninstall`).
   - Inspect Android services, logs, or activities (`am start`, `dumpsys`, `logcat`).
+
+## Browser, URL Opening & Headless Automation on Android
+- Never invoke the desktop `browser` subagent (`mcp_browser_page_snapshot` is unavailable in Android `--standalone` mode).
+- To open any web page, local dev server, or OAuth link in the user's Android browser, run `xdg-open "<url>"`.
+- For headless DOM inspection or screenshots, install `nodejs` and `chromium` (`pkg update && pkg install nodejs chromium`) and use `$CHROME_PATH` or the `Chrome DevTools` Marketplace plugin.

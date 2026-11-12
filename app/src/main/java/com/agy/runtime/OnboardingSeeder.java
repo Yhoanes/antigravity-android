@@ -337,6 +337,20 @@ public final class OnboardingSeeder {
                     }
                 } catch (Exception ignored) {
                 }
+            } else if ("AGENTS.md".equals(assetName)) {
+                try (InputStream existingIn = new FileInputStream(target)) {
+                    String existing = IoUtil.readAll(existingIn, "UTF-8");
+                    if (!existing.contains("mcp_browser_page_snapshot")) {
+                        try (InputStream seedIn = appContext.getAssets().open(
+                                RuntimePaths.SEED_ASSET + "/" + assetName)) {
+                            String fresh = IoUtil.readAll(seedIn, "UTF-8");
+                            AtomicFileWriter.writeText(target, fresh);
+                            Log.i(TAG, "upgraded AGENTS.md with Android browser & plugin rules: " + target);
+                        }
+                        return;
+                    }
+                } catch (Exception ignored) {
+                }
             }
             Log.i(TAG, "state present; left untouched: " + target);
             return;

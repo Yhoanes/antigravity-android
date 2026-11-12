@@ -108,14 +108,29 @@ The agent has native access to Shizuku's elevated ADB shell (`uid=2000(shell)`):
 
 ---
 
-## 5. Development & Server Guidelines
+## 5. Browser, URL Opening & Headless Automation on Android
+
+- **Do NOT Invoke the Desktop `browser` Subagent:**
+  Antigravity on Android runs in `--standalone` mode without a desktop Electron browser host (`mcp_browser_page_snapshot` is NOT registered). **Never delegate to the `browser` subagent** — doing so will fail immediately.
+- **Opening URLs & OAuth Links for the User (`xdg-open`):**
+  To open any web page, local dev server (`http://localhost:3000`), or OAuth sign-in URL in the user's Android browser / Chrome Custom Tab, run:
+  ```bash
+  xdg-open "https://example.com"
+  ```
+- **Headless Web Inspection & Automation:**
+  - For static pages or APIs, use `curl -fsSL`, Python, or `search_web`.
+  - For full JS-rendered DOM inspection, screenshots, or Puppeteer/DevTools automation, install native ARM64 Chromium (`pkg update && pkg install nodejs chromium`) and use the `Chrome DevTools` plugin (`chrome-devtools-plugin`) or `$CHROME_PATH` (`runtime/bin/chrome`, which automatically passes `--no-sandbox --disable-gpu --disable-dev-shm-usage`).
+
+---
+
+## 6. Development & Server Guidelines
 
 - **Port Binding:** Local development servers (Vite, Next.js, Express, FastAPI) MUST bind to `localhost` or `127.0.0.1` on ports such as `3000`, `5173`, `8000`, `8080`. Avoid ports `45157` and `45158` (reserved for Antigravity core).
 - **Compilation:** When compiling native C/C++/Rust code, target `-march=armv8.1-a` (or higher) to leverage native LSE atomics.
 
 ---
 
-## 6. Background Daemon & Android Notifications
+## 7. Background Daemon & Android Notifications
 
 Antigravity includes an ultra-lightweight background scheduler and native notification CLI:
 

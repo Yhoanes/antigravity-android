@@ -70,11 +70,17 @@ def patch_main(file_path):
             content = must_replace(content, old_bw, new_bw, "Bw_click_fallback_when_mousedown_prevented")
             updated = True
             print("[web-patch] Patched Base UI Bw trigger to fallback to onClick if mousedown was suppressed")
+        old_vzb = "async function VZb(a){var b=e,c=e;try{a.isStreaming()?c(await b(a.refreshSkills())):c(await b(a.refresh()))}finally{b()}}"
+        new_vzb = "async function VZb(a){var b=e,c=e;try{c(await b(a.refresh()))}finally{b()}}"
+        if old_vzb in content:
+            content = must_replace(content, old_vzb, new_vzb, "VZb_always_refresh_plugins_and_skills")
+            updated = True
+            print("[web-patch] Patched VZb to always refresh plugins and skills after Marketplace mutations")
         if updated:
             with open(file_path, "w", encoding="utf-8", newline="\n") as f:
                 f.write(content)
         else:
-            print("[web-patch] main.js already patched (v2.29.0 Android UI + Settings Customizations/Automations + Overview + Marketplace + /sdcard + planModel fallback)")
+            print("[web-patch] main.js already patched (v2.31.1 Android UI + Smart Marketplace Fusion + /sdcard + planModel fallback)")
         return True
 
     # 1a. pY() system theme resolver via window.Android.getTheme()

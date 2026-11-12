@@ -3,6 +3,7 @@
 RBIN="$(cd "$(dirname "$0")" && pwd)"
 FILES_DIR="$(cd "$RBIN/../.." && pwd)"
 PREFIX="${PREFIX:-$FILES_DIR/usr}"
+HOME="${HOME:-$FILES_DIR}"
 WANT_HEADLESS=0
 for arg in "$@"; do
   case "$arg" in
@@ -15,20 +16,25 @@ done
 if [ "$WANT_HEADLESS" = "1" ]; then
   for cand in "$PREFIX/bin/chromium" "$PREFIX/bin/chromium-browser" "$PREFIX/bin/google-chrome"; do
     if [ -x "$cand" ]; then
-      export PREFIX
-      if [ -f "$PREFIX/lib/libtermux-exec.so" ]; then
+      export PREFIX HOME
+      if [ -f "$PREFIX/lib/libagy-go-dns.so" ] && [ -f "$PREFIX/lib/libtermux-exec.so" ]; then
+        export LD_PRELOAD="$PREFIX/lib/libagy-go-dns.so:$PREFIX/lib/libtermux-exec.so"
+      elif [ -f "$PREFIX/lib/libtermux-exec.so" ]; then
         export LD_PRELOAD="$PREFIX/lib/libtermux-exec.so"
+      elif [ -f "$PREFIX/lib/libagy-go-dns.so" ]; then
+        export LD_PRELOAD="$PREFIX/lib/libagy-go-dns.so"
       else
         unset LD_PRELOAD
       fi
       export LD_LIBRARY_PATH="$PREFIX/lib"
-      export PATH="$PREFIX/bin:$RBIN:/system/bin"
+      export PATH="$PREFIX/bin:$RBIN:$HOME/.gemini/antigravity-app/bin:$HOME/.local/bin:/system/bin"
       export OPENSSL_CONF="$PREFIX/etc/tls/openssl.cnf"
       export SSL_CERT_FILE="$PREFIX/etc/tls/cert.pem"
       export CURL_CA_BUNDLE="$PREFIX/etc/tls/cert.pem"
       exec "$cand" --no-sandbox --disable-gpu --disable-dev-shm-usage "$@"
     fi
   done
+  echo "chrome: headless/CDP requested but Chromium is not installed in Android userspace. Run: pkg update && pkg install chromium" >&2
+  exit 127
 fi
 exec "$RBIN/xdg-open" "$@"
-

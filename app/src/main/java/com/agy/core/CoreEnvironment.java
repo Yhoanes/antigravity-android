@@ -20,18 +20,28 @@ public final class CoreEnvironment {
     public static void apply(RuntimeManager rm, ProcessBuilder pb) {
         File files = rm.appContext().getFilesDir();
         File bin = rm.getBinDir();
+        File appDataDir = rm.getAppDataDir();
+        File appDataBin = new File(appDataDir, "bin");
+        File localBin = new File(files, ".local/bin");
+        appDataBin.mkdirs();
+        localBin.mkdirs();
+
         Map<String, String> env = pb.environment();
         // HOME is the app files dir and never a temp dir; it is stable across
         // builds so the core always finds $HOME/.gemini (token, config, chats).
         env.put("HOME", files.getAbsolutePath());
+        env.put("ANTIGRAVITY_APP_DATA_DIR", appDataDir.getAbsolutePath());
         env.put("TMPDIR", rm.appContext().getCacheDir().getAbsolutePath());
         Log.i(TAG, "core env: HOME=" + files.getAbsolutePath()
-                + " appDataDir=" + rm.getAppDataDir().getAbsolutePath()
+                + " appDataDir=" + appDataDir.getAbsolutePath()
                 + " projectsDir=" + rm.getProjectsDir().getAbsolutePath()
                 + " TMPDIR=" + rm.appContext().getCacheDir().getAbsolutePath());
         env.put("SSL_CERT_FILE", rm.getCertFile().getAbsolutePath());
         String inheritedPath = env.get("PATH");
-        env.put("PATH", bin.getAbsolutePath()
+        String basePath = bin.getAbsolutePath()
+                + ":" + appDataBin.getAbsolutePath()
+                + ":" + localBin.getAbsolutePath();
+        env.put("PATH", basePath
                 + (inheritedPath == null || inheritedPath.isEmpty() ? "" : ":" + inheritedPath));
         // The core's PTY spawner uses $SHELL (or falls back to /bin/bash, which
         // does not exist on Android). Point it at the bridge in runtime/bin.
@@ -55,7 +65,10 @@ public final class CoreEnvironment {
         env.put("ANTIGRAVITY_VSCODE_HOST", "1");
         // Configure browser and desktop environment so core OAuth/open tools find the browser
         File xdgOpen = new File(bin, "xdg-open");
+        File chromeShim = new File(bin, "chrome");
         env.put("BROWSER", xdgOpen.getAbsolutePath());
+        env.put("CHROME_PATH", chromeShim.getAbsolutePath());
+        env.put("PUPPETEER_EXECUTABLE_PATH", chromeShim.getAbsolutePath());
         env.put("DISPLAY", ":0");
         env.put("WAYLAND_DISPLAY", "wayland-0");
         env.put("XDG_CURRENT_DESKTOP", "X-Generic");
@@ -96,4 +109,3 @@ public final class CoreEnvironment {
         return "450MiB";
     }
 }
-
