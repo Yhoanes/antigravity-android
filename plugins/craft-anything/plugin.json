@@ -1,7 +1,7 @@
 {
   "name": "craft-anything",
   "displayName": "Craft Anything + Ghidra",
-  "version": "0.4.0-r7",
+  "version": "0.4.0-r8",
   "description": "302 native ARM64 Rust MCP tools for static software inspection, multi-format binary analysis (ELF, PE, Mach-O, APK/DEX, .NET, WASM, Electron/JS), clean-room rebuilding, and on-demand Android ARM64 Ghidra 12.1.4 decompilation.",
   "author": {
     "name": "Storytold / Antigravity Android ARM64"

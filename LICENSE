@@ -4,14 +4,14 @@ PART I: DERIVATIVE WORK & MODIFICATIONS LICENSE
 ================================================================================
 
 Copyright (c) 2026 Yhoanes (https://github.com/Yhoanes/antigravity-android)
-All rights reserved over the v2.29.0 - v2.31.0 modifications, additions,
+All rights reserved over the v2.29.0 - v2.31.1 modifications, additions,
 documentation, visual assets, and compiled APK distributions.
 
 Pursuant to Section 4 ("Redistribution") of the Apache License, Version 2.0,
 the author (Yhoanes) provides additional and different license terms and
 conditions for the use, reproduction, and distribution of all modifications
 and additions authored by Yhoanes, as well as for this Derivative Work as a
-whole ("Antigravity for Android v2.29.0 - v2.31.0"):
+whole ("Antigravity for Android v2.29.0 - v2.31.1"):
 
 1. Grant of Non-Commercial License.
    Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -25,8 +25,8 @@ whole ("Antigravity for Android v2.29.0 - v2.31.0"):
    (a) Retain this LICENSE file and the accompanying NOTICE file intact in all
        source and binary distributions;
    (b) Clearly and prominently credit "Yhoanes" as the author of the v2.29.0 -
-       v2.31.0 engineering, reverse-engineering suite integration, voice relay,
-       and runtime optimizations; and
+       v2.31.1 engineering, Marketplace OTA architecture, reverse-engineering
+       suite integration, voice relay, and runtime optimizations; and
    (c) Include a visible, clickable link to the official repository:
        https://github.com/Yhoanes/antigravity-android
 

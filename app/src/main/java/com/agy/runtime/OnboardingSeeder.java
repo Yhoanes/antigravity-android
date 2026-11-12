@@ -169,7 +169,7 @@ public final class OnboardingSeeder {
                         JSONObject from = new JSONObject();
                         from.put("id", "antigravity-plugins-official/plugin/craft-anything");
                         from.put("marketplace", "antigravity-plugins-official");
-                        from.put("version", "0.4.0-r7");
+                        from.put("version", "0.4.0-r8");
                         craftEntry.put("installedFrom", from);
                         modified = true;
                     }

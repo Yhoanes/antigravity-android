@@ -1,5 +1,5 @@
 #!/system/bin/sh
-# install-plugin.sh - Instala y configura Craft Anything + Ghidra ARM64 (v0.4.0-r7) activo por defecto en Android.
+# install-plugin.sh - Instala y configura Craft Anything + Ghidra ARM64 (v0.4.0-r8) activo por defecto en Android.
 set -eu
 
 SRC_DIR="$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)"
@@ -81,6 +81,6 @@ EOF
 fi
 
 echo "============================================================"
-echo " Plugin Craft Anything + Ghidra ARM64 v0.4.0-r7 activo"
+echo " Plugin Craft Anything + Ghidra ARM64 v0.4.0-r8 activo"
 echo " Ruta: $TARGET_DIR"
 echo "============================================================"

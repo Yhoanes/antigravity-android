@@ -1,7 +1,7 @@
 # Antigravity Android Agent Rules & Environment Guidelines
 
 > [!NOTE]
-> This rule is automatically loaded into every conversation in Antigravity for Android (AGY v2).
+> This rule is automatically loaded into every conversation in Antigravity for Android (v2.31.1).
 > It defines the operating environment, execution rules, package management, and elevated permissions.
 
 ---
@@ -154,7 +154,7 @@ Antigravity includes an ultra-lightweight background scheduler and native notifi
   agy-daemon add --name "Disk Health Check" --interval 30m --command "df -h > ~/.gemini/disk.log"
 
   # Watch GitHub repo for new PRs:
-  agy-daemon add --name "Watch PRs" --github-pr "werdio325-png/antigravity-android" --interval 5m --command "agy-notify post -t 'GitHub Alert' -m 'New Pull Request detected'"
+  agy-daemon add --name "Watch PRs" --github-pr "Yhoanes/antigravity-android" --interval 5m --command "agy-notify post -t 'GitHub Alert' -m 'New Pull Request detected'"
 
   # List active background tasks:
   agy-daemon list
