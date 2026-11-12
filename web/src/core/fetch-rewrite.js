@@ -8,11 +8,8 @@
  * which the WebView rejects: URL scheme "file" is not supported.
  *
  * Rewrite file:// or relative ConnectRPC URLs onto the core origin, preserving
- * method/headers/body and attaching the CSRF token. Idempotent and a no-op for
- * non-RPC / already-absolute http(s) URLs.
- *
- * The original periodic HEAD ping is not ported (it referenced an undefined
- * helper; see docs/DEADCODE.md).
+ * method/headers/body/signal and attaching the CSRF token. Idempotent and a
+ * no-op for non-RPC / already-absolute http(s) URLs.
  */
 var RPC_MARKERS = ['exa.language_server_pb.', 'exa.host_bridge_pb.', '/exa.'];
 
@@ -31,13 +28,29 @@ function rpcPathFrom(url) {
   return s.slice(best).replace(/^\/+/, '') || null;
 }
 
+function isStartupComplete() {
+  return !!(
+    (CONFIG && CONFIG.engineReady) ||
+    (global.__agStartupReady && typeof global.__agStartupReady.isReady === 'function' && global.__agStartupReady.isReady())
+  );
+}
+
+function isFetchAborted(err, opts) {
+  if (opts && opts.signal && opts.signal.aborted) return true;
+  if (err && (err.name === 'AbortError' || err.code === 20)) return true;
+  return false;
+}
+
 function installFetchRewrite() {
   if (global.__AG_FETCH_REWRITE__ || typeof global.fetch !== 'function') return;
   var origFetch = global.fetch.bind(global);
 
   function fetchWithStartupRetry(u, opts, retries) {
-    return origFetch(u, opts).catch(function (err) {
-      if (retries > 0) {
+    return origFetch(u, opts).then(function (res) {
+      if (CONFIG) CONFIG.engineReady = true;
+      return res;
+    }).catch(function (err) {
+      if (retries > 0 && !isFetchAborted(err, opts)) {
         return new Promise(function (resolve) {
           setTimeout(function () {
             resolve(fetchWithStartupRetry(u, opts, retries - 1));
@@ -50,7 +63,7 @@ function installFetchRewrite() {
 
   global.fetch = function (resource, init) {
     try {
-      // Request object: rebuild against the core origin, keep method/body.
+      // Request object: rebuild against the core origin, keep method/body/signal.
       if (resource && typeof resource === 'object' && typeof resource.url === 'string') {
         var rpath = rpcPathFrom(resource.url);
         if (rpath) {
@@ -59,6 +72,7 @@ function installFetchRewrite() {
             var reqMethod = resource.method || (init && init.method) || 'POST';
             var reqHeaders = new Headers(resource.headers || (init && init.headers) || {});
             ensureCsrf(reqHeaders);
+            var reqSignal = (init && init.signal) || resource.signal;
 
             var bodyPromise;
             if (init && init.body !== undefined) {
@@ -80,7 +94,9 @@ function installFetchRewrite() {
                 body: bodyData,
                 credentials: 'omit'
               };
-              return fetchWithStartupRetry(targetUrl, nextOpts, 30);
+              if (reqSignal) nextOpts.signal = reqSignal;
+              var maxRetries = isStartupComplete() ? 2 : 30;
+              return fetchWithStartupRetry(targetUrl, nextOpts, maxRetries);
             });
           } catch (e) { warn('fetch rewrite (Request)', e); }
         }
@@ -102,7 +118,8 @@ function installFetchRewrite() {
           }
           next.headers = headers;
 
-          return fetchWithStartupRetry(url, next, 30);
+          var maxRetriesStr = isStartupComplete() ? 2 : 30;
+          return fetchWithStartupRetry(url, next, maxRetriesStr);
         }
       }
     } catch (e) { warn('fetch rewrite', e); }

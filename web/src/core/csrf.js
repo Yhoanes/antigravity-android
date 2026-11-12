@@ -18,6 +18,14 @@ function syncCsrf() {
   CONFIG.csrfToken = token;
   CONFIG.csrf_token = token;
   try {
+    if (global.__APP_CONFIG__ && typeof global.__APP_CONFIG__ === 'object') {
+      global.__APP_CONFIG__.csrfToken = token;
+    }
+    if (global.localStorage) {
+      global.localStorage.setItem('agy_session_csrf_token', token);
+    }
+  } catch (e) {}
+  try {
     if (document && document.cookie !== undefined) {
       document.cookie = 'csrfToken=' + token + '; path=/; SameSite=Lax';
       document.cookie = 'csrf_token=' + token + '; path=/; SameSite=Lax';

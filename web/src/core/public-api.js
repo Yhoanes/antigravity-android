@@ -11,7 +11,8 @@ var api = {
   setEndpoint: setEndpoint,
   baseOrigin: baseOrigin,
   syncCsrf: syncCsrf,
-  parseEndpointSpec: parseEndpointSpec
+  parseEndpointSpec: parseEndpointSpec,
+  probeSockets: probeTrackedSockets
 };
 
 window.__agBridgeCore = api;

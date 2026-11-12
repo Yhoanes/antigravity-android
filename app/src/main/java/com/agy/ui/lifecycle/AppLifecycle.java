@@ -22,14 +22,10 @@ public final class AppLifecycle {
     }
 
     public static void trimMemory(int level, Handler handler, WebViewHost host) {
-        if (level >= ComponentCallbacks2.TRIM_MEMORY_MODERATE && host != null) {
-            handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    host.freeMemory();
-                }
-            });
-        }
+        // Intentionally do not invoke deprecated WebView.freeMemory() on background trim:
+        // switching to an external browser (e.g. OAuth login) or another app triggers
+        // TRIM_MEMORY_MODERATE on Android/HyperOS, and freeMemory() purges active WebView
+        // caches/pipes and stalls live agent state streams on resume.
     }
 
     public static void destroy(Handler handler) {

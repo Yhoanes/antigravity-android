@@ -113,6 +113,15 @@ public final class ShellBridgeInstaller {
                 + "if [ -x \"$PREFIX/bin/node\" ]; then\n"
                 + "  exec \"$PREFIX/bin/node\" \"$@\"\n"
                 + "fi\n"
+                + "case \"$*:$PWD\" in\n"
+                + "  *swarm_board*|*/sidecars/*)\n"
+                + "    trap 'exit 0' INT TERM HUP\n"
+                + "    while [ ! -x \"$PREFIX/bin/node\" ]; do\n"
+                + "      sleep 60 || exit 0\n"
+                + "    done\n"
+                + "    exec \"$PREFIX/bin/node\" \"$@\"\n"
+                + "    ;;\n"
+                + "esac\n"
                 + "echo \"agy-node: nodejs is not installed in Android userspace (run: pkg install nodejs)\" >&2\n"
                 + "exit 127\n";
         writeScript(new File(bin, "agy-node"), script);
