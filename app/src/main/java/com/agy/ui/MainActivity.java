@@ -145,6 +145,7 @@ public class MainActivity extends Activity
         androidBridge.setActivity(this);
         webViewHost = new WebViewHost(this, themeManager, oauthManager, androidBridge, this);
         webViewHost.setListener(this);
+        com.agy.update.AppUpdateManager.getInstance(this).attachWebView(webViewHost.getWebView());
 
         rootLayout = new FrameLayout(this);
         rootLayout.setBackgroundColor(themeManager.getBackgroundColor());
@@ -276,6 +277,8 @@ public class MainActivity extends Activity
         activeActivity = this;
         if (webViewHost != null) {
             AppLifecycle.resume(webViewHost.getWebView());
+            com.agy.update.AppUpdateManager.getInstance(this)
+                    .onActivityResumed(this, webViewHost.getWebView());
         }
         refreshTheme();
         handler.postDelayed(this::requestStartupRuntimePermissionsIfNeeded, 700);

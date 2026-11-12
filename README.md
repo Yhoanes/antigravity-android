@@ -16,6 +16,7 @@
     <code>AGY Video Studio (GPU)</code> &nbsp;&bull;&nbsp;
     <code>Craft Anything + Ghidra 12.1.4</code> &nbsp;&bull;&nbsp;
     <code>Live Voice Mode</code> &nbsp;&bull;&nbsp;
+    <code>In-App OTA Updater</code> &nbsp;&bull;&nbsp;
     <code>Shizuku Ready</code> &nbsp;&bull;&nbsp;
     <code>BY-NC / Apache 2.0</code>
   </p>
@@ -70,8 +71,8 @@ Unlike terminal-based chat wrappers or virtualized environments (PRoot, QEMU, ch
       <p><font color="#7d8590">Bidirectional WebRTC/WebAudio voice sessions with live transcription, paired with native Bionic ARM64 <code>webp_encoder</code> and <code>webm_encoder</code> binaries for zero-dependency media processing.</font></p>
     </td>
     <td width="50%" valign="top" style="border: 1px solid rgba(128, 128, 128, 0.2); border-radius: 12px; padding: 16px;">
-      <p><font size="4"><b>Shizuku (Rish) &amp; Async Daemon</b></font></p>
-      <p><font color="#7d8590">Single-call Shizuku elevation (<code>uid=2000</code>) for system notifications (<code>agy-notify</code>) and APK installs, backed by a non-blocking multithreaded scheduler (<code>agy-daemon</code>) with 1 MB log rotation.</font></p>
+      <p><font size="4"><b>In-App OTA Updater &amp; Shizuku (Rish)</b></font></p>
+      <p><font color="#7d8590">Native <code>window.electronUpdater</code> bridge (<b>Check for Updates</b> &amp; 1-tap <b>Restart to Update</b> from GitHub Releases) with silent Shizuku <code>pm install -r -d</code> + auto-relaunch or standard Android PackageInstaller fallback.</font></p>
     </td>
   </tr>
 </table>

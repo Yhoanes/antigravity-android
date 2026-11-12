@@ -206,4 +206,29 @@ public final class AndroidBridge {
         } catch (Throwable ignored) {
         }
     }
+
+    @JavascriptInterface
+    public String getUpdateStateJson() {
+        try {
+            return com.agy.update.AppUpdateManager.getInstance(appContext).getStateJson();
+        } catch (Throwable t) {
+            return "{\"type\":\"idle\"}";
+        }
+    }
+
+    @JavascriptInterface
+    public void checkForAppUpdates(boolean manual) {
+        try {
+            com.agy.update.AppUpdateManager.getInstance(appContext).checkForUpdates(manual);
+        } catch (Throwable ignored) {
+        }
+    }
+
+    @JavascriptInterface
+    public void applyAppUpdate() {
+        try {
+            com.agy.update.AppUpdateManager.getInstance(appContext).applyUpdate();
+        } catch (Throwable ignored) {
+        }
+    }
 }
