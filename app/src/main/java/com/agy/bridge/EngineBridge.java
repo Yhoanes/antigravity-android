@@ -45,6 +45,7 @@ public final class EngineBridge {
 
     private static String resolveAndroidOverrideUrl(String safeName, String archiveUrl) {
         if ("agy-video-studio".equals(safeName)
+                || "craft-anything".equals(safeName)
                 || "chrome-devtools-plugin".equals(safeName)
                 || "android-cli-plugin".equals(safeName)
                 || "science".equals(safeName)) {
@@ -79,7 +80,7 @@ public final class EngineBridge {
             String canonicalTarget = targetDir.getCanonicalPath();
             java.net.HttpURLConnection conn = (java.net.HttpURLConnection) new java.net.URL(urlStr).openConnection();
             conn.setConnectTimeout(15000);
-            conn.setReadTimeout(25000);
+            conn.setReadTimeout(60000);
             conn.setInstanceFollowRedirects(true);
             try (java.io.InputStream in = conn.getInputStream();
                  java.util.zip.ZipInputStream zis = new java.util.zip.ZipInputStream(new java.io.BufferedInputStream(in))) {
@@ -276,6 +277,14 @@ public final class EngineBridge {
             java.io.File configDir = new java.io.File(runtime.getGeminiDir(), "config");
             java.io.File targetDir = new java.io.File(new java.io.File(configDir, "plugins"), safeName);
             deleteRecursive(targetDir);
+            java.io.File runtimeBin = new java.io.File(runtime.appContext().getFilesDir(), "runtime/bin");
+            if ("craft-anything".equals(safeName)) {
+                new java.io.File(runtimeBin, "craft-anything-cli").delete();
+                new java.io.File(runtimeBin, "craft-ghidra-setup").delete();
+            } else if ("agy-video-studio".equals(safeName)) {
+                new java.io.File(runtimeBin, "agy-video-setup").delete();
+                new java.io.File(runtimeBin, "agy-video-mcp").delete();
+            }
             updateConfigJsonOnUninstall(configDir, safeName);
             return true;
         } catch (Exception e) {
@@ -309,6 +318,8 @@ public final class EngineBridge {
                 pObj = new org.json.JSONObject();
                 plugins.put(safeName, pObj);
             }
+            pObj.put("enabled", true);
+            pObj.remove("disabled");
             org.json.JSONObject from = new org.json.JSONObject();
             from.put("id", id);
             from.put("marketplace", marketplace);

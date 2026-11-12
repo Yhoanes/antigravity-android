@@ -10,14 +10,9 @@ import com.agy.util.IoUtil;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 
 /**
  * Materializes a fully-onboarded state before the core starts, so the Welcome
@@ -27,8 +22,6 @@ import java.util.zip.ZipInputStream;
 public final class OnboardingSeeder {
 
     private static final String TAG = "OnboardingSeeder";
-    private static final String CRAFT_PLUGIN_ASSET = "plugins/craft-anything.zip";
-    private static final String CRAFT_PLUGIN_VERSION = "0.4.0-r6";
 
     private OnboardingSeeder() {
     }
@@ -45,7 +38,7 @@ public final class OnboardingSeeder {
             new File(appData, "plugins").mkdirs();
             new File(appData, "skills").mkdirs();
 
-            // Seed default agent rules (AGENTS.md) and preinstalled plugins into ~/.gemini/config/
+            // Seed default agent rules (AGENTS.md) and Android runtime settings into ~/.gemini/config/
             File configDir = projects.getParentFile();
             if (configDir != null && (configDir.isDirectory() || configDir.mkdirs())) {
                 seedStateFile(appContext, "AGENTS.md", new File(configDir, "AGENTS.md"));
@@ -53,7 +46,7 @@ public final class OnboardingSeeder {
                 new File(configDir, "skills").mkdirs();
                 new File(configDir, "agents").mkdirs();
                 new File(configDir, "sidecars").mkdirs();
-                seedCraftAnythingPlugin(appContext, configDir);
+                seedAndroidRuntimeAndConfig(appContext, configDir);
             }
 
             // The project store resolves its projects here; without the
@@ -71,94 +64,24 @@ public final class OnboardingSeeder {
         }
     }
 
-    private static void seedCraftAnythingPlugin(Context appContext, File configDir) {
+    private static void seedAndroidRuntimeAndConfig(Context appContext, File configDir) {
         try {
             File filesDir = appContext.getFilesDir();
             File prefixDir = new File(filesDir, "usr");
+            File prefixBin = new File(prefixDir, "bin");
+            File runtimeBin = new File(filesDir, RuntimePaths.BIN_DIR);
             File pluginsDir = new File(configDir, "plugins");
-            File targetDir = new File(pluginsDir, "craft-anything");
-            File marker = new File(targetDir, ".bundled_version");
-            File cliBin = new File(targetDir, "mcp/bin/craft-anything-cli");
 
-            boolean needsExtract = !marker.isFile() || !cliBin.isFile() || cliBin.length() < 1000000L;
-            if (!needsExtract) {
-                try (InputStream in = new FileInputStream(marker)) {
-                    String ver = IoUtil.readAll(in, "UTF-8").trim();
-                    if (!CRAFT_PLUGIN_VERSION.equals(ver)) {
-                        needsExtract = true;
-                    }
-                } catch (Exception e) {
-                    needsExtract = true;
-                }
-            }
-
-            if (needsExtract) {
-                try (InputStream raw = appContext.getAssets().open(CRAFT_PLUGIN_ASSET);
-                     ZipInputStream zis = new ZipInputStream(new BufferedInputStream(raw))) {
-                    String canonicalRoot = targetDir.getCanonicalPath() + File.separator;
-                    ZipEntry entry;
-                    while ((entry = zis.getNextEntry()) != null) {
-                        String name = entry.getName();
-                        if (name == null || name.isEmpty() || name.contains("..")) {
-                            continue;
-                        }
-                        File outFile = new File(targetDir, name);
-                        if (!outFile.getCanonicalPath().startsWith(canonicalRoot)) {
-                            continue;
-                        }
-                        if (entry.isDirectory()) {
-                            outFile.mkdirs();
-                        } else {
-                            File parent = outFile.getParentFile();
-                            if (parent != null && !parent.isDirectory()) {
-                                parent.mkdirs();
-                            }
-                            try (OutputStream out = new FileOutputStream(outFile)) {
-                                IoUtil.pipe(zis, out);
-                            }
-                        }
-                        zis.closeEntry();
-                    }
-                    AtomicFileWriter.writeText(marker, CRAFT_PLUGIN_VERSION + "\n");
-                    Log.i(TAG, "extracted bundled craft-anything plugin to " + targetDir);
-                } catch (Exception e) {
-                    Log.w(TAG, "craft-anything plugin asset not present or failed: " + e.getMessage());
-                    return;
-                }
-            }
-
-            // Ensure executable bits on plugin scripts and native ARM64 binaries
-            String[] execRelPaths = {
-                    "install-plugin.sh",
-                    "mcp/bin/start-mcp.sh",
-                    "mcp/bin/craft-anything-cli",
-                    "mcp/bin/craft-ghidra-setup",
-                    "mcp/bin/ghidra-arm64/decompile",
-                    "mcp/bin/ghidra-arm64/sleigh"
-            };
-            for (String rel : execRelPaths) {
-                File f = new File(targetDir, rel);
-                if (f.isFile()) {
-                    FileModeUtil.setExec(f);
-                }
-            }
-
-            // Stage decompile & sleigh in $PREFIX/share/ghidra-arm64/os/linux_arm_64 and create $PREFIX/tmp/run
-            // ahead of time so start-mcp.sh runs in <10ms with zero file copies during MCP handshake.
-            File shareNative = new File(prefixDir, "share/ghidra-arm64/os/linux_arm_64");
-            if (shareNative.isDirectory() || shareNative.mkdirs()) {
-                for (String binName : new String[]{"decompile", "sleigh"}) {
-                    File srcBin = new File(targetDir, "mcp/bin/ghidra-arm64/" + binName);
-                    File dstBin = new File(shareNative, binName);
-                    if (srcBin.isFile() && (!dstBin.isFile() || dstBin.length() != srcBin.length())) {
-                        try (InputStream in = new FileInputStream(srcBin);
-                             OutputStream out = new FileOutputStream(dstBin)) {
-                            IoUtil.pipe(in, out);
-                        }
-                        FileModeUtil.setExec(dstBin);
+            // Strip incompatible desktop Electron sidecars inside any existing plugin dirs
+            File[] pluginDirs = pluginsDir.listFiles();
+            if (pluginDirs != null) {
+                for (File pd : pluginDirs) {
+                    if (pd.isDirectory()) {
+                        deleteRecursive(new File(pd, "sidecars"));
                     }
                 }
             }
+
             File tmpRun = new File(prefixDir, "tmp/run");
             if (tmpRun.isDirectory() || tmpRun.mkdirs()) {
                 try {
@@ -179,40 +102,6 @@ public final class OnboardingSeeder {
                     if (cf.isFile() && cf.getName().endsWith(".deb")) {
                         cf.delete();
                     }
-                }
-            }
-
-            // Pre-create ~/.config/craft-anything/config.toml so deep_mode=true and first_run_done=true
-            // match --deep from the very first invocation.
-            File craftCfgDir = new File(filesDir, ".config/craft-anything");
-            if (craftCfgDir.isDirectory() || craftCfgDir.mkdirs()) {
-                File craftToml = new File(craftCfgDir, "config.toml");
-                if (!craftToml.isFile() || craftToml.length() == 0) {
-                    AtomicFileWriter.writeText(craftToml, "deep_mode = true\nfirst_run_done = true\n");
-                }
-            }
-
-            // Remove any duplicate symlinks in $PREFIX/bin so setup_doctor never warns binary:duplicates,
-            // and expose wrappers in $HOME/runtime/bin only.
-            File prefixBin = new File(prefixDir, "bin");
-            for (String tool : new String[]{"craft-anything-cli", "craft-ghidra-setup"}) {
-                File dup = new File(prefixBin, tool);
-                if (dup.exists()) {
-                    dup.delete();
-                }
-            }
-            File runtimeBin = new File(filesDir, RuntimePaths.BIN_DIR);
-            if (runtimeBin.isDirectory() || runtimeBin.mkdirs()) {
-                for (String tool : new String[]{"craft-anything-cli", "craft-ghidra-setup"}) {
-                    File targetBin = new File(targetDir, "mcp/bin/" + tool);
-                    File wrapper = new File(runtimeBin, tool);
-                    String script = "#!/system/bin/sh\n"
-                            + "export HOME=\"" + filesDir.getAbsolutePath() + "\"\n"
-                            + "export PREFIX=\"" + prefixDir.getAbsolutePath() + "\"\n"
-                            + "export XDG_CONFIG_HOME=\"" + new File(filesDir, ".config").getAbsolutePath() + "\"\n"
-                            + "exec \"" + targetBin.getAbsolutePath() + "\" \"$@\"\n";
-                    AtomicFileWriter.writeText(wrapper, script);
-                    FileModeUtil.setExec(wrapper);
                 }
             }
 
@@ -241,8 +130,9 @@ public final class OnboardingSeeder {
             }
 
             // Configure ~/.gemini/config/config.json:
-            // 1. Register craft-anything WITHOUT installedFrom (so UI never calls remote marketplace catalog and never shows 'Failed to load plugin').
-            // 2. Seed Android-compatible userSettings (enableTerminalSandbox=false so run_command never fails with libloader.so: invalid argument, and pre-grant MCP tools).
+            // 1. Clean up legacy pre-seeded disabled craft-anything (.bundled_version) so Craft Anything + Ghidra
+            //    is managed cleanly via the 'Built for Android' Marketplace shelf (enabled=true on install).
+            // 2. Seed Android-compatible userSettings (enableTerminalSandbox=false & MCP tool grants).
             File configJson = new File(configDir, "config.json");
             JSONObject root = new JSONObject();
             if (configJson.isFile() && configJson.length() > 0) {
@@ -257,21 +147,33 @@ public final class OnboardingSeeder {
             }
             boolean modified = false;
 
-            JSONObject plugins = root.optJSONObject("plugins");
-            if (plugins == null) {
-                plugins = new JSONObject();
-                root.put("plugins", plugins);
-                modified = true;
-            }
-            JSONObject craftEntry = plugins.optJSONObject("craft-anything");
-            if (craftEntry == null) {
-                craftEntry = new JSONObject();
-                craftEntry.put("enabled", false);
-                plugins.put("craft-anything", craftEntry);
-                modified = true;
-            } else if (craftEntry.has("installedFrom")) {
-                craftEntry.remove("installedFrom");
-                modified = true;
+            File craftTargetDir = new File(pluginsDir, "craft-anything");
+            File legacyBundledMarker = new File(craftTargetDir, ".bundled_version");
+            if (legacyBundledMarker.isFile()) {
+                JSONObject plugins = root.optJSONObject("plugins");
+                JSONObject craftEntry = plugins != null ? plugins.optJSONObject("craft-anything") : null;
+                boolean userEnabledOrInstalledFromMp = craftEntry != null
+                        && (craftEntry.optBoolean("enabled", false) || craftEntry.has("installedFrom"));
+                if (!userEnabledOrInstalledFromMp) {
+                    deleteRecursive(craftTargetDir);
+                    new File(runtimeBin, "craft-anything-cli").delete();
+                    new File(runtimeBin, "craft-ghidra-setup").delete();
+                    if (plugins != null && plugins.has("craft-anything")) {
+                        plugins.remove("craft-anything");
+                        modified = true;
+                    }
+                    Log.i(TAG, "removed legacy disabled bundled craft-anything stub (now managed via Marketplace)");
+                } else {
+                    legacyBundledMarker.delete();
+                    if (craftEntry != null && !craftEntry.has("installedFrom")) {
+                        JSONObject from = new JSONObject();
+                        from.put("id", "antigravity-plugins-official/plugin/craft-anything");
+                        from.put("marketplace", "antigravity-plugins-official");
+                        from.put("version", "0.4.0-r7");
+                        craftEntry.put("installedFrom", from);
+                        modified = true;
+                    }
+                }
             }
 
             JSONObject userSettings = root.optJSONObject("userSettings");
@@ -308,10 +210,10 @@ public final class OnboardingSeeder {
 
             if (modified) {
                 AtomicFileWriter.writeText(configJson, root.toString(2) + "\n");
-                Log.i(TAG, "updated " + configJson + " (craft-anything clean local entry + Android sandbox/MCP settings)");
+                Log.i(TAG, "updated " + configJson + " (Android sandbox/MCP settings)");
             }
         } catch (Exception e) {
-            Log.w(TAG, "seedCraftAnythingPlugin notice: " + e.getMessage());
+            Log.w(TAG, "seedAndroidRuntimeAndConfig notice: " + e.getMessage());
         }
     }
 

@@ -1,10 +1,10 @@
 # Craft Anything + Ghidra 12.1.4 (Android ARM64)
 
-Plugin nativo preinstalado para **Antigravity Android (`aarch64-linux-android`)** que integra el motor completo de **Craft Anything** (**302 herramientas MCP** compiladas en Rust para Bionic ARM64) junto con los binarios nativos **ARM64 de Ghidra 12.1.4** (`decompile` y `sleigh`) e instalador inteligente bajo demanda.
+Plugin nativo oficial para **Antigravity Android (`aarch64-linux-android`)** y **Vektron Studio Android** que integra el motor completo de **Craft Anything** (**302 herramientas MCP** compiladas en Rust para Bionic ARM64) junto con los binarios nativos **ARM64 de Ghidra 12.1.4** (`decompile` y `sleigh`) e instalador inteligente bajo demanda.
 
 > [!TIP]
-> **¿Cómo funciona al activarlo?**
-> 1. **Nivel 1 — Motor Rápido en Rust (Activo al instante, 0 descargas):** En cuanto activas este plugin, tienes disponibles las **302 herramientas MCP** con desensamblador y decompilador pseudo-C integrado (`<50 MB` de RAM, sin Java).
+> **¿Cómo funciona al instalarlo?**
+> 1. **Nivel 1 — Motor Rápido en Rust (Activo al instante, 0 descargas extra):** En cuanto instalas este plugin desde la tienda, queda habilitado automáticamente con las **302 herramientas MCP** y su desensamblador/decompilador pseudo-C integrado (`<50 MB` de RAM, sin Java).
 > 2. **Nivel 2 — Superpotencia Ghidra 12.1.4 Nativo ARM64 (Bajo demanda):** Cuando quieras análisis profundo de tipos C++/vtables, grafos globales de referencias cruzadas (`xrefs`) o ejecutar `analyzeHeadless`, simplemente escríbele al asistente en el chat: **«Instala Ghidra»** (o ejecuta `craft-ghidra-setup` en la terminal).
 
 ---

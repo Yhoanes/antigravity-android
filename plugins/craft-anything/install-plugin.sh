@@ -1,9 +1,12 @@
 #!/system/bin/sh
-# install-plugin.sh - Instala y registra el plugin Craft Anything + Ghidra ARM64 en Antigravity Android.
+# install-plugin.sh - Instala y configura Craft Anything + Ghidra ARM64 (v0.4.0-r7) activo por defecto en Android.
 set -eu
 
 SRC_DIR="$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)"
-HOME="${HOME:-/data/user/0/com.agy/files}"
+case "$SRC_DIR" in
+    */.gemini/*) HOME="${SRC_DIR%%/.gemini/*}" ;;
+    *) HOME="${HOME:-/data/user/0/com.agy/files}" ;;
+esac
 PREFIX="${PREFIX:-$HOME/usr}"
 CONFIG_DIR="$HOME/.gemini/config"
 TARGET_DIR="$CONFIG_DIR/plugins/craft-anything"
@@ -29,11 +32,8 @@ cp -f "$TARGET_DIR/mcp/bin/ghidra-arm64/decompile" "$PREFIX/share/ghidra-arm64/o
 cp -f "$TARGET_DIR/mcp/bin/ghidra-arm64/sleigh" "$PREFIX/share/ghidra-arm64/os/linux_arm_64/sleigh"
 chmod 0755 "$PREFIX/share/ghidra-arm64/os/linux_arm_64/decompile" "$PREFIX/share/ghidra-arm64/os/linux_arm_64/sleigh"
 
-rm -f "$PREFIX/bin/craft-anything-cli" "$PREFIX/bin/craft-ghidra-setup" 2>/dev/null || true
-if [ -d "$HOME/runtime/bin" ]; then
-    ln -sf "$TARGET_DIR/mcp/bin/craft-anything-cli" "$HOME/runtime/bin/craft-anything-cli"
-    ln -sf "$TARGET_DIR/mcp/bin/craft-ghidra-setup" "$HOME/runtime/bin/craft-ghidra-setup"
-fi
+mkdir -p "$PREFIX/tmp/run" "$PREFIX/tmp/ghidra-temp" "$PREFIX/tmp/ghidra-cache" "$PREFIX/tmp/ghidra-settings"
+chmod 0700 "$PREFIX/tmp/run" 2>/dev/null || true
 
 mkdir -p "$HOME/.config/craft-anything"
 if [ ! -f "$HOME/.config/craft-anything/config.toml" ]; then
@@ -43,57 +43,44 @@ first_run_done = true
 TOML
 fi
 
-CFG_FILE="$CONFIG_DIR/config.json"
-if command -v python3 >/dev/null 2>&1; then
-    python3 - "$CFG_FILE" <<'PY'
-import json, os, sys
-p = sys.argv[1]
-data = {}
-if os.path.isfile(p):
-    try:
-        with open(p, "r", encoding="utf-8") as f:
-            txt = f.read().strip()
-            if txt:
-                data = json.loads(txt)
-    except Exception:
-        data = {}
-plugins = data.setdefault("plugins", {})
-entry = plugins.setdefault("craft-anything", {})
-entry.setdefault("enabled", False)
-entry.pop("installedFrom", None)
-with open(p, "w", encoding="utf-8") as f:
-    json.dump(data, f, indent=2)
-    f.write("\n")
-PY
-elif command -v node >/dev/null 2>&1; then
-    node -e '
-const fs = require("fs");
-const p = process.argv[1];
-let data = {};
-if (fs.existsSync(p)) {
-  try { const t = fs.readFileSync(p, "utf8").trim(); if (t) data = JSON.parse(t); } catch (_) {}
-}
-data.plugins = data.plugins || {};
-const prev = data.plugins["craft-anything"] || {};
-delete prev.installedFrom;
-data.plugins["craft-anything"] = Object.assign({}, prev, {
-  enabled: typeof prev.enabled === "boolean" ? prev.enabled : false
-});
-fs.writeFileSync(p, JSON.stringify(data, null, 2) + "\n");
-' "$CFG_FILE"
-elif [ ! -s "$CFG_FILE" ]; then
-    cat > "$CFG_FILE" <<'JSON'
-{
-  "plugins": {
-    "craft-anything": {
-      "enabled": false
-    }
-  }
-}
-JSON
+# Evitar binarios duplicados en $PREFIX/bin y crear wrappers limpios en $HOME/runtime/bin
+rm -f "$PREFIX/bin/craft-anything-cli" "$PREFIX/bin/craft-ghidra-setup" 2>/dev/null || true
+mkdir -p "$HOME/runtime/bin" 2>/dev/null || true
+for tool in craft-anything-cli craft-ghidra-setup; do
+    rm -f "$HOME/runtime/bin/$tool" 2>/dev/null || true
+    cat > "$HOME/runtime/bin/$tool" <<EOF
+#!/system/bin/sh
+export HOME="$HOME"
+export PREFIX="$PREFIX"
+export XDG_CONFIG_HOME="$HOME/.config"
+exec "$TARGET_DIR/mcp/bin/$tool" "\$@"
+EOF
+    chmod 0755 "$HOME/runtime/bin/$tool"
+done
+
+# Si Ghidra 12.1.4 ya estaba extraido, actualizar tambien los wrappers de analyzeHeadless
+GHIDRA_ROOT="$PREFIX/opt/ghidra/ghidra_12.1.4_PUBLIC"
+if [ -f "$GHIDRA_ROOT/support/analyzeHeadless" ]; then
+    mkdir -p "$PREFIX/bin" 2>/dev/null || true
+    for dst in "$PREFIX/bin/analyzeHeadless" "$HOME/runtime/bin/analyzeHeadless"; do
+        rm -f "$dst" 2>/dev/null || true
+        cat > "$dst" <<EOF
+#!/system/bin/sh
+export HOME="$HOME"
+export PREFIX="$PREFIX"
+export JAVA_HOME="$PREFIX/lib/jvm/java-21-openjdk"
+export LD_LIBRARY_PATH="$PREFIX/lib\${LD_LIBRARY_PATH:+:\$LD_LIBRARY_PATH}"
+export PATH="$PREFIX/bin:$HOME/runtime/bin:\$JAVA_HOME/bin:/system/bin"
+export TMPDIR="\${TMPDIR:-$PREFIX/tmp}"
+export JDK_JAVA_OPTIONS="-Duser.home=$HOME -Djava.io.tmpdir=$PREFIX/tmp"
+mkdir -p "\$TMPDIR/ghidra-temp" "\$TMPDIR/ghidra-cache" "\$TMPDIR/ghidra-settings"
+exec "$PREFIX/bin/bash" "$GHIDRA_ROOT/support/analyzeHeadless" "\$@"
+EOF
+        chmod 0755 "$dst"
+    done
 fi
 
 echo "============================================================"
-echo " Plugin Craft Anything + Ghidra ARM64 instalado con exito"
+echo " Plugin Craft Anything + Ghidra ARM64 v0.4.0-r7 activo"
 echo " Ruta: $TARGET_DIR"
 echo "============================================================"

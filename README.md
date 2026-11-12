@@ -93,7 +93,7 @@ Select between **Gemini 4 Carbon High**, **Gemini 4 Argon**, **Gemini 3.8 Flash*
 
 ### 2. Native ARM64 Reverse Engineering: `Craft Anything` + `Ghidra 12.1.4`
 
-Antigravity for Android ships with **`craft-anything` (`v0.4.0-r6`)** preinstalled and ready to enable in **Customizations &rarr; Plugins**, combining two complementary reverse-engineering engines natively on ARM64:
+Available in 1 tap from the **`Built for Android`** shelf in **Customizations &rarr; Marketplace** (auto-enabled upon installation), **`Craft Anything + Ghidra` (`v0.4.0-r7`)** combines two complementary reverse-engineering engines natively on ARM64:
 
 * **Tier 1 — Instant Rust Binary & App Engine (`<50 MB` RAM, 0 Downloads):** Exposes **320 MCP tools** (`craft-anything-cli --deep mcp --all-tools`, compiled for `aarch64-linux-android` with 16 KB page alignment) for static binary triage (`ELF`, `PE`, `Mach-O`, `APK/DEX`, `.NET`, `WASM`, `Electron/JS`), function disassembly, fast pseudo-C decompilation, string/symbol indexing, game asset inspection, and structured clean-room rebuilding.
 * **Tier 2 — On-Demand Native ARM64 Ghidra 12.1.4 (`craft-ghidra-setup`):** Pre-staged native Android Bionic ARM64 `decompile` and `sleigh` binaries paired with an automated 1-step installer (`craft-ghidra-setup`) that fetches `openjdk-21`, configures Java TLS `cacerts`, downloads & verifies **Ghidra 12.1.4 PUBLIC** (`SHA-256`), injects the ARM64 decompiler, configures SELinux-compatible dot-free temp directories (`$PREFIX/tmp/ghidra-*`), and exposes `analyzeHeadless` across the runtime.
@@ -143,9 +143,11 @@ Designed for autonomous multi-agent workflows: project sidebar, parallel subagen
 
 ---
 
-### 5. Customizations & Agent Marketplace
+### 5. Customizations & Smart Android Marketplace Fusion
 
-Browse and install official plugins, MCP servers, and skills directly from the built-in **Customizations Marketplace** — including **Google Workspace** (Docs, Sheets, Slides, Drive, Calendar), **Build with Google** (Gemini API, Chrome DevTools, Android CLI, Firebase, Science, Google Antigravity SDK), and third-party integrations. Preinstalled local plugins (`craft-anything`) load cleanly without remote catalog conflicts.
+Browse and install both **native Android ARM64 plugins** and **official Antigravity plugins** directly from **Customizations &rarr; Marketplace**:
+* **`Built for Android` Shelf (Shelf #1):** Features 1-tap auto-enabled native ARM64 plugins hosted live via [`antigravity-android-plugins`](https://github.com/Yhoanes/antigravity-android-plugins) — including **`AGY Video Studio`** (GPU `h264_mediacodec` video studio, neural TTS, CapCut drafts & Shizuku), **`Craft Anything + Ghidra`**, **`Chrome DevTools`** (headless ARM64 Chromium MCP), and **`Android CLI`** (on-device Shizuku `rish` workflows).
+* **Official Shelves:** **Google Workspace** (Docs, Sheets, Slides, Drive, Calendar, Gmail), **Build with Google** (Gemini API, Firebase, Science, Google Antigravity SDK), and partner integrations, automatically normalized for Bionic ARM64 (`libagy-go-dns.so` DNS fix & sidecar cleanup).
 
 <br/>
 
@@ -202,7 +204,7 @@ Real-world test: the agent authored a custom Python I/O benchmark and executed m
     <td width="33%" valign="top" style="border: 1px solid rgba(128, 128, 128, 0.2); border-radius: 12px; padding: 16px;">
       <p><font size="4"><b>1. Download APK</b></font></p>
       <p><font color="#7d8590">Releases are available under <a href="https://github.com/Yhoanes/antigravity-android/releases">Releases</a>:<br/><br/>
-      &bull; <b><code>Antigravity-v2.31.1.apk</code></b> — full signed release with bundled Bionic toolchain and <code>craft-anything</code>.<br/><br/>
+      &bull; <b><code>Antigravity-v2.31.1.apk</code></b> — full signed release with bundled Bionic toolchain and Smart Android Marketplace.<br/><br/>
       <i>Seamless in-place updates are supported across versions.</i></font></p>
     </td>
     <td width="33%" valign="top" style="border: 1px solid rgba(128, 128, 128, 0.2); border-radius: 12px; padding: 16px;">
@@ -215,7 +217,7 @@ Real-world test: the agent authored a custom Python I/O benchmark and executed m
       <p><font color="#7d8590">Install development toolchains or enable native Ghidra decompilation:<br/><br/>
       <code>pkg update &amp;&amp; pkg install git python nodejs</code><br/>
       <code>craft-ghidra-setup</code><br/><br/>
-      Enable <b>Craft Anything</b> in <i>Customizations &rarr; Plugins</i>.</font></p>
+      Install <b>AGY Video Studio</b> or <b>Craft Anything + Ghidra</b> with <code>+</code> in <i>Customizations &rarr; Marketplace</i>.</font></p>
     </td>
   </tr>
 </table>

@@ -3,7 +3,9 @@
     "craft-anything": {
       "command": "/system/bin/sh",
       "args": [
-        "/data/user/0/com.agy/files/.gemini/config/plugins/craft-anything/mcp/bin/start-mcp.sh"
+        "-c",
+        "H=\"${HOME:-/data/user/0/com.agy/files}\"; exec \"$H/.gemini/config/plugins/craft-anything/mcp/bin/start-mcp.sh\" \"$@\"",
+        "start-mcp.sh"
       ]
     }
   }
