@@ -1,6 +1,6 @@
 # Craft Anything + Ghidra 12.1.4 (Android ARM64)
 
-Plugin nativo oficial para **Antigravity Android (`aarch64-linux-android`)** y **Vektron Studio Android** que integra el motor completo de **Craft Anything** (**302 herramientas MCP** compiladas en Rust para Bionic ARM64) junto con los binarios nativos **ARM64 de Ghidra 12.1.4** (`decompile` y `sleigh`) e instalador inteligente bajo demanda.
+Plugin nativo oficial para **Antigravity for Android (`aarch64-linux-android`)** que integra el motor completo de **Craft Anything** (**302 herramientas MCP** compiladas en Rust para Bionic ARM64) junto con los binarios nativos **ARM64 de Ghidra 12.1.4** (`decompile` y `sleigh`) e instalador inteligente bajo demanda.
 
 > [!TIP]
 > **¿Cómo funciona al instalarlo?**

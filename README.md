@@ -12,6 +12,8 @@
     <code>v2.31.1</code> &nbsp;&bull;&nbsp;
     <code>Android 7.0+</code> &nbsp;&bull;&nbsp;
     <code>ARM64 v8.0-A+</code> &nbsp;&bull;&nbsp;
+    <code>Smart Android Marketplace</code> &nbsp;&bull;&nbsp;
+    <code>AGY Video Studio (GPU)</code> &nbsp;&bull;&nbsp;
     <code>Craft Anything + Ghidra 12.1.4</code> &nbsp;&bull;&nbsp;
     <code>Live Voice Mode</code> &nbsp;&bull;&nbsp;
     <code>Shizuku Ready</code> &nbsp;&bull;&nbsp;
@@ -48,18 +50,18 @@ Unlike terminal-based chat wrappers or virtualized environments (PRoot, QEMU, ch
       <p><font color="#7d8590">End-to-end engineering with <b>Gemini 4 Carbon/Argon</b>, <b>Claude 5.5</b>, and parallel subagents (<code>self</code>, <code>research</code>): task planning, multi-file refactoring, compilation, and automated diagnosis.</font></p>
     </td>
     <td width="50%" valign="top" style="border: 1px solid rgba(128, 128, 128, 0.2); border-radius: 12px; padding: 16px;">
-      <p><font size="4"><b>Craft Anything + Ghidra 12.1.4 ARM64</b></font></p>
-      <p><font color="#7d8590">Preinstalled native reverse-engineering suite with <b>320 MCP tools</b> in Rust plus on-demand native Android ARM64 <b>Ghidra 12.1.4</b> (<code>decompile</code> &amp; <code>sleigh</code>) for ELF, PE, Mach-O, APK/DEX, .NET, and WASM analysis.</font></p>
+      <p><font size="4"><b>Smart Android Marketplace &amp; Video Studio</b></font></p>
+      <p><font color="#7d8590">Live <b>Built for Android</b> OTA shelf featuring <b>AGY Video Studio</b> (<code>h264_mediacodec</code> GPU rendering, neural TTS &amp; CapCut drafts), headless Chromium MCP, and Bionic Go DNS bridging (<code>libagy-go-dns.so</code>) for Google Workspace.</font></p>
     </td>
   </tr>
   <tr>
     <td width="50%" valign="top" style="border: 1px solid rgba(128, 128, 128, 0.2); border-radius: 12px; padding: 16px;">
-      <p><font size="4"><b>Zero-Friction Terminal Execution</b></font></p>
-      <p><font color="#7d8590">Binary-patched <code>language_server</code> (<code>exebox</code> / <code>urpc.Fork</code> bypass) and Bionic bridge wrappers execute commands directly without <code>CLONE_NEWUSER</code> or <code>seccomp</code> sandbox failures on unrooted Android kernels.</font></p>
+      <p><font size="4"><b>Craft Anything + Ghidra 12.1.4 ARM64</b></font></p>
+      <p><font color="#7d8590">1-tap auto-enabled reverse-engineering suite with <b>302 MCP tools</b> in Rust plus on-demand native Android ARM64 <b>Ghidra 12.1.4</b> (<code>decompile</code> &amp; <code>sleigh</code>) for ELF, PE, Mach-O, APK/DEX, .NET, and WASM analysis.</font></p>
     </td>
     <td width="50%" valign="top" style="border: 1px solid rgba(128, 128, 128, 0.2); border-radius: 12px; padding: 16px;">
-      <p><font size="4"><b>Stage-Isolated <code>pkg</code> Manager</b></font></p>
-      <p><font color="#7d8590">Fast <code>O(1)</code> per-package staging in <code>$PKG_ROOT/stage</code> (<code>&lt;20 ms</code> prefix rewrite), automatic <code>.deb</code> cache cleanup, pre-bundled OpenJDK 21 TLS <code>cacerts</code>, and single-pass bridge syncing.</font></p>
+      <p><font size="4"><b>Zero-Friction Terminal &amp; Stage-Isolated <code>pkg</code></b></font></p>
+      <p><font color="#7d8590">Binary-patched <code>language_server</code> (<code>exebox</code> / <code>urpc.Fork</code> bypass), fast <code>O(1)</code> per-package staging in <code>$PKG_ROOT/stage</code> (<code>&lt;20 ms</code> prefix rewrite), and pre-bundled OpenJDK 21 TLS <code>cacerts</code>.</font></p>
     </td>
   </tr>
   <tr>
@@ -101,7 +103,7 @@ Available in 1 tap from the **`Built for Android`** shelf in **Customizations &r
 <br/>
 
 <img alt="Craft Anything + Ghidra 12.1.4 ARM64 Plugin Overview" src="docs/assets/craft_anything_overview.jpg" width="100%" style="border-radius: 12px; border: 1px solid rgba(128, 128, 128, 0.2); box-shadow: 0 8px 24px rgba(0,0,0,0.25);" />
-<p align="center"><font size="2" color="#7d8590">Preinstalled Craft Anything + Ghidra 12.1.4 ARM64 plugin overview and two-tier architecture</font></p>
+<p align="center"><font size="2" color="#7d8590">Craft Anything + Ghidra 12.1.4 ARM64 plugin overview and two-tier architecture</font></p>
 
 <br/>
 
@@ -151,8 +153,8 @@ Browse and install both **native Android ARM64 plugins** and **official Antigrav
 
 <br/>
 
-<img alt="Customizations and Agent Marketplace" src="docs/assets/customizations_marketplace.jpg" width="100%" style="border-radius: 12px; border: 1px solid rgba(128, 128, 128, 0.2); box-shadow: 0 8px 24px rgba(0,0,0,0.25);" />
-<p align="center"><font size="2" color="#7d8590">Integrated Customizations Marketplace for plugins, skills, and MCP servers</font></p>
+<img alt="Customizations and Smart Android Marketplace" src="docs/assets/customizations_marketplace.jpg" width="100%" style="border-radius: 12px; border: 1px solid rgba(128, 128, 128, 0.2); box-shadow: 0 8px 24px rgba(0,0,0,0.25);" />
+<p align="center"><font size="2" color="#7d8590">Smart Android Marketplace Fusion showing the live <b>Built for Android</b> shelf (AGY Video Studio, Craft Anything + Ghidra, Chrome DevTools, Android CLI) directly above Google Workspace</font></p>
 
 <br/>
 
@@ -277,8 +279,8 @@ antigravity-android/
 ├── docs/       # Architecture specifications, manuals, and high-res visual assets
 ├── env/        # Bionic toolchain, rootfs overlay, TLS cacerts, and pkg manager
 ├── patches/    # Low-level binary patches (Go pclntab, exebox/seccomp bypass, AArch64 gates)
-├── plugins/    # Preinstalled native Craft Anything MCP server + Ghidra 12.1.4 ARM64 suite
-└── web/        # Workbench v2.31.1 UI, touch submenu patches, and audio relay processor
+├── plugins/    # Native Craft Anything MCP server + Ghidra 12.1.4 ARM64 plugin source
+└── web/        # Workbench v2.31.1 UI, Smart Marketplace Fusion, touch patches, and audio relay
 ```
 
 ---
@@ -287,8 +289,9 @@ antigravity-android/
 
 This project builds upon the foundational Android Bionic host architecture originally created by [werdio325-png/antigravity-android](https://github.com/werdio325-png/antigravity-android), with major architectural upgrades and expansions in this repository (`v2.31.1`), including:
 
-* **Core Engine & Workbench Upgrade (`v2.31.1`):** Updated ARM64 `language_server` (`go1.28`), Workbench UI bundle (`Gemini 4 Carbon/Argon`, `Claude 5.5`), touch reasoning submenu patches, and native `webp_encoder` / `webm_encoder` binaries.
-* **Native ARM64 Reverse Engineering (`Craft Anything` + `Ghidra 12.1.4`):** Bundled 320-tool Rust MCP server (`craft-anything-cli`), native Android Bionic ARM64 Ghidra `decompile` & `sleigh` binaries, and automated on-demand `craft-ghidra-setup` installer.
+* **Core Engine & Workbench Upgrade (`v2.31.1`):** Updated ARM64 `language_server` (`go1.28`), Workbench UI bundle (`Gemini 4 Carbon/Argon`, `Claude 5.5`), OAuth redirect & touch input trigger fixes, and native `webp_encoder` / `webm_encoder` binaries.
+* **Smart Android Marketplace Fusion & `AGY Video Studio`:** Live OTA plugin fusion via [`antigravity-android-plugins`](https://github.com/Yhoanes/antigravity-android-plugins) (`Built for Android` shelf), native GPU `h264_mediacodec` video studio (`AGY Video Studio`), headless ARM64 Chromium MCP (`Chrome DevTools`), on-device `android` CLI bridge, and 16 KB-aligned `libagy-go-dns.so` Bionic DNS resolution for Go plugin CLIs.
+* **Native ARM64 Reverse Engineering (`Craft Anything` + `Ghidra 12.1.4`):** 302-tool Rust MCP server (`craft-anything-cli`), native Android Bionic ARM64 Ghidra `decompile` & `sleigh` binaries, and automated on-demand `craft-ghidra-setup` installer.
 * **Direct Terminal Execution & Production Runtime Hardening:** Binary `exebox` / `urpc.Fork` sandbox bypass in `liblanguage_server.so`, `O(1)` stage-isolated `pkg install`, pre-bundled OpenJDK 21 `cacerts`, multithreaded `agy-daemon` with log rotation, and single-call `agy-notify`.
 * **Real-Time Voice Chat & ARMv8.0-A Compatibility (`liblse_compat.so`):** Native WebRTC/WebAudio microphone pipeline and custom `SIGILL` trap-and-emulate layer for `FEAT_LSE` atomics, `FEAT_RDM`, and `FEAT_FCMA` SIMD instructions.
 
