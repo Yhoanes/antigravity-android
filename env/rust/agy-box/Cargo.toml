@@ -1,0 +1,32 @@
+[package]
+name = "agy-box"
+version = "0.2.0"
+edition = "2021"
+description = "Ultra-fast native Rust multicall runtime toolkit for Antigravity Android (pkg, agy-daemon, agy-fix-paths, agy-notify, bridge-shim)"
+
+[dependencies]
+flate2 = { version = "1.0", default-features = false, features = ["rust_backend"] }
+hex = "0.4"
+lzma-rs = "0.3"
+memchr = "2.7"
+rayon = "1.10"
+regex = "1.11"
+rustls = { version = "0.23", default-features = false, features = ["ring", "std", "tls12"] }
+rustls-pemfile = "2.1"
+ruzstd = "0.7"
+serde_json = "1.0"
+sha2 = "0.10"
+tar = "0.4"
+ureq = { version = "2.10", default-features = false, features = ["tls", "gzip"] }
+walkdir = "2.5"
+webpki-roots = "0.26"
+
+[target.'cfg(unix)'.dependencies]
+libc = "0.2"
+
+[profile.release]
+opt-level = 3
+lto = "fat"
+codegen-units = 1
+panic = "abort"
+strip = "symbols"

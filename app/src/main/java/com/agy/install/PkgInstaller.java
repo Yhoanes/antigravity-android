@@ -39,12 +39,18 @@ public final class PkgInstaller {
         if (bin != null && !bin.isDirectory() && !bin.mkdirs() && !bin.isDirectory()) {
             throw new IllegalStateException("cannot create " + bin);
         }
+        String box = new File(prefix, "bin/agy-box").getAbsolutePath();
         String bash = new File(prefix, "bin/bash").getAbsolutePath();
         String script = new File(prefix, "libexec/pkg/pkg").getAbsolutePath();
         StringBuilder sb = new StringBuilder();
-        sb.append('#').append('!').append(bash).append('\n');
+        sb.append("#!/system/bin/sh\n");
         sb.append("export PREFIX=").append(ShellQuote.quote(prefix.getAbsolutePath())).append('\n');
-        sb.append("exec ").append(ShellQuote.quote(script)).append(" \"$@\"").append('\n');
+        sb.append("if [ \"${AGY_DISABLE_RUST_BOX:-0}\" != \"1\" ] && [ -x ")
+                .append(ShellQuote.quote(box)).append(" ]; then\n");
+        sb.append("  exec ").append(ShellQuote.quote(box)).append(" pkg \"$@\"\n");
+        sb.append("fi\n");
+        sb.append("exec ").append(ShellQuote.quote(bash)).append(' ')
+                .append(ShellQuote.quote(script)).append(" \"$@\"\n");
         try (OutputStream out = new FileOutputStream(wrapper)) {
             out.write(sb.toString().getBytes(StandardCharsets.UTF_8));
         } catch (IOException e) {

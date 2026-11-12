@@ -42,3 +42,4 @@ tools/uber-apk-signer.jar
 
 # Scratch temporary work
 scratch/
+env/rust/agy-box/target/

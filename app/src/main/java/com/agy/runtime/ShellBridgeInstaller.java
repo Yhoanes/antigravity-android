@@ -48,7 +48,7 @@ public final class ShellBridgeInstaller {
     /** Records which prefix the bulk bridges were generated for. Bump when the
      *  bridge script format changes so a warm launch regenerates them once. */
     private static final String BRIDGE_MARKER = ".agy-bridges";
-    private static final int BRIDGE_FORMAT = 11;
+    private static final int BRIDGE_FORMAT = 12;
 
     private ShellBridgeInstaller() {
     }
@@ -430,7 +430,9 @@ public final class ShellBridgeInstaller {
                     if ("rish".equals(name) || isOpenUrlShim(name)) {
                         continue;
                     }
-                    patchTermuxBinaryPrefixInPlace(toolFile);
+                    if (!"agy-box".equals(name)) {
+                        patchTermuxBinaryPrefixInPlace(toolFile);
+                    }
                     writeBridge(new File(bin, name), prefix, name);
                 }
             }
@@ -770,6 +772,22 @@ public final class ShellBridgeInstaller {
                 || "craft-anything-cli".equals(target) || "craft-ghidra-setup".equals(target)
                 || "agy-video-mcp".equals(target) || "agy-video-setup".equals(target)) {
             return;
+        }
+        if (!"bash".equals(target)) {
+            File agyBox = new File(prefix, "bin/agy-box");
+            if (agyBox.isFile()) {
+                try {
+                    android.system.Os.lstat(bridge.getAbsolutePath());
+                    bridge.delete();
+                } catch (Throwable ignored) {
+                }
+                try {
+                    android.system.Os.symlink(agyBox.getAbsolutePath(), bridge.getAbsolutePath());
+                    return;
+                } catch (Throwable t) {
+                    Log.w(TAG, "agy-box symlink fallback for " + target + ": " + t.getMessage());
+                }
+            }
         }
         String p = ShellQuote.quote(prefix.getAbsolutePath());
         File filesDir = prefix.getParentFile();

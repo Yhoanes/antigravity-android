@@ -9,15 +9,15 @@
   <p><font color="#7d8590">Autonomous agentic development &amp; native reverse-engineering environment engineered for Android ARM64.</font></p>
 
   <p>
-    <code>v2.31.1</code> &nbsp;&bull;&nbsp;
+    <code>v2.31.1-r1</code> &nbsp;&bull;&nbsp;
     <code>Android 7.0+</code> &nbsp;&bull;&nbsp;
     <code>ARM64 v8.0-A+</code> &nbsp;&bull;&nbsp;
+    <code>Native Rust agy-box Engine</code> &nbsp;&bull;&nbsp;
     <code>Smart Android Marketplace</code> &nbsp;&bull;&nbsp;
     <code>AGY Video Studio (GPU)</code> &nbsp;&bull;&nbsp;
     <code>Craft Anything + Ghidra 12.1.4</code> &nbsp;&bull;&nbsp;
     <code>Live Voice Mode</code> &nbsp;&bull;&nbsp;
     <code>In-App OTA Updater</code> &nbsp;&bull;&nbsp;
-    <code>Shizuku Ready</code> &nbsp;&bull;&nbsp;
     <code>BY-NC / Apache 2.0</code>
   </p>
 
@@ -61,8 +61,8 @@ Unlike terminal-based chat wrappers or virtualized environments (PRoot, QEMU, ch
       <p><font color="#7d8590">1-tap auto-enabled reverse-engineering suite with <b>302 MCP tools</b> in Rust plus on-demand native Android ARM64 <b>Ghidra 12.1.4</b> (<code>decompile</code> &amp; <code>sleigh</code>) for ELF, PE, Mach-O, APK/DEX, .NET, and WASM analysis.</font></p>
     </td>
     <td width="50%" valign="top" style="border: 1px solid rgba(128, 128, 128, 0.2); border-radius: 12px; padding: 16px;">
-      <p><font size="4"><b>Zero-Friction Terminal &amp; Stage-Isolated <code>pkg</code></b></font></p>
-      <p><font color="#7d8590">Binary-patched <code>language_server</code> (<code>exebox</code> / <code>urpc.Fork</code> bypass), fast <code>O(1)</code> per-package staging in <code>$PKG_ROOT/stage</code> (<code>&lt;20 ms</code> prefix rewrite), and pre-bundled OpenJDK 21 TLS <code>cacerts</code>.</font></p>
+      <p><font size="4"><b>Native Rust <code>agy-box</code> Runtime Engine</b></font></p>
+      <p><font color="#7d8590">Single-binary Bionic ARM64 Rust accelerator: 4-thread parallel <code>pkg</code> (pure-Rust TLS + <code>.tar.xz/.zst</code>), zero-Python <code>agy-daemon</code> (<code>41 ms</code> <code>inotify</code>, <code>900 KB</code> heap), <code>112x</code> faster <code>agy-fix-paths</code>, Shizuku-free <code>agy-notify</code> (<code>&lt;55 ms</code>), and <code>398</code> zero-shell direct tool symlinks.</font></p>
     </td>
   </tr>
   <tr>
@@ -149,7 +149,7 @@ Designed for autonomous multi-agent workflows: project sidebar, parallel subagen
 ### 5. Customizations & Smart Android Marketplace Fusion
 
 Browse and install both **native Android ARM64 plugins** and **official Antigravity plugins** directly from **Customizations &rarr; Marketplace**:
-* **`Built for Android` Shelf (Shelf #1):** Features 1-tap auto-enabled native ARM64 plugins hosted live via [`antigravity-android-plugins`](https://github.com/Yhoanes/antigravity-android-plugins) — including **`AGY Video Studio` (`v2.1.3`)** (GPU `h264_mediacodec` video studio, neural TTS, CapCut drafts & Shizuku), **`Craft Anything + Ghidra` (`v0.4.0-r8`, 302 MCP tools)**, **`GitHub` (`v2.1.1-android`, 91 MCP tools + Bionic OAuth bridge)**, **`Chrome DevTools` (`v1.10.3-android`)** (headless ARM64 Chromium MCP), and **`Android CLI` (`v1.0.16625372-android`)** (on-device Shizuku `rish` workflows).
+* **`Built for Android` Shelf (Shelf #1):** Features 1-tap auto-enabled native ARM64 plugins hosted live via [`antigravity-android-plugins`](https://github.com/Yhoanes/antigravity-android-plugins) — including **`AGY Video Studio` (`v2.1.3`)** (GPU `h264_mediacodec` video studio, neural TTS, CapCut drafts & Shizuku), **`Craft Anything + Ghidra` (`v0.4.0-r8`, 302 MCP tools)**, **`GitHub` (`v2.1.1-android`, 91 MCP tools + Bionic OAuth bridge)**, **`Chrome DevTools` (`v1.10.4-android`)** (headless ARM64 Chromium MCP), and **`Android CLI` (`v1.0.16625373-android`)** (on-device Shizuku `rish` workflows).
 * **Official Shelves:** **Google Workspace** (Docs, Sheets, Slides, Drive, Calendar, Gmail), **Build with Google** (Gemini API, Firebase, Science, Google Antigravity SDK), and partner integrations, automatically normalized for Bionic ARM64 (`libagy-go-dns.so` DNS fix & sidecar cleanup).
 
 <br/>
@@ -176,15 +176,18 @@ Configure agent autonomy and workspace layout from **Settings**:
 
 ---
 
-### 7. Userspace & Production Runtime Optimizations
+### 7. Native Rust `agy-box` Engine &amp; Production Runtime Optimizations
 
-Every layer of the Android Bionic runtime has been hardened for low latency and zero storage bloat:
+Every layer of the Android Bionic runtime has been hardened for low latency, minimal RAM footprint, and zero storage bloat:
 
-* **Multiplexed WebSocket ConnectRPC & Instant Background Resume (`wsTransport=3`):** Routes `StreamAgentStateUpdates` and ConnectRPC traffic over `/connect-websocket` (`2s` inactivity ping / `4s` dead-stream timeout with automatic HTTP fallback), pairs with `agy:host-resume` & `visibilitychange` socket liveness probing (`<1.2s` zombie-socket recovery after OAuth browser redirects or app switching), and prevents background `WebView.freeMemory()` stream stalls.
+* **Native ARM64 Bionic Rust Multicall Engine (`agy-box` `v0.2.0`):** Linked solely against Android's `libc.so` and `libdl.so` (`3.52 MiB`), `agy-box` replaces shell/Python bottlenecks while retaining 100% automatic POSIX fallbacks (`libexec/` + `AGY_DISABLE_RUST_BOX=1`):
+  * **4-Thread Parallel `pkg` (`rustls` + `.ar`/`.tar.{xz,gz,zst}`):** Exact Debian `dpkg vercmp` dependency resolution, parallel HTTPS downloads, and on-the-fly in-RAM prefix/shebang rewriting during extraction.
+  * **Zero-Python `agy-daemon` (`41 ms` `inotify`, `900 KB` Heap):** Event-driven Linux `inotify` file watcher, HTTP webhook server, 5-field cron, GitHub PR/Issue poller, and battery monitor in **`4.32 MiB` RSS** (**~86% less RAM** than Python, working out-of-the-box before Python is installed).
+  * **SIMD `agy-fix-paths` (`112x` Faster) &amp; Native `agy-notify` (`<55 ms`):** Multithreaded NEON `memchr` prefix/shebang fixer (`103 ms` vs `11,523 ms`) and Shizuku-free native Android `NotificationManager` IPC queue (`53 ms` `post`/`cancel`/`list` without waiting on `rish`).
+  * **Zero-Shell Direct Runtime Bridges (`BRIDGE_FORMAT = 12`):** `398` `runtime/bin/<tool>` symlinks point directly to `agy-box`, injecting `LD_PRELOAD`, `LD_LIBRARY_PATH`, and `SSL_CERT_FILE` in C/Rust and `execve`-ing targets directly without spawning an intermediate `/system/bin/sh` process.
+* **Multiplexed WebSocket ConnectRPC &amp; Instant Background Resume (`wsTransport=3`):** Routes `StreamAgentStateUpdates` and ConnectRPC traffic over `/connect-websocket` (`2s` inactivity ping / `4s` dead-stream timeout with automatic HTTP fallback), pairs with `agy:host-resume` &amp; `visibilitychange` socket liveness probing (`<1.2s` zombie-socket recovery after OAuth browser redirects or app switching), and prevents background `WebView.freeMemory()` stream stalls.
 * **Direct Terminal Execution (`exebox` / `urpc.Fork` Bypass):** Binary-level patches in `liblanguage_server.so` (`initEscapeSbox`, `sbox_prep`, `resolveSandbox`, `isSandboxEnabled`, `ApplySettingsToConfig`) disable Linux desktop `CLONE_NEWUSER` / `seccomp` re-exec forks (`libloader.so: invalid argument`), allowing `run_command` to execute directly on Android whether `BypassSandbox` is `false` or `true`.
-* **`O(1)` Staged Package Installation (`pkg`):** `pkg install` extracts each `.deb` into an isolated staging directory (`$PKG_ROOT/stage`), rewrites hardcoded Termux prefixes in `<20 ms` (instead of rescanning the entire `$PREFIX` tree), indexes package files in a single pass, removes downloaded `.deb` archives immediately after extraction, and synchronizes `runtime/bin` bridges once per transaction.
-* **Out-of-the-Box OpenJDK 21 & Ghidra Support:** Pre-bundles the Java TLS truststore (`$PREFIX/etc/tls/certs/java/cacerts`), injects `JDK_JAVA_OPTIONS="-Duser.home=$HOME -Djava.io.tmpdir=$PREFIX/tmp"` across shells and runtime bridges, and uses self-safe glob patterns (`/data/[d]ata/...`) in `util.sh` and `agy-fix-paths`.
-* **Non-Blocking `agy-daemon` & Single-Call `agy-notify`:** Background scheduled tasks and webhooks execute in asynchronous daemon threads with concurrency guards (`_RUNNING_TASKS`) and automatic `1 MB` log rotation (`daemon.log.1`). System notifications cache the bundled app icon (`$PREFIX/share/antigravity/logo.png`) and post via `cmd notification` in a single `rish -c` call.
+* **Out-of-the-Box OpenJDK 21 &amp; Ghidra Support:** Pre-bundles the Java TLS truststore (`$PREFIX/etc/tls/certs/java/cacerts`), injects `JDK_JAVA_OPTIONS="-Duser.home=$HOME -Djava.io.tmpdir=$PREFIX/tmp"` across shells and runtime bridges, and uses self-safe glob patterns (`/data/[d]ata/...`) in fallback utilities.
 
 ---
 
@@ -208,8 +211,8 @@ Real-world test: the agent authored a custom Python I/O benchmark and executed m
     <td width="33%" valign="top" style="border: 1px solid rgba(128, 128, 128, 0.2); border-radius: 12px; padding: 16px;">
       <p><font size="4"><b>1. Download APK</b></font></p>
       <p><font color="#7d8590">Releases are available under <a href="https://github.com/Yhoanes/antigravity-android/releases">Releases</a>:<br/><br/>
-      &bull; <b><code>Antigravity-v2.31.1.apk</code></b> — full signed release with bundled Bionic toolchain and Smart Android Marketplace.<br/><br/>
-      <i>Seamless in-place updates are supported across versions.</i></font></p>
+      &bull; <b><code>Antigravity-v2.31.1-r1.apk</code></b> — full signed release with native Rust <code>agy-box</code> engine, bundled Bionic toolchain, Smart Android Marketplace, and in-app OTA updater.<br/><br/>
+      <i>Seamless 1-tap in-app OTA updates (<b>Restart to Update</b>) and in-place upgrades are supported across versions.</i></font></p>
     </td>
     <td width="33%" valign="top" style="border: 1px solid rgba(128, 128, 128, 0.2); border-radius: 12px; padding: 16px;">
       <p><font size="4"><b>2. Grant Permissions</b></font></p>
@@ -279,7 +282,7 @@ antigravity-android/
 ├── config/     # Centralized environment configs (app.env, paths.env, tools.env)
 ├── core/       # Glibc runtime manifest, seed states, and native media encoders
 ├── docs/       # Architecture specifications, manuals, and high-res visual assets
-├── env/        # Bionic toolchain, rootfs overlay, TLS cacerts, and pkg manager
+├── env/        # Bionic toolchain, native Rust agy-box engine (env/rust/agy-box), TLS cacerts & pkg manager
 ├── patches/    # Low-level binary patches (Go pclntab, exebox/seccomp bypass, AArch64 gates)
 ├── plugins/    # Native Craft Anything MCP server + Ghidra 12.1.4 ARM64 plugin source
 └── web/        # Workbench v2.31.1 UI, Smart Marketplace Fusion, touch patches, and audio relay
@@ -294,7 +297,7 @@ This project builds upon the foundational Android Bionic host architecture origi
 * **Core Engine & Workbench Upgrade (`v2.31.1`):** Updated ARM64 `language_server` (`go1.28`), Workbench UI bundle (`Gemini 4 Carbon/Argon`, `Claude 5.5`), multiplexed ConnectRPC WebSocket transport (`wsTransport=3` + `agy:host-resume` recovery), OAuth redirect & touch input trigger fixes, and native `webp_encoder` / `webm_encoder` binaries.
 * **Smart Android Marketplace Fusion & `AGY Video Studio`:** Live OTA plugin fusion via [`antigravity-android-plugins`](https://github.com/Yhoanes/antigravity-android-plugins) (`Built for Android` shelf), native GPU `h264_mediacodec` video studio (`AGY Video Studio`), native 91-tool `GitHub MCP` server, headless ARM64 Chromium MCP (`Chrome DevTools`), on-device `android` CLI bridge, and 16 KB-aligned `libagy-go-dns.so` Bionic DNS resolution for Go plugin CLIs.
 * **Native ARM64 Reverse Engineering (`Craft Anything` + `Ghidra 12.1.4`):** 302-tool Rust MCP server (`craft-anything-cli`), native Android Bionic ARM64 Ghidra `decompile` & `sleigh` binaries, and automated on-demand `craft-ghidra-setup` installer.
-* **Direct Terminal Execution & Production Runtime Hardening:** Binary `exebox` / `urpc.Fork` sandbox bypass in `liblanguage_server.so`, `O(1)` stage-isolated `pkg install`, pre-bundled OpenJDK 21 `cacerts`, multithreaded `agy-daemon` with log rotation, and single-call `agy-notify`.
+* **Native Rust `agy-box` Engine, In-App OTA Updater & Production Runtime Hardening:** Native ARM64 Rust multicall accelerator (`pkg` 4-thread parallel TLS/XZ installer, zero-Python `inotify` `agy-daemon`, `112x` faster `agy-fix-paths`, Shizuku-free `agy-notify` IPC, `398` zero-shell `BRIDGE_FORMAT = 12` symlinks), native `window.electronUpdater` 1-tap OTA updater, binary `exebox` / `urpc.Fork` sandbox bypass in `liblanguage_server.so`, and pre-bundled OpenJDK 21 `cacerts`.
 * **Real-Time Voice Chat & ARMv8.0-A Compatibility (`liblse_compat.so`):** Native WebRTC/WebAudio microphone pipeline and custom `SIGILL` trap-and-emulate layer for `FEAT_LSE` atomics, `FEAT_RDM`, and `FEAT_FCMA` SIMD instructions.
 
 ---

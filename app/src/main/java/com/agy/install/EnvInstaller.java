@@ -69,6 +69,7 @@ public final class EnvInstaller {
                 TermuxShebangRewriter.rewrite(prefix);
                 TermuxPrefixRewriter.rewrite(prefix);
                 FileModeUtil.recursiveSetExec(new File(prefix, "bin"));
+                FileModeUtil.recursiveSetExec(new File(prefix, "libexec"));
             } catch (Exception e) {
                 Log.w(TAG, "best-effort pkg/overlay refresh skipped: " + e.getMessage());
             }
@@ -104,6 +105,7 @@ public final class EnvInstaller {
         TermuxShebangRewriter.rewrite(prefix);
         TermuxPrefixRewriter.rewrite(prefix);
         FileModeUtil.recursiveSetExec(new File(prefix, "bin"));
+        FileModeUtil.recursiveSetExec(new File(prefix, "libexec"));
         FileModeUtil.setExec(new File(prefix, "libexec/pkg/pkg"));
         // Ship the reusable post-install fixer: users run it after pip/npm so
         // newly written console scripts are repointed at our prefix too.

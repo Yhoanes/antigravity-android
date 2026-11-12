@@ -2,6 +2,12 @@
 # pkg -- self-written package manager for the tlx environment.
 set -uo pipefail
 
+if [ "${AGY_DISABLE_RUST_BOX:-0}" != "1" ] && [ -x "${PREFIX:-/data/data/com.agy/files/usr}/bin/agy-box" ]; then
+    if "${PREFIX:-/data/data/com.agy/files/usr}/bin/agy-box" --probe >/dev/null 2>&1; then
+        exec "${PREFIX:-/data/data/com.agy/files/usr}/bin/agy-box" pkg "$@"
+    fi
+fi
+
 PKG_SELF="$(cd "$(dirname "$0")" && pwd)"
 PKG_LIB="$PKG_SELF/lib"
 

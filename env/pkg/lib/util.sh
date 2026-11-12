@@ -99,7 +99,7 @@ fi
 EOF
         chmod 755 "$bridge" 2>/dev/null || true
     done
-    printf '11\n%s\n%d\n' "$PREFIX" "$count" > "$rbin/.agy-bridges" 2>/dev/null || true
+    printf '12\n%s\n%d\n' "$PREFIX" "$count" > "$rbin/.agy-bridges" 2>/dev/null || true
 }
 
 load_conf() {
