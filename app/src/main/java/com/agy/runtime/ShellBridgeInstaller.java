@@ -42,13 +42,13 @@ public final class ShellBridgeInstaller {
             "webp_encoder", "webm_encoder", "webm_encoder.elf", "agy-node"
     };
 
-    /** Known file offset of embedded ELF #2 (webm_encoder / webp_encoder) in liblanguage_server.so. */
-    private static final long KNOWN_ELF2_OFFSET = 0xAE42039L;
+    /** Known file offset of embedded ELF #2 (webm_encoder / webp_encoder) in liblanguage_server.so (v2.32.0). */
+    private static final long KNOWN_ELF2_OFFSET = 0xB151D17L;
 
     /** Records which prefix the bulk bridges were generated for. Bump when the
      *  bridge script format changes so a warm launch regenerates them once. */
     private static final String BRIDGE_MARKER = ".agy-bridges";
-    private static final int BRIDGE_FORMAT = 12;
+    private static final int BRIDGE_FORMAT = 13;
 
     private ShellBridgeInstaller() {
     }
@@ -171,7 +171,7 @@ public final class ShellBridgeInstaller {
         if (bin == null) return;
         File core = new File(bin, RuntimePaths.CORE_NAME);
         File targetElf = new File(bin, "webm_encoder.elf");
-        if ((!targetElf.isFile() || targetElf.length() < 65536) && core.isFile()) {
+        if ((!targetElf.isFile() || targetElf.length() < 65536 || targetElf.lastModified() < core.lastModified()) && core.isFile()) {
             try (RandomAccessFile raf = new RandomAccessFile(core, "r")) {
                 long elfOffset = findEmbeddedEncoderOffset(raf);
                 if (elfOffset > 0) {
@@ -219,8 +219,8 @@ public final class ShellBridgeInstaller {
         if (len > KNOWN_ELF2_OFFSET + 64 && isValidAarch64Elf64(raf, KNOWN_ELF2_OFFSET)) {
             return KNOWN_ELF2_OFFSET;
         }
-        // Fallback scan over the tail 32 MB if liblanguage_server.so offset shifted in a newer build
-        long start = Math.max(4096L, len - 32L * 1024L * 1024L);
+        // Fallback scan over the tail 64 MB if liblanguage_server.so offset shifted in a newer build
+        long start = Math.max(4096L, len - 64L * 1024L * 1024L);
         raf.seek(start);
         byte[] buf = new byte[65536];
         long pos = start;
@@ -427,7 +427,7 @@ public final class ShellBridgeInstaller {
             for (File toolFile : prefixTools) {
                 if (toolFile.isFile()) {
                     String name = toolFile.getName();
-                    if ("rish".equals(name) || isOpenUrlShim(name)) {
+                    if ("rish".equals(name) || "sh".equals(name) || "bash".equals(name) || isOpenUrlShim(name)) {
                         continue;
                     }
                     if (!"agy-box".equals(name)) {
@@ -773,7 +773,7 @@ public final class ShellBridgeInstaller {
                 || "agy-video-mcp".equals(target) || "agy-video-setup".equals(target)) {
             return;
         }
-        if (!"bash".equals(target)) {
+        if (!"bash".equals(target) && !"sh".equals(bridge.getName())) {
             File agyBox = new File(prefix, "bin/agy-box");
             if (agyBox.isFile()) {
                 try {
@@ -852,6 +852,11 @@ public final class ShellBridgeInstaller {
     }
 
     private static void writeScript(File bridge, String script) {
+        try {
+            android.system.Os.lstat(bridge.getAbsolutePath());
+            bridge.delete();
+        } catch (Throwable ignored) {
+        }
         try (OutputStream out = new FileOutputStream(bridge)) {
             out.write(script.getBytes(Charset.forName("UTF-8")));
         } catch (IOException e) {

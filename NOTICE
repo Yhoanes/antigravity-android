@@ -1,11 +1,11 @@
-Antigravity for Android (v2.31.1)
+Antigravity for Android (v2.32.0)
 Copyright (c) 2026 Yhoanes (https://github.com/Yhoanes/antigravity-android)
 
 ========================================================================
 ATTRIBUTION & DERIVATIVE WORK NOTICE (Apache License 2.0, Section 4)
 ========================================================================
 
-This product and derivative distribution ("Antigravity for Android v2.29.0 - v2.31.1")
+This product and derivative distribution ("Antigravity for Android v2.29.0 - v2.32.0")
 was engineered, expanded, and maintained by Yhoanes:
   https://github.com/Yhoanes/antigravity-android
 
@@ -16,9 +16,9 @@ attribution to Yhoanes, including a direct link to the official repository:
   https://github.com/Yhoanes/antigravity-android
 
 Proprietary / Non-Commercial Modifications by Yhoanes (2026):
-  - Core Engine & Workbench v2.31.1 integration, multiplexed ConnectRPC
-    WebSocket transport (wsTransport=3 + agy:host-resume liveness recovery),
-    binary patch signatures, and touch reasoning submenu patches.
+  - Core Engine & Workbench v2.32.0 integration, ConnectRPC HTTP/2 & WebSocket
+    background stream resume recovery (agy:host-resume), binary patch signatures,
+    and touch reasoning submenu patches.
   - Smart Android Marketplace OTA Fusion (Built for Android shelf via
     Yhoanes/antigravity-android-plugins: AGY Video Studio GPU h264_mediacodec,
     GitHub MCP 91-tool server, Headless Chrome DevTools, and Android CLI) plus

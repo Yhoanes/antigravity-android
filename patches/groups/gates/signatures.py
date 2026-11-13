@@ -28,22 +28,18 @@ SIG_VOICE_RELAY = re.compile(rb"\xe4\x00\x00\xb4\x84\x04\x40\x39\xa4\x00\x00\x36
 PATCHED_VOICE_RELAY = re.compile(rb"(?<!\xe3\x2b\x00\xf9)(\x1f\x20\x03\xd5){3}" + _VOICE_RET_TAIL, re.S)
 REPL_VOICE_RELAY = b"\x1f\x20\x03\xd5" * 3
 
-SIG_VOICE_ALLOWED = re.compile(rb"\xe3\x2b\x00\xf9\x64\x00\x00\xb4\x05\x60\x42\xf9\xa5\x00\x00\xb5" + _VOICE_RET_TAIL, re.S)
+SIG_VOICE_ALLOWED = re.compile(rb"\xe3\x2b\x00\xf9\x64\x00\x00\xb4\x05[\x60\x6c]\x42\xf9\xa5\x00\x00\xb5" + _VOICE_RET_TAIL, re.S)
 PATCHED_VOICE_ALLOWED = re.compile(rb"\xe3\x2b\x00\xf9(\x1f\x20\x03\xd5){3}" + _VOICE_RET_TAIL, re.S)
 REPL_VOICE_ALLOWED = b"\xe3\x2b\x00\xf9" + (b"\x1f\x20\x03\xd5" * 3)
 
 # --- Voice instructions ResolveRequestAgentConfig -------------------------
-# Site 1 @ 0x754a528 (12 bytes):
-#   cbz x10, 0x754a674; tbz w9, #0, 0x754a53c; cbz x10, 0x754a674
-# -> tbnz w9, #0, 0x754a534; cbz x10, 0x754a674; b 0x754a53c
+# Site 1 @ 0x77235a8 (12 bytes):
 REPL_VOICE_CFG_S1 = bytes.fromhex("690000374a0a00b403000014")
 SIG_VOICE_CFG_S1 = re.compile(re.escape(bytes.fromhex("6a0a00b4890000362a0a00b4")), re.S)
 PATCHED_VOICE_CFG_S1 = re.compile(re.escape(REPL_VOICE_CFG_S1), re.S)
 
-# Site 2 @ 0x754a674 (24 bytes):
-#   ldr x9, [sp, #0x128]; cbnz x9, 0x754a710; ldr x9, [sp, #0x140]; cbnz x9, 0x754a68c; mov x3, xzr; b 0x754a714
-# -> mov x0, xzr; orr x1, xzr, #1; mov x2, xzr; bl 0x7cdee50 <buildProductAPICustomAgentSpec>; str x0, [sp, #0x138]; b 0x754a630
-REPL_VOICE_CFG_S2 = bytes.fromhex("e0031faae10340b2e2031faaf4511e94e09f00f9eaffff17")
+# Site 2 @ 0x77236f4 (24 bytes, BL 0x7f5c780 <buildProductAPICustomAgentSpec> in v2.32.0):
+REPL_VOICE_CFG_S2 = bytes.fromhex("e0031faae10340b2e2031faa20e42094e09f00f9eaffff17")
 SIG_VOICE_CFG_S2 = re.compile(re.escape(bytes.fromhex("e99740f9c90400b5e9a340f9690000b5e3031faa23000014")), re.S)
 PATCHED_VOICE_CFG_S2 = re.compile(re.escape(REPL_VOICE_CFG_S2), re.S)
 
