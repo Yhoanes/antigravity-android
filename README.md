@@ -2,11 +2,11 @@
 
   <br/>
 
-  <img src="docs/assets/logo.png" alt="Antigravity" width="96" height="96" style="border-radius: 22px; margin-bottom: 12px;" />
+  <img src="docs/assets/logo.png" alt="Antigravity for Android Logo" width="96" height="96" style="border-radius: 22px; margin-bottom: 12px;" />
 
-  <p><font size="6"><b>Antigravity for Android</b></font></p>
+  <h1 align="center">Antigravity for Android</h1>
 
-  <p><font color="#7d8590">Autonomous agentic development &amp; native reverse-engineering environment engineered for Android ARM64.</font></p>
+  <p><font color="#7d8590">Standalone <b>Google Antigravity</b> autonomous coding IDE &amp; native <b>ARM64 Bionic</b> reverse-engineering APK for Android — engineered by <a href="https://github.com/Yhoanes"><b>Yhoanes</b></a> (zero PRoot/Termux virtualization overhead).</font></p>
 
   <p>
     <code>v2.32.0</code> &nbsp;&bull;&nbsp;
@@ -21,28 +21,34 @@
     <code>BY-NC / Apache 2.0</code>
   </p>
 
+  <p>
+    <a href="https://yhoanes.github.io/antigravity-android/"><b>Official Website &amp; Benchmarks</b></a> &nbsp;&bull;&nbsp;
+    <a href="https://github.com/Yhoanes/antigravity-android/releases/latest"><b>Download Signed APK (v2.32.0)</b></a> &nbsp;&bull;&nbsp;
+    <a href="https://github.com/Yhoanes/antigravity-android-plugins"><b>ARM64 Plugin Marketplace</b></a>
+  </p>
+
   <br/>
 
   <!-- Hero Visual -->
-  <img alt="Antigravity v2.32.0 Interface in Action" src="docs/assets/hero_home.jpg" width="100%" style="border-radius: 14px; border: 1px solid rgba(128, 128, 128, 0.2); box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);" />
+  <img alt="Antigravity for Android v2.32.0 Standalone Autonomous Agent IDE Interface" src="docs/assets/hero_home.jpg" width="100%" style="border-radius: 14px; border: 1px solid rgba(128, 128, 128, 0.2); box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);" />
   <p align="center"><font size="2" color="#7d8590">Antigravity v2.32.0 autonomous agent workspace on Android with Orchestrator (Carbon/Argon), Gemini 4 (Carbon/Argon/Hydrogen) &amp; Live Voice Mode</font></p>
 
 </div>
 
 ---
 
-<p><font size="5"><b>Architectural Overview</b></font></p>
+## Architectural Overview
 
-**Antigravity for Android (`v2.32.0`)** brings Google's autonomous agentic coding engine and a full native binary reverse-engineering suite directly to mobile operating systems.
+**Antigravity for Android (`v2.32.0`)** by **[Yhoanes](https://github.com/Yhoanes)** brings Google's autonomous agentic coding engine (`Google Antigravity` IDE & CLI) and a full native binary reverse-engineering suite directly to Android phones and tablets as a standalone APK.
 
-Unlike terminal-based chat wrappers or virtualized environments (PRoot, QEMU, chroot), Antigravity executes **natively inside Android userspace (Bionic)** within the application process. Powered by next-generation models (**Gemini 4 Carbon**, **Gemini 4 Argon**, **Gemini 4 Hydrogen**, **Orchestrator (Carbon)**, **Orchestrator (Argon)**, **Gemini 3.8 Flash**, **Claude Opus 5.5**, **Claude Sonnet 5.5**, and **GPT-OSS 120B**), the agent autonomously inspects codebases, decompiles multi-architecture binaries, edits project trees, executes build tools, and validates results directly on physical mobile hardware.
+Unlike terminal-based chat wrappers or virtualized Linux containers (`PRoot`, `QEMU`, `chroot`, `Termux proot-distro`), Antigravity executes **natively inside Android userspace (Bionic)** within the application process. Powered by next-generation models (**Gemini 4 Carbon**, **Gemini 4 Argon**, **Gemini 4 Hydrogen**, **Orchestrator (Carbon)**, **Orchestrator (Argon)**, **Gemini 3.8 Flash**, **Claude Opus 5.5**, **Claude Sonnet 5.5**, and **GPT-OSS 120B**), the agent autonomously inspects codebases, decompiles multi-architecture binaries, edits project trees, executes build tools, and validates results directly on physical mobile hardware.
 
 > [!NOTE]
 > **Bare-Metal Execution with Transparent Compatibility:** Processes run directly on the host CPU via a hybrid Bionic/Glibc loader without virtualization penalties, taking full advantage of UFS storage throughput and ARMv8.1-A+ Large System Extension (LSE) atomics (with transparent userspace `SIGILL` emulation for ARMv8.0-A CPUs via `liblse_compat.so`).
 
 ---
 
-<p><font size="5"><b>Key Capabilities</b></font></p>
+## Key Capabilities
 
 <table width="100%" style="border-collapse: separate; border-spacing: 8px; border: none;">
   <tr>
@@ -79,7 +85,7 @@ Unlike terminal-based chat wrappers or virtualized environments (PRoot, QEMU, ch
 
 ---
 
-<p><font size="5"><b>Visual Feature Walkthrough</b></font></p>
+## Visual Feature Walkthrough
 
 ### 1. Next-Generation Models & Touch Reasoning Controls (`v2.32.0`)
 
@@ -204,7 +210,7 @@ Real-world test: the agent authored a custom Python I/O benchmark and executed m
 
 ---
 
-<p><font size="5"><b>Installation &amp; Getting Started</b></font></p>
+## Installation & Getting Started
 
 <table width="100%" style="border-collapse: separate; border-spacing: 8px; border: none;">
   <tr>
@@ -231,7 +237,7 @@ Real-world test: the agent authored a custom Python I/O benchmark and executed m
 
 ---
 
-<p><font size="5"><b>System Requirements</b></font></p>
+## System Requirements
 
 <table width="100%" style="border-collapse: separate; border-spacing: 0; border: 1px solid rgba(128, 128, 128, 0.2); border-radius: 12px; overflow: hidden;">
   <thead>
@@ -272,7 +278,20 @@ Real-world test: the agent authored a custom Python I/O benchmark and executed m
 
 ---
 
-<p><font size="5"><b>Repository Structure</b></font></p>
+## Frequently Asked Questions (Google Antigravity on Android)
+
+**How is Antigravity for Android different from running Antigravity CLI inside Termux or PRoot?**  
+Unlike `proot-distro` or containerized wrappers that intercept every Linux syscall with heavy I/O overhead, **Antigravity for Android** runs natively inside Android userspace (`Bionic`/`Glibc` hybrid loader + single-binary Rust `agy-box` engine), delivering **1,222 MB/s** sequential reads, **84,395 IOPS** on physical UFS storage, full WebView Workbench UI (`v2.32.0`), Live Voice WebRTC, and 1-tap OTA updates in a standalone APK.
+
+**Does Antigravity for Android require root access?**  
+No. It runs out of the box as a standard unrooted user on **Android 7.0+ (`ARM64 v8.0-A+`)** thanks to binary-patched `exebox`/`seccomp` bypasses in `liblanguage_server.so` and `liblse_compat.so` atomics emulation. Optional **Shizuku (`rish`)** integration unlocks silent 1-tap APK upgrades and on-device ADB shell automation without rooting.
+
+**Can it decompile ARM64, Windows PE, and Android APK binaries directly on a phone?**  
+Yes. Installing **Craft Anything + Ghidra (`v0.4.0-r8`)** from *Customizations &rarr; Marketplace* activates **302 native ARM64 Rust MCP tools** immediately (`<50 MB` RAM, zero downloads) plus optional 1-command setup (`craft-ghidra-setup`) for native Android Bionic ARM64 **Ghidra 12.1.4** (`decompile` & `sleigh` + `OpenJDK 21`).
+
+---
+
+## Repository Structure
 
 ```text
 antigravity-android/
@@ -290,7 +309,7 @@ antigravity-android/
 
 ---
 
-<p><font size="5"><b>Acknowledgments &amp; Attribution</b></font></p>
+## Acknowledgments & Attribution
 
 This project builds upon the foundational Android Bionic host architecture originally created by [werdio325-png/antigravity-android](https://github.com/werdio325-png/antigravity-android), with major architectural upgrades and expansions in this repository (`v2.32.0`), including:
 
@@ -302,7 +321,7 @@ This project builds upon the foundational Android Bionic host architecture origi
 
 ---
 
-<p><font size="5"><b>License, Copyright &amp; Attribution Terms</b></font></p>
+## License, Copyright & Attribution Terms
 
 **Copyright &copy; 2026 [Yhoanes](https://github.com/Yhoanes)** (`v2.29.0` – `v2.32.0` modifications, reverse-engineering suite integration, voice relay, runtime optimizations, documentation, and compiled APK distributions).
 
