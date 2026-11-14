@@ -21,6 +21,7 @@ var trackedStateStreams = [];
 var lastResumeProbeAt = 0;
 var lastStreamRecycleAt = 0;
 var lastHiddenAt = 0;
+var lastBlurredAt = 0;
 
 var streamResumeStats = {
   activeStreams: 0,
@@ -38,7 +39,7 @@ function isConnectWebSocketUrl(url) {
 
 function isAgentStateStreamUrl(url) {
   if (!url) return false;
-  return /\/streamagentstateupdates(?:\?|$)/i.test(String(url));
+  return /\/(?:streamagentstateupdates|jetboxsubscribetosummaries)(?:\?|$)/i.test(String(url));
 }
 
 function buildGrpcWebOkTrailer() {
@@ -74,10 +75,10 @@ function syncStreamCount() {
   streamResumeStats.activeStreams = trackedStateStreams.length;
 }
 
-function recycleTrackedStateStreams(reason, hiddenDurationMs) {
+function recycleTrackedStateStreams(reason, awayDurationMs) {
   var now = Date.now();
   if (now - lastStreamRecycleAt < 450) return;
-  if (reason !== 'agy:host-resume' && hiddenDurationMs < 1500) return;
+  if (reason !== 'agy:host-resume' && awayDurationMs < 1500) return;
   lastStreamRecycleAt = now;
 
   var snapshot = trackedStateStreams.slice();
@@ -90,14 +91,15 @@ function recycleTrackedStateStreams(reason, hiddenDurationMs) {
   }
 }
 
-function probeTrackedSockets(reason) {
+function probeTrackedSockets(reason, explicitAwayMs) {
   var now = Date.now();
   var hiddenDurationMs = lastHiddenAt > 0 ? Math.max(0, now - lastHiddenAt) : 0;
+  var awayDurationMs = Math.max(hiddenDurationMs, explicitAwayMs || 0);
   if (!global.document || global.document.visibilityState === 'visible') {
     lastHiddenAt = 0;
   }
 
-  recycleTrackedStateStreams(reason, hiddenDurationMs);
+  recycleTrackedStateStreams(reason, awayDurationMs);
 
   if (now - lastResumeProbeAt < 250) return;
   lastResumeProbeAt = now;
@@ -372,6 +374,16 @@ function installWebSocketResumeGuard() {
   });
   global.addEventListener('pageshow', function (ev) {
     if (ev && ev.persisted) probeTrackedSockets('pageshow');
+  });
+  global.addEventListener('blur', function () {
+    lastBlurredAt = Date.now();
+  });
+  global.addEventListener('focus', function () {
+    var blurMs = lastBlurredAt > 0 ? Math.max(0, Date.now() - lastBlurredAt) : 0;
+    lastBlurredAt = 0;
+    if (blurMs >= 2000) {
+      probeTrackedSockets('window-focus', blurMs);
+    }
   });
 
   global.__AG_WS_RESUME_GUARD__ = true;

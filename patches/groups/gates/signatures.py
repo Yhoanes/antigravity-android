@@ -33,12 +33,12 @@ PATCHED_VOICE_ALLOWED = re.compile(rb"\xe3\x2b\x00\xf9(\x1f\x20\x03\xd5){3}" + _
 REPL_VOICE_ALLOWED = b"\xe3\x2b\x00\xf9" + (b"\x1f\x20\x03\xd5" * 3)
 
 # --- Voice instructions ResolveRequestAgentConfig -------------------------
-# Site 1 @ 0x77235a8 (12 bytes):
+# Site 1 @ 0x77238a8 (12 bytes):
 REPL_VOICE_CFG_S1 = bytes.fromhex("690000374a0a00b403000014")
 SIG_VOICE_CFG_S1 = re.compile(re.escape(bytes.fromhex("6a0a00b4890000362a0a00b4")), re.S)
 PATCHED_VOICE_CFG_S1 = re.compile(re.escape(REPL_VOICE_CFG_S1), re.S)
 
-# Site 2 @ 0x77236f4 (24 bytes, BL 0x7f5c780 <buildProductAPICustomAgentSpec> in v2.32.0):
+# Site 2 @ 0x77239f4 (24 bytes, BL 0x7f5ca80 <buildProductAPICustomAgentSpec> in v2.32.1):
 REPL_VOICE_CFG_S2 = bytes.fromhex("e0031faae10340b2e2031faa20e42094e09f00f9eaffff17")
 SIG_VOICE_CFG_S2 = re.compile(re.escape(bytes.fromhex("e99740f9c90400b5e9a340f9690000b5e3031faa23000014")), re.S)
 PATCHED_VOICE_CFG_S2 = re.compile(re.escape(REPL_VOICE_CFG_S2), re.S)

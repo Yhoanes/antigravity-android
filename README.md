@@ -9,7 +9,7 @@
   <p><font color="#7d8590">Standalone <b>Google Antigravity</b> autonomous coding IDE &amp; native <b>ARM64 Bionic</b> reverse-engineering APK for Android — engineered by <a href="https://github.com/Yhoanes"><b>Yhoanes</b></a> (zero PRoot/Termux virtualization overhead).</font></p>
 
   <p>
-    <code>v2.32.0</code> &nbsp;&bull;&nbsp;
+    <code>v2.32.1</code> &nbsp;&bull;&nbsp;
     <code>Android 7.0+</code> &nbsp;&bull;&nbsp;
     <code>ARM64 v8.0-A+</code> &nbsp;&bull;&nbsp;
     <code>Native Rust agy-box Engine</code> &nbsp;&bull;&nbsp;
@@ -23,15 +23,15 @@
 
   <p>
     <a href="https://yhoanes.github.io/antigravity-android/"><b>Official Website &amp; Benchmarks</b></a> &nbsp;&bull;&nbsp;
-    <a href="https://github.com/Yhoanes/antigravity-android/releases/latest"><b>Download Signed APK (v2.32.0)</b></a> &nbsp;&bull;&nbsp;
+    <a href="https://github.com/Yhoanes/antigravity-android/releases/latest"><b>Download Signed APK (v2.32.1)</b></a> &nbsp;&bull;&nbsp;
     <a href="https://github.com/Yhoanes/antigravity-android-plugins"><b>ARM64 Plugin Marketplace</b></a>
   </p>
 
   <br/>
 
   <!-- Hero Visual -->
-  <img alt="Antigravity for Android v2.32.0 Standalone Autonomous Agent IDE Interface" src="docs/assets/hero_home.jpg" width="100%" style="border-radius: 14px; border: 1px solid rgba(128, 128, 128, 0.2); box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);" />
-  <p align="center"><font size="2" color="#7d8590">Antigravity v2.32.0 autonomous agent workspace on Android with Orchestrator (Carbon/Argon), Gemini 4 (Carbon/Argon/Hydrogen) &amp; Live Voice Mode</font></p>
+  <img alt="Antigravity for Android v2.32.1 Standalone Autonomous Agent IDE Interface" src="docs/assets/hero_home.jpg" width="100%" style="border-radius: 14px; border: 1px solid rgba(128, 128, 128, 0.2); box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);" />
+  <p align="center"><font size="2" color="#7d8590">Antigravity v2.32.1 autonomous agent workspace on Android with Orchestrator (Carbon/Argon), Gemini 4 (Carbon/Argon/Hydrogen) &amp; Live Voice Mode</font></p>
 
 </div>
 
@@ -39,7 +39,7 @@
 
 ## Architectural Overview
 
-**Antigravity for Android (`v2.32.0`)** by **[Yhoanes](https://github.com/Yhoanes)** brings Google's autonomous agentic coding engine (`Google Antigravity` IDE & CLI) and a full native binary reverse-engineering suite directly to Android phones and tablets as a standalone APK.
+**Antigravity for Android (`v2.32.1`)** by **[Yhoanes](https://github.com/Yhoanes)** brings Google's autonomous agentic coding engine (`Google Antigravity` IDE & CLI) and a full native binary reverse-engineering suite directly to Android phones and tablets as a standalone APK.
 
 Unlike terminal-based chat wrappers or virtualized Linux containers (`PRoot`, `QEMU`, `chroot`, `Termux proot-distro`), Antigravity executes **natively inside Android userspace (Bionic)** within the application process. Powered by next-generation models (**Gemini 4 Carbon**, **Gemini 4 Argon**, **Gemini 4 Hydrogen**, **Orchestrator (Carbon)**, **Orchestrator (Argon)**, **Gemini 3.8 Flash**, **Claude Opus 5.5**, **Claude Sonnet 5.5**, and **GPT-OSS 120B**), the agent autonomously inspects codebases, decompiles multi-architecture binaries, edits project trees, executes build tools, and validates results directly on physical mobile hardware.
 
@@ -87,14 +87,14 @@ Unlike terminal-based chat wrappers or virtualized Linux containers (`PRoot`, `Q
 
 ## Visual Feature Walkthrough
 
-### 1. Next-Generation Models & Touch Reasoning Controls (`v2.32.0`)
+### 1. Next-Generation Models & Touch Reasoning Controls (`v2.32.1`)
 
 Select between **Gemini 4 Carbon**, **Gemini 4 Argon**, **Gemini 4 Hydrogen**, **Orchestrator (Carbon)**, **Orchestrator (Argon)**, **Gemini 3.8 Flash**, **Claude Opus 5.5**, **Claude Sonnet 5.5**, and **GPT-OSS 120B**. Touch-engineered submenu patches allow effortless selection of reasoning effort levels (`Low`, `Medium`, `High`) on mobile and tablet screens without requiring desktop hover events.
 
 <br/>
 
 <img alt="Model Selector and Reasoning Effort Submenu" src="docs/assets/model_selector.jpg" width="100%" style="border-radius: 12px; border: 1px solid rgba(128, 128, 128, 0.2); box-shadow: 0 8px 24px rgba(0,0,0,0.25);" />
-<p align="center"><font size="2" color="#7d8590">v2.32.0 model selector with Gemini 4 (Carbon/Argon/Hydrogen), Orchestrator (Carbon/Argon), Claude 5.5, and touch-activated reasoning effort submenu</font></p>
+<p align="center"><font size="2" color="#7d8590">v2.32.1 model selector with Gemini 4 (Carbon/Argon/Hydrogen), Orchestrator (Carbon/Argon), Claude 5.5, and touch-activated reasoning effort submenu</font></p>
 
 <br/>
 
@@ -126,9 +126,9 @@ Available in 1 tap from the **`Built for Android`** shelf in **Customizations &r
 
 ---
 
-### 3. Real-Time Bidirectional Voice Chat (`v2.32.0`)
+### 3. Real-Time Bidirectional Voice Chat (`v2.32.1`)
 
-Speak directly with the autonomous agent in real time. Powered by native WebRTC/WebAudio microphone bridging (`RECORD_AUDIO`, `MODIFY_AUDIO_SETTINGS`) and unlocked `v2.32.0` voice relay feature gates (`cascade-enable-voice`, `send_voice_button_variant`).
+Speak directly with the autonomous agent in real time. Powered by native WebRTC/WebAudio microphone bridging (`RECORD_AUDIO`, `MODIFY_AUDIO_SETTINGS`) and unlocked `v2.32.1` voice relay feature gates (`cascade-enable-voice`, `send_voice_button_variant`).
 
 <br/>
 
@@ -146,7 +146,7 @@ Designed for autonomous multi-agent workflows: project sidebar, parallel subagen
 <br/>
 
 <img alt="Antigravity Multi-Agent Workspace" src="docs/assets/workspace_subagents.jpg" width="100%" style="border-radius: 12px; border: 1px solid rgba(128, 128, 128, 0.2); box-shadow: 0 8px 24px rgba(0,0,0,0.25);" />
-<p align="center"><font size="2" color="#7d8590">Parallel subagent spawning and live status tracking inside the v2.32.0 workspace</font></p>
+<p align="center"><font size="2" color="#7d8590">Parallel subagent spawning and live status tracking inside the v2.32.1 workspace</font></p>
 
 <br/>
 
@@ -167,7 +167,7 @@ Browse and install both **native Android ARM64 plugins** and **official Antigrav
 
 ---
 
-### 6. Execution Policies, Interface Modes & Settings (`v2.32.0`)
+### 6. Execution Policies, Interface Modes & Settings (`v2.32.1`)
 
 Configure agent autonomy and workspace layout from **Settings**:
 * **Interface Layout:** Switch between **Knowledge Work** (streamlined research/writing view) and **Software Engineering** (full IDE, terminal, and multi-agent controls).
@@ -176,7 +176,7 @@ Configure agent autonomy and workspace layout from **Settings**:
 <br/>
 
 <img alt="General Settings and Execution Policies" src="docs/assets/settings_general.jpg" width="100%" style="border-radius: 12px; border: 1px solid rgba(128, 128, 128, 0.2); box-shadow: 0 8px 24px rgba(0,0,0,0.25);" />
-<p align="center"><font size="2" color="#7d8590">v2.32.0 General settings panel with Knowledge Work / Software Engineering modes and execution policies</font></p>
+<p align="center"><font size="2" color="#7d8590">v2.32.1 General settings panel with Knowledge Work / Software Engineering modes and execution policies</font></p>
 
 <br/>
 
@@ -191,7 +191,7 @@ Every layer of the Android Bionic runtime has been hardened for low latency, min
   * **Zero-Python `agy-daemon` (`41 ms` `inotify`, `900 KB` Heap):** Event-driven Linux `inotify` file watcher, HTTP webhook server, 5-field cron, GitHub PR/Issue poller, and battery monitor in **`4.32 MiB` RSS** (**~86% less RAM** than Python, working out-of-the-box before Python is installed).
   * **SIMD `agy-fix-paths` (`112x` Faster) &amp; Native `agy-notify` (`<55 ms`):** Multithreaded NEON `memchr` prefix/shebang fixer (`103 ms` vs `11,523 ms`) and Shizuku-free native Android `NotificationManager` IPC queue (`53 ms` `post`/`cancel`/`list` without waiting on `rish`).
   * **Zero-Shell Direct Runtime Bridges (`BRIDGE_FORMAT = 12`):** `398` `runtime/bin/<tool>` symlinks point directly to `agy-box`, injecting `LD_PRELOAD`, `LD_LIBRARY_PATH`, and `SSL_CERT_FILE` in C/Rust and `execve`-ing targets directly without spawning an intermediate `/system/bin/sh` process.
-* **HTTP/2 &amp; WebSocket Stream Resume Guard (`agy:host-resume`):** Wraps `StreamAgentStateUpdates` on envelope boundaries (`5-byte` gRPC-Web / Connect framing) and recycles stale background streams via clean status-0 trailer injection upon `MainActivity.onResume` or `visibilitychange`, re-synchronizing completed agent turns in `<1s` after switching apps or returning from OAuth browser redirects without extra background battery drain.
+* **HTTP/2 &amp; WebSocket Stream Resume Guard (`agy:host-resume` &amp; `window-focus`):** Wraps `StreamAgentStateUpdates` and `JetboxSubscribeToSummaries` on envelope boundaries (`5-byte` gRPC-Web / Connect framing) and recycles stale background streams via clean status-0 trailer injection upon `MainActivity.onResume`, `visibilitychange`, or multi-window `window-focus`, re-synchronizing completed agent turns and sidebar spinner/summary states in `<1s` after switching apps or returning from OAuth browser redirects without extra background battery drain.
 * **Direct Terminal Execution (`exebox` / `urpc.Fork` Bypass):** Binary-level patches in `liblanguage_server.so` (`initEscapeSbox`, `sbox_prep`, `resolveSandbox`, `isSandboxEnabled`, `ApplySettingsToConfig`) disable Linux desktop `CLONE_NEWUSER` / `seccomp` re-exec forks (`libloader.so: invalid argument`), allowing `run_command` to execute directly on Android whether `BypassSandbox` is `false` or `true`.
 * **Out-of-the-Box OpenJDK 21 &amp; Ghidra Support:** Pre-bundles the Java TLS truststore (`$PREFIX/etc/tls/certs/java/cacerts`), injects `JDK_JAVA_OPTIONS="-Duser.home=$HOME -Djava.io.tmpdir=$PREFIX/tmp"` across shells and runtime bridges, and uses self-safe glob patterns (`/data/[d]ata/...`) in fallback utilities.
 
@@ -217,7 +217,7 @@ Real-world test: the agent authored a custom Python I/O benchmark and executed m
     <td width="33%" valign="top" style="border: 1px solid rgba(128, 128, 128, 0.2); border-radius: 12px; padding: 16px;">
       <p><font size="4"><b>1. Download APK</b></font></p>
       <p><font color="#7d8590">Releases are available under <a href="https://github.com/Yhoanes/antigravity-android/releases">Releases</a>:<br/><br/>
-      &bull; <b><code>Antigravity-v2.32.0.apk</code></b> — full signed release with native Rust <code>agy-box</code> engine, bundled Bionic toolchain, Smart Android Marketplace, and in-app OTA updater.<br/><br/>
+      &bull; <b><code>Antigravity-v2.32.1.apk</code></b> — full signed release with native Rust <code>agy-box</code> engine, bundled Bionic toolchain, Smart Android Marketplace, and in-app OTA updater.<br/><br/>
       <i>Seamless 1-tap in-app OTA updates (<b>Restart to Update</b>) and in-place upgrades are supported across versions.</i></font></p>
     </td>
     <td width="33%" valign="top" style="border: 1px solid rgba(128, 128, 128, 0.2); border-radius: 12px; padding: 16px;">
@@ -281,7 +281,7 @@ Real-world test: the agent authored a custom Python I/O benchmark and executed m
 ## Frequently Asked Questions (Google Antigravity on Android)
 
 **How is Antigravity for Android different from running Antigravity CLI inside Termux or PRoot?**  
-Unlike `proot-distro` or containerized wrappers that intercept every Linux syscall with heavy I/O overhead, **Antigravity for Android** runs natively inside Android userspace (`Bionic`/`Glibc` hybrid loader + single-binary Rust `agy-box` engine), delivering **1,222 MB/s** sequential reads, **84,395 IOPS** on physical UFS storage, full WebView Workbench UI (`v2.32.0`), Live Voice WebRTC, and 1-tap OTA updates in a standalone APK.
+Unlike `proot-distro` or containerized wrappers that intercept every Linux syscall with heavy I/O overhead, **Antigravity for Android** runs natively inside Android userspace (`Bionic`/`Glibc` hybrid loader + single-binary Rust `agy-box` engine), delivering **1,222 MB/s** sequential reads, **84,395 IOPS** on physical UFS storage, full WebView Workbench UI (`v2.32.1`), Live Voice WebRTC, and 1-tap OTA updates in a standalone APK.
 
 **Does Antigravity for Android require root access?**  
 No. It runs out of the box as a standard unrooted user on **Android 7.0+ (`ARM64 v8.0-A+`)** thanks to binary-patched `exebox`/`seccomp` bypasses in `liblanguage_server.so` and `liblse_compat.so` atomics emulation. Optional **Shizuku (`rish`)** integration unlocks silent 1-tap APK upgrades and on-device ADB shell automation without rooting.
@@ -304,16 +304,16 @@ antigravity-android/
 ├── env/        # Bionic toolchain, native Rust agy-box engine (env/rust/agy-box), TLS cacerts & pkg manager
 ├── patches/    # Low-level binary patches (Go pclntab, exebox/seccomp bypass, AArch64 gates)
 ├── plugins/    # Native Craft Anything MCP server + Ghidra 12.1.4 ARM64 plugin source
-└── web/        # Workbench v2.32.0 UI, Smart Marketplace Fusion, touch patches, and audio relay
+└── web/        # Workbench v2.32.1 UI, Smart Marketplace Fusion, touch patches, and audio relay
 ```
 
 ---
 
 ## Acknowledgments & Attribution
 
-This project builds upon the foundational Android Bionic host architecture originally created by [werdio325-png/antigravity-android](https://github.com/werdio325-png/antigravity-android), with major architectural upgrades and expansions in this repository (`v2.32.0`), including:
+This project builds upon the foundational Android Bionic host architecture originally created by [werdio325-png/antigravity-android](https://github.com/werdio325-png/antigravity-android), with major architectural upgrades and expansions in this repository (`v2.32.1`), including:
 
-* **Core Engine & Workbench Upgrade (`v2.32.0`):** Updated ARM64 `language_server` (`go1.28`), Workbench UI bundle (`Gemini 4 Carbon/Argon/Hydrogen`, `Orchestrator Carbon/Argon`, `Claude 5.5`), HTTP/2 & WebSocket `StreamAgentStateUpdates` background resume guard (`agy:host-resume` recovery), OAuth redirect & touch input trigger fixes, and native `webp_encoder` / `webm_encoder` binaries.
+* **Core Engine & Workbench Upgrade (`v2.32.1`):** Updated ARM64 `language_server` (`go1.28`, including `Gemini 4 Hydrogen` default model metadata), Workbench UI bundle (`Gemini 4 Carbon/Argon/Hydrogen`, `Orchestrator Carbon/Argon`, `Claude 5.5`), HTTP/2 & WebSocket `StreamAgentStateUpdates` + `JetboxSubscribeToSummaries` background resume guard (`agy:host-resume` & multi-window `window-focus` recovery), OAuth redirect & touch input trigger fixes, and native `webp_encoder` / `webm_encoder` binaries.
 * **Smart Android Marketplace Fusion & `AGY Video Studio`:** Live OTA plugin fusion via [`antigravity-android-plugins`](https://github.com/Yhoanes/antigravity-android-plugins) (`Built for Android` shelf), native GPU `h264_mediacodec` video studio (`AGY Video Studio`), native 91-tool `GitHub MCP` server, headless ARM64 Chromium MCP (`Chrome DevTools`), on-device `android` CLI bridge, and 16 KB-aligned `libagy-go-dns.so` Bionic DNS resolution for Go plugin CLIs.
 * **Native ARM64 Reverse Engineering (`Craft Anything` + `Ghidra 12.1.4`):** 302-tool Rust MCP server (`craft-anything-cli`), native Android Bionic ARM64 Ghidra `decompile` & `sleigh` binaries, and automated on-demand `craft-ghidra-setup` installer.
 * **Native Rust `agy-box` Engine, In-App OTA Updater & Production Runtime Hardening:** Native ARM64 Rust multicall accelerator (`pkg` 4-thread parallel TLS/XZ installer, zero-Python `inotify` `agy-daemon`, `112x` faster `agy-fix-paths`, Shizuku-free `agy-notify` IPC, `398` zero-shell `BRIDGE_FORMAT = 12` symlinks), native `window.electronUpdater` 1-tap OTA updater, binary `exebox` / `urpc.Fork` sandbox bypass in `liblanguage_server.so`, and pre-bundled OpenJDK 21 `cacerts`.
@@ -323,11 +323,11 @@ This project builds upon the foundational Android Bionic host architecture origi
 
 ## License, Copyright & Attribution Terms
 
-**Copyright &copy; 2026 [Yhoanes](https://github.com/Yhoanes)** (`v2.29.0` – `v2.32.0` modifications, reverse-engineering suite integration, voice relay, runtime optimizations, documentation, and compiled APK distributions).
+**Copyright &copy; 2026 [Yhoanes](https://github.com/Yhoanes)** (`v2.29.0` – `v2.32.1` modifications, reverse-engineering suite integration, voice relay, runtime optimizations, documentation, and compiled APK distributions).
 
 Pursuant to **Section 4 of the Apache License, Version 2.0**, all modifications, additions, and the derivative distribution in this repository are licensed under the **Non-Commercial &amp; Mandatory Attribution License** (see [`LICENSE`](LICENSE) and [`NOTICE`](NOTICE)):
 
-* **Mandatory Attribution (`BY`):** Any fork, redistribution, modified version, or binary/APK distribution **must** retain the [`LICENSE`](LICENSE) and [`NOTICE`](NOTICE) files intact, credit **Yhoanes** as the author of the `v2.29.0` – `v2.32.0` engineering and expansions, and link back to [https://github.com/Yhoanes/antigravity-android](https://github.com/Yhoanes/antigravity-android).
+* **Mandatory Attribution (`BY`):** Any fork, redistribution, modified version, or binary/APK distribution **must** retain the [`LICENSE`](LICENSE) and [`NOTICE`](NOTICE) files intact, credit **Yhoanes** as the author of the `v2.29.0` – `v2.32.1` engineering and expansions, and link back to [https://github.com/Yhoanes/antigravity-android](https://github.com/Yhoanes/antigravity-android).
 * **Non-Commercial Use Only (`NC`):** Commercial sale, paid redistribution, paid bundling, or commercial monetization of this derivative work, its modifications, or its compiled APK binaries is **strictly prohibited** without prior written permission from **Yhoanes**.
 * **Upstream Foundation:** The foundational Android Bionic host code derived from [werdio325-png/antigravity-android](https://github.com/werdio325-png/antigravity-android) remains licensed under the [Apache License 2.0](LICENSE).
 

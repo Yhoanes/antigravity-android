@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-web/patch_main.py - Dynamic patcher for web/main.js (Antigravity v2.32.0 Android UI).
+web/patch_main.py - Dynamic patcher for web/main.js (Antigravity v2.32.1 Android UI).
 
 Applies:
 1. Android Bridge theme sync hooks (window.Android.getTheme / setTheme / setThemeByUser).
@@ -17,7 +17,7 @@ import sys
 def must_replace(content, old, new, label):
     cnt = content.count(old)
     if cnt != 1:
-        raise RuntimeError(f"[web-patch-2.32.0] expected count=1 for {label}, got {cnt}")
+        raise RuntimeError(f"[web-patch-2.32.1] expected count=1 for {label}, got {cnt}")
     print(f"  [OK] {label}")
     return content.replace(old, new, 1)
 
@@ -85,14 +85,14 @@ NEW_MP_BLOCK_V3 = (
 
 def patch_main(file_path):
     if not os.path.isfile(file_path):
-        print(f"[web-patch-2.32.0] file not found: {file_path}", file=sys.stderr)
+        print(f"[web-patch-2.32.1] file not found: {file_path}", file=sys.stderr)
         return False
 
     with open(file_path, "r", encoding="utf-8") as f:
         content = f.read()
 
     if "Android.getTheme" in content and "__agMpSmartV3" in content:
-        print("[web-patch-2.32.0] main.js already patched (v2.32.0 Android UI + Smart Marketplace V3)")
+        print("[web-patch-2.32.1] main.js already patched (v2.32.1 Android UI + Smart Marketplace V3)")
         return True
 
     # 1a. g_() system theme resolver via window.Android.getTheme()
@@ -464,7 +464,7 @@ def patch_main(file_path):
     with open(file_path, "w", encoding="utf-8", newline="\n") as f:
         f.write(content)
 
-    print("[web-patch-2.32.0] Successfully patched Android main.js (v2.32.0 + Smart Marketplace V3)!")
+    print("[web-patch-2.32.1] Successfully patched Android main.js (v2.32.1 + Smart Marketplace V3)!")
     return True
 
 

@@ -42,8 +42,8 @@ public final class ShellBridgeInstaller {
             "webp_encoder", "webm_encoder", "webm_encoder.elf", "agy-node"
     };
 
-    /** Known file offset of embedded ELF #2 (webm_encoder / webp_encoder) in liblanguage_server.so (v2.32.0). */
-    private static final long KNOWN_ELF2_OFFSET = 0xB151D17L;
+    /** Known file offset of embedded ELF #2 (webm_encoder / webp_encoder) in liblanguage_server.so (v2.32.1). */
+    private static final long KNOWN_ELF2_OFFSET = 0xB151E97L;
 
     /** Records which prefix the bulk bridges were generated for. Bump when the
      *  bridge script format changes so a warm launch regenerates them once. */

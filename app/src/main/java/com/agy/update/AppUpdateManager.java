@@ -54,7 +54,7 @@ public final class AppUpdateManager {
 
     private static final String RELEASES_LATEST_URL =
             "https://api.github.com/repos/Yhoanes/antigravity-android/releases/latest";
-    private static final String USER_AGENT = "Antigravity-Android-Updater/2.32.0";
+    private static final String USER_AGENT = "Antigravity-Android-Updater/2.32.1";
     private static final long MIN_AUTO_CHECK_GAP_MS = 45_000L;
 
     private static volatile AppUpdateManager instance;
@@ -183,7 +183,7 @@ public final class AppUpdateManager {
             }
         } catch (Throwable ignored) {
         }
-        return "2.32.0";
+        return "2.32.1";
     }
 
     public static String normalizeVersion(String raw) {

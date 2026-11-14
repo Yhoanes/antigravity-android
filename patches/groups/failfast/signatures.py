@@ -8,13 +8,13 @@
    registers the SIGILL handler.
 """
 
-# Site 1: CPU feature check (0x85cd6b0 in v2.32.0)
-TARGET_CPU = bytes.fromhex("930301b00a60905268de47f9e903282a3f010aeae1020054e8033836e8045036")
+# Site 1: CPU feature check (0x85cd6b0 in v2.32.1)
+TARGET_CPU = bytes.fromhex("930301d00a609052689e40f9e903282a3f010aeae1020054e8033836e8045036")
 REPLACEMENT_CPU = bytes.fromhex("190000141f2003d51f2003d51f2003d51f2003d51f2003d51f2003d51f2003d5")
 
-# Site 2: Preinit atomic flag initialization (0x86339c0 in v2.32.0)
-TARGET_ATOMIC = bytes.fromhex("480001f008a12591290080520801e9f8480000b4c0035fd61f2003d5")
-REPLACEMENT_ATOMIC = bytes.fromhex("480001f008a12591090140f92a008052490000b4c0035fd60a0100f9")
+# Site 2: Preinit atomic flag initialization (0x86339c0 in v2.32.1)
+TARGET_ATOMIC = bytes.fromhex("480001f008a12b91290080520801e9f8480000b4c0035fd61f2003d5")
+REPLACEMENT_ATOMIC = bytes.fromhex("480001f008a12b91090140f92a008052490000b4c0035fd60a0100f9")
 
 # Backwards compatibility aliases
 TARGET = TARGET_CPU
