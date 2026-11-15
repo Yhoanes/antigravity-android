@@ -1,0 +1,27 @@
+#!/system/bin/sh
+# AGY URL opener shim (xdg-open / open / sensible-browser).
+unset LD_PRELOAD
+unset LD_LIBRARY_PATH
+RBIN="$(cd "$(dirname "$0")" && pwd)"
+FILES_DIR="$(cd "$RBIN/../.." && pwd)"
+URL=""
+for arg in "$@"; do
+  case "$arg" in
+    -*) ;;
+    *) URL="$arg" ;;
+  esac
+done
+[ -z "$URL" ] && URL="$1"
+[ -z "$URL" ] && exit 0
+
+echo "AGY_OPEN_URL=$URL"
+echo "ANTIGRAVITY_OPEN_URL: $URL"
+printf '%s\n' "$URL" >> "$FILES_DIR/.open_url_queue" 2>/dev/null || true
+
+if [ -x /system/bin/am ]; then
+  /system/bin/am broadcast -a com.agy.ACTION_OPEN_URL -p com.agy --es url "$URL" >/dev/null 2>&1 || true
+  /system/bin/am broadcast -a com.agy.ACTION_OPEN_URL -p com.agy.dev --es url "$URL" >/dev/null 2>&1 || true
+  /system/bin/am start -a android.intent.action.VIEW -d "$URL" >/dev/null 2>&1 || true
+fi
+
+exit 0

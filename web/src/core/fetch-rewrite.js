@@ -1,0 +1,119 @@
+/**
+ * core/fetch-rewrite.js - file:// / relative WebView -> core origin fetch rewrite.
+ *
+ * Rewrite file:// or relative ConnectRPC URLs onto the core origin, preserving
+ * Request + init override precedence, headers, body, and signal while attaching
+ * the CSRF token. Idempotent and a no-op for non-RPC / absolute http(s) URLs.
+ */
+var RPC_MARKERS = ['exa.language_server_pb.', 'exa.host_bridge_pb.', '/exa.'];
+
+function rpcPathFrom(url) {
+  if (!url) return null;
+  var s = String(url);
+  if (/^(https?|blob|data|wss?|chrome-extension):/i.test(s)) return null;
+  var best = -1;
+  for (var i = 0; i < RPC_MARKERS.length; i++) {
+    var at = s.indexOf(RPC_MARKERS[i]);
+    if (at >= 0 && (best === -1 || at < best)) best = at;
+  }
+  if (best === -1) return null;
+  return s.slice(best).replace(/^\/+/, '') || null;
+}
+
+function isStartupComplete() {
+  return !!(
+    (CONFIG && CONFIG.engineReady) ||
+    (global.__agStartupReady && typeof global.__agStartupReady.isReady === 'function' && global.__agStartupReady.isReady())
+  );
+}
+
+function isFetchAborted(err, opts) {
+  if (opts && opts.signal && opts.signal.aborted) return true;
+  if (err && (err.name === 'AbortError' || err.code === 20)) return true;
+  return false;
+}
+
+function installFetchRewrite() {
+  if (global.__AG_FETCH_REWRITE__ || typeof global.fetch !== 'function') return;
+  var origFetch = global.fetch.bind(global);
+
+  function fetchWithStartupRetry(u, opts, retries) {
+    return origFetch(u, opts).then(function (res) {
+      if (CONFIG) CONFIG.engineReady = true;
+      return res;
+    }).catch(function (err) {
+      if (retries > 0 && !isFetchAborted(err, opts)) {
+        return new Promise(function (resolve) {
+          setTimeout(function () {
+            resolve(fetchWithStartupRetry(u, opts, retries - 1));
+          }, 120);
+        });
+      }
+      throw err;
+    });
+  }
+
+  global.fetch = function (resource, init) {
+    try {
+      // Request object: rebuild against the core origin, respecting init overrides.
+      if (resource && typeof resource === 'object' && typeof resource.url === 'string') {
+        var rpath = rpcPathFrom(resource.url);
+        if (rpath) {
+          var targetUrl = appendCsrfQuery(coreBase() + '/' + rpath);
+          var reqMethod = ((init && init.method) || resource.method || 'POST').toUpperCase();
+          var reqHeaders = new Headers((init && init.headers) || resource.headers || {});
+          ensureCsrf(reqHeaders);
+          var reqSignal = (init && init.signal) || resource.signal;
+
+          var bodyPromise;
+          if (init && init.body !== undefined) {
+            bodyPromise = Promise.resolve(init.body);
+          } else if (reqMethod === 'GET' || reqMethod === 'HEAD') {
+            bodyPromise = Promise.resolve(undefined);
+          } else {
+            bodyPromise = resource.clone().arrayBuffer().then(function (buf) {
+              return buf.byteLength > 0 ? buf : undefined;
+            });
+          }
+
+          return bodyPromise.then(function (bodyData) {
+            var nextOpts = {
+              method: reqMethod,
+              headers: reqHeaders,
+              body: bodyData,
+              credentials: (init && init.credentials) || resource.credentials || 'omit'
+            };
+            if (reqSignal) nextOpts.signal = reqSignal;
+            var maxRetries = isStartupComplete() ? 2 : 30;
+            return fetchWithStartupRetry(targetUrl, nextOpts, maxRetries);
+          });
+        }
+        return origFetch(resource, init);
+      }
+
+      // String URL: the Connect/grpc-web transport's common path.
+      if (typeof resource === 'string') {
+        var path = rpcPathFrom(resource);
+        if (path) {
+          var url = appendCsrfQuery(coreBase() + '/' + path);
+          var headers = new Headers((init && init.headers) || {});
+          ensureCsrf(headers);
+          var next = {};
+          if (init) {
+            for (var k in init) {
+              if (Object.prototype.hasOwnProperty.call(init, k)) next[k] = init[k];
+            }
+          }
+          next.headers = headers;
+
+          var maxRetriesStr = isStartupComplete() ? 2 : 30;
+          return fetchWithStartupRetry(url, next, maxRetriesStr);
+        }
+      }
+    } catch (e) { warn('fetch rewrite', e); }
+    return origFetch(resource, init);
+  };
+  global.__AG_FETCH_REWRITE__ = true;
+}
+
+installFetchRewrite();

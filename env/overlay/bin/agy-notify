@@ -1,0 +1,11 @@
+#!/system/bin/sh
+# AGY native Rust notification bridge, with automatic bash fallback.
+SELF_DIR="${0%/*}"
+PREFIX="${PREFIX:-$(cd "$SELF_DIR/.." 2>/dev/null && pwd || echo /data/data/com.agy/files/usr)}"
+export PREFIX
+if [ "${AGY_DISABLE_RUST_BOX:-0}" != "1" ] && [ -x "$PREFIX/bin/agy-box" ]; then
+    if "$PREFIX/bin/agy-box" --probe >/dev/null 2>&1; then
+        exec "$PREFIX/bin/agy-box" notify "$@"
+    fi
+fi
+exec "$PREFIX/bin/bash" "$PREFIX/libexec/agy-notify.sh" "$@"

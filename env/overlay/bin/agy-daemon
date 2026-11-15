@@ -1,0 +1,57 @@
+#!/system/bin/sh
+# AGY native Rust daemon launcher (zero-Python), with automatic fallback.
+SELF_DIR="${0%/*}"
+PREFIX="${PREFIX:-$(cd "$SELF_DIR/.." 2>/dev/null && pwd || echo /data/data/com.agy/files/usr)}"
+export PREFIX
+if [ "${AGY_DISABLE_RUST_BOX:-0}" != "1" ] && [ -x "$PREFIX/bin/agy-box" ]; then
+    if "$PREFIX/bin/agy-box" --probe >/dev/null 2>&1; then
+        exec "$PREFIX/bin/agy-box" daemon "$@"
+    fi
+fi
+if [ -x "$PREFIX/bin/python3" ]; then
+    exec "$PREFIX/bin/python3" "$PREFIX/libexec/agy-daemon.py" "$@"
+fi
+HOME_DIR="${HOME:-$(cd "$PREFIX/.." 2>/dev/null && pwd || echo /data/data/com.agy/files)}"
+DAEMON_DIR="${ANTIGRAVITY_APP_DATA_DIR:-$HOME_DIR/.gemini/antigravity-app}/daemon"
+PID_FILE="$DAEMON_DIR/daemon.pid"
+case "${1:-}" in
+    status)
+        if [ -f "$PID_FILE" ]; then
+            PID="$(cat "$PID_FILE" 2>/dev/null)"
+            if [ -n "$PID" ] && kill -0 "$PID" 2>/dev/null; then
+                echo "Daemon PID file exists (running): $PID_FILE"
+                exit 0
+            fi
+        fi
+        echo "Daemon not currently running (python3 not installed for fallback; unset AGY_DISABLE_RUST_BOX for native Rust daemon)."
+        exit 0
+        ;;
+    stop)
+        if [ -f "$PID_FILE" ]; then
+            PID="$(cat "$PID_FILE" 2>/dev/null)"
+            [ -n "$PID" ] && kill "$PID" 2>/dev/null || true
+            rm -f "$PID_FILE"
+            echo "[agy-daemon] Stopped daemon (PID: $PID)."
+        else
+            echo "Daemon not currently running."
+        fi
+        exit 0
+        ;;
+    list)
+        if [ -s "$DAEMON_DIR/tasks.json" ]; then
+            cat "$DAEMON_DIR/tasks.json"
+        else
+            echo "No tasks scheduled."
+        fi
+        exit 0
+        ;;
+    ""|-h|--help|help)
+        echo "Usage: agy-daemon <start|stop|status|list|clear|remove|add>"
+        echo "Note: Python fallback requires 'pkg install python' when AGY_DISABLE_RUST_BOX=1."
+        exit 0
+        ;;
+    *)
+        echo "[agy-daemon] Python fallback requires python3 (run: pkg install python, or unset AGY_DISABLE_RUST_BOX to use native Rust agy-box)." >&2
+        exit 1
+        ;;
+esac
