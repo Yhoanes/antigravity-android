@@ -30,17 +30,25 @@ public final class OAuthManager {
         return matcher.isAuthUrl(url);
     }
 
+    private static String redactUrl(String url) {
+        if (url == null || url.isEmpty()) return "";
+        int q = url.indexOf('?');
+        int h = url.indexOf('#');
+        int cut = (q >= 0 && h >= 0) ? Math.min(q, h) : (q >= 0 ? q : h);
+        return cut >= 0 ? url.substring(0, cut) : url;
+    }
+
     /**
      * Intercepts an auth URL. Returns true if it was handled (opened externally),
      * false if the WebView should load it normally.
      */
     public boolean intercept(Context context, String url) {
         boolean auth = matcher.isAuthUrl(url);
-        Log.i(OAuthConstants.TAG, "intercept isAuthUrl=" + auth + " url=" + url);
+        Log.i(OAuthConstants.TAG, "intercept isAuthUrl=" + auth + " url=" + redactUrl(url));
         if (!auth) {
             return false;
         }
-        Log.i(OAuthConstants.TAG, "isAuthUrl matched -> external browser: " + url);
+        Log.i(OAuthConstants.TAG, "isAuthUrl matched -> external browser: " + redactUrl(url));
         return launcher.openInBrowser(context, url);
     }
 

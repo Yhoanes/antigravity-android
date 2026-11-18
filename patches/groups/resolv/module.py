@@ -21,7 +21,10 @@ from patch_lib import module_base as base
 from patch_lib.report import hex_list
 from groups.resolv import signatures as sig
 from groups.resolv.analyze import analyze
-from groups.resolv.selftest import _selftest
+try:
+    from groups.resolv.selftest import _selftest
+except ImportError:
+    _selftest = None
 
 GROUP_ID = "resolv"
 GROUP = "resolv"

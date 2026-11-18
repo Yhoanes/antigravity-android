@@ -149,12 +149,13 @@ public final class CoreProcessSupervisor {
                 return false;
             }
             if (CoreReadyProbe.probeOnce(port)) {
-                CoreRuntimeState.serverUrl = CoreUrl.startUrl(port, csrf);
                 CoreRuntimeState.lastError = null;
                 CoreRuntimeState.restarting = false;
                 CoreRuntimeState.readyGeneration++;
-                Log.i(TAG, "core ready: " + CoreRuntimeState.serverUrl);
-                CoreLogWriter.writeLine(log, "core ready: " + CoreRuntimeState.serverUrl);
+                CoreRuntimeState.serverUrl = CoreUrl.startUrl(port, csrf);
+                String safeUrl = CoreUrl.startUrl(port);
+                Log.i(TAG, "core ready: " + safeUrl);
+                CoreLogWriter.writeLine(log, "core ready: " + safeUrl);
                 return true;
             }
         }

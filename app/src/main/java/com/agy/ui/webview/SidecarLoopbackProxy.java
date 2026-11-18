@@ -188,7 +188,7 @@ public final class SidecarLoopbackProxy {
             String rawContentType = conn.getContentType();
             String mimeType = parseMimeType(rawContentType, uri.getPath());
             String charset = parseCharset(rawContentType, mimeType);
-            Map<String, String> respHeaders = extractResponseHeaders(conn.getHeaderFields());
+            Map<String, String> respHeaders = extractResponseHeaders(conn.getHeaderFields(), enginePort);
             String reason = safeReason(conn.getResponseMessage(), status);
 
             InputStream rawStream = status >= 400 ? conn.getErrorStream() : conn.getInputStream();
@@ -503,7 +503,7 @@ public final class SidecarLoopbackProxy {
         return MimeTypes.isTextMime(mimeType) ? "UTF-8" : null;
     }
 
-    private static Map<String, String> extractResponseHeaders(Map<String, List<String>> raw) {
+    private static Map<String, String> extractResponseHeaders(Map<String, List<String>> raw, int enginePort) {
         Map<String, String> out = new HashMap<>();
         if (raw != null) {
             for (Map.Entry<String, List<String>> e : raw.entrySet()) {
@@ -520,8 +520,8 @@ public final class SidecarLoopbackProxy {
                 out.put(k, vals.get(vals.size() - 1));
             }
         }
-        if (!out.containsKey("Access-Control-Allow-Origin")) {
-            out.put("Access-Control-Allow-Origin", "*");
+        if (!out.containsKey("Access-Control-Allow-Origin") && enginePort > 0) {
+            out.put("Access-Control-Allow-Origin", "https://127.0.0.1:" + enginePort);
         }
         return out;
     }

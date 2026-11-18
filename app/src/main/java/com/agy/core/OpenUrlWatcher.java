@@ -56,13 +56,21 @@ public final class OpenUrlWatcher {
     private FileObserver queueObserver;
     private ScheduledExecutorService queuePoller;
 
+    private static String redactUrl(String url) {
+        if (url == null || url.isEmpty()) return "";
+        int q = url.indexOf('?');
+        int h = url.indexOf('#');
+        int cut = (q >= 0 && h >= 0) ? Math.min(q, h) : (q >= 0 ? q : h);
+        return cut >= 0 ? url.substring(0, cut) : url;
+    }
+
     private final BroadcastReceiver openUrlReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (intent == null) return;
             String url = intent.getStringExtra("url");
             if (url != null && !url.trim().isEmpty()) {
-                Log.i(TAG, "broadcast ACTION_OPEN_URL received: " + url);
+                Log.i(TAG, "broadcast ACTION_OPEN_URL received: " + redactUrl(url));
                 dispatchIfValid(url);
             }
         }
@@ -86,7 +94,7 @@ public final class OpenUrlWatcher {
         try {
             IntentFilter filter = new IntentFilter("com.agy.ACTION_OPEN_URL");
             if (Build.VERSION.SDK_INT >= 33) {
-                appContext.registerReceiver(openUrlReceiver, filter, Context.RECEIVER_EXPORTED);
+                appContext.registerReceiver(openUrlReceiver, filter, Context.RECEIVER_NOT_EXPORTED);
             } else {
                 appContext.registerReceiver(openUrlReceiver, filter);
             }
@@ -244,7 +252,7 @@ public final class OpenUrlWatcher {
                 if (candidate.startsWith("http://") || candidate.startsWith("https://")) {
                     if (candidate.contains("accounts.google.com") || candidate.contains("oauth2")
                             || candidate.contains("auth")) {
-                        Log.i(TAG, "stream regex detected auth URL: " + candidate);
+                        Log.i(TAG, "stream regex detected auth URL: " + redactUrl(candidate));
                         dispatchIfValid(candidate);
                     }
                 }
@@ -263,7 +271,7 @@ public final class OpenUrlWatcher {
         }
         lastDispatchedUrl = url;
         lastDispatchedTime = now;
-        Log.i(TAG, "dispatching external URL: " + url);
+        Log.i(TAG, "dispatching external URL: " + redactUrl(url));
         openUrl(url);
     }
 
@@ -276,7 +284,7 @@ public final class OpenUrlWatcher {
                         : appContext;
                 boolean opened = oauth.openInBrowser(target, url);
                 if (!opened) {
-                    Log.w(TAG, "no browser accepted the url: " + url);
+                    Log.w(TAG, "no browser accepted the url: " + redactUrl(url));
                 }
             }
         });

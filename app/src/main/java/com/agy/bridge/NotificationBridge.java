@@ -53,9 +53,6 @@ public final class NotificationBridge {
     }
 
     public String list() {
-        if (shizuku != null && shizuku.isAvailable()) {
-            return shizuku.exec("dumpsys notification --noredact | grep -E 'pkg=|android.title=|android.text=' | head -n 40");
-        }
         return listLocalJson(context);
     }
 
@@ -97,7 +94,10 @@ public final class NotificationBridge {
                 iconId = android.R.drawable.stat_notify_chat;
             }
 
-            Intent launchIntent = new Intent(app, MainActivity.class);
+            Intent launchIntent = app.getPackageManager().getLaunchIntentForPackage(app.getPackageName());
+            if (launchIntent == null) {
+                launchIntent = new Intent(app, MainActivity.class);
+            }
             launchIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
             int piFlags = Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
                     ? (PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE)

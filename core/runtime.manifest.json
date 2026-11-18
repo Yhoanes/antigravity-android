@@ -1,10 +1,10 @@
 {
   "files": {
-    "bin/chrome": "b57c80d63fe10d8ab0ddfd3a419f47e11a8448c26621520a8813dfcdda36121b",
-    "bin/chromium": "b57c80d63fe10d8ab0ddfd3a419f47e11a8448c26621520a8813dfcdda36121b",
+    "bin/chrome": "4b105b35b5905ce2b011dea9d6b13269964f62e54127d9aabf43034fb408385e",
+    "bin/chromium": "4b105b35b5905ce2b011dea9d6b13269964f62e54127d9aabf43034fb408385e",
     "bin/gnome-open": "8258a78e342dd041a0257a48df9bf96d9941848b06cc00d09b7c94acf0db8cc4",
-    "bin/google-chrome": "b57c80d63fe10d8ab0ddfd3a419f47e11a8448c26621520a8813dfcdda36121b",
-    "bin/liblanguage_server.so": "8c1e5859f7423586cf884d20d56400054beb711baab7bb968e3936672e1def10",
+    "bin/google-chrome": "4b105b35b5905ce2b011dea9d6b13269964f62e54127d9aabf43034fb408385e",
+    "bin/liblanguage_server.so": "ed601f73dacd44095f92d69801aa590c3711b303676b0f49785651e2647a8cc4",
     "bin/libloader.so": "ca4af7c4022222bb405b0b601d818506ea608a2242f3cce43bd0b56b71f94530",
     "bin/open": "8258a78e342dd041a0257a48df9bf96d9941848b06cc00d09b7c94acf0db8cc4",
     "bin/open_helper": "8258a78e342dd041a0257a48df9bf96d9941848b06cc00d09b7c94acf0db8cc4",
@@ -14,8 +14,8 @@
     "bin/webm_encoder": "bda61e10cbfe7e5f9f3b81579e2468ed4b77b6b556d9d52bc632e97219daad97",
     "bin/webp_encoder": "bda61e10cbfe7e5f9f3b81579e2468ed4b77b6b556d9d52bc632e97219daad97",
     "bin/x-www-browser": "8258a78e342dd041a0257a48df9bf96d9941848b06cc00d09b7c94acf0db8cc4",
-    "bin/xdg-open": "0461043cf2d187cbaa69de4fe8bde28d068e48fc3933cbe30b9db33ef170998c",
-    "certs/ca-certificates.crt": "303daa9461b9617eb8e6209b272613fcf2923959ff32e9422eaaae195c55c780",
+    "bin/xdg-open": "0f8a560ba98978ef422c687cad7269a14f10d5423fe569cfca5acc22409fc29c",
+    "certs/ca-certificates.crt": "f66dff1bdf8f96060b8177976f8b7d9254bc89bc4db933d769f7384d28480bc9",
     "lib/ld-linux-aarch64.so.1": "ca4af7c4022222bb405b0b601d818506ea608a2242f3cce43bd0b56b71f94530",
     "lib/libc.so.6": "cb7b001c0d4030119eb9010ae2d747fcbc51108cfb1e0940fa78618d78dc9ae9",
     "lib/libdl.so.2": "9c8504547ea2ae94146760551135ae49b19659ee3f6d913c1f2f055695a7fce7",
@@ -27,11 +27,11 @@
     "lib/libpthread.so.0": "adf2a3b38694cdd6b8e6c08f56a64786420cb20d736ceece48c3871147357ff2",
     "lib/libresolv.so.2": "490093f15e8f6a5966e89f61c01887657ababeb154b755c48d91a6e2ab9888f2",
     "lib/librt.so.1": "a941a6c9eb45597c47597e7711e8cd24b039eb488f20337d2a96e35c22daf327",
-    "seed/AGENTS.md": "d5ef5ed56657fcb3e36da0a0fe6003ce7b16c4af8748681e9c3d7bacf3a0944e",
+    "seed/AGENTS.md": "7b9ed3dcfd65829ad4bc5df3ba6981fe056ea40c925d50597168c230575c9881",
     "seed/antigravity_state.gemini.pbtxt": "d0771e8da9b2cbcba7d993e391acc7e7e6ee4797b0f660dd51dd65ae5f6159cf",
     "seed/antigravity_state.pbtxt": "ab5ba94e0414d5379d38722ad60849e9801a1fc21ca862ed7caec84cf2f9da3e",
     "seed/jetski_state.pbtxt": "ab5ba94e0414d5379d38722ad60849e9801a1fc21ca862ed7caec84cf2f9da3e"
   },
-  "generated_at": "2026-11-11T00:30:54Z",
+  "generated_at": "2026-11-18T00:50:32Z",
   "schema": 1
 }

@@ -42,8 +42,8 @@ public final class ShellBridgeInstaller {
             "webp_encoder", "webm_encoder", "webm_encoder.elf", "agy-node"
     };
 
-    /** Known file offset of embedded ELF #2 (webm_encoder / webp_encoder) in liblanguage_server.so (v2.32.1). */
-    private static final long KNOWN_ELF2_OFFSET = 0xB151E97L;
+    /** Optional file offset hint for embedded Go encoder ELF in liblanguage_server.so (absent in v2.33.0+). */
+    private static final long KNOWN_ELF2_OFFSET = -1L;
 
     /** Records which prefix the bulk bridges were generated for. Bump when the
      *  bridge script format changes so a warm launch regenerates them once. */
@@ -168,7 +168,7 @@ public final class ShellBridgeInstaller {
      * (intercepted by mcp.findSiblingBinary) and runtime/bin/webm_encoder.
      */
     public static synchronized void installEmbeddedEncoder(File bin, android.content.Context context) {
-        if (bin == null) return;
+        if (bin == null || KNOWN_ELF2_OFFSET < 0) return;
         File core = new File(bin, RuntimePaths.CORE_NAME);
         File targetElf = new File(bin, "webm_encoder.elf");
         if ((!targetElf.isFile() || targetElf.length() < 65536 || targetElf.lastModified() < core.lastModified()) && core.isFile()) {
@@ -183,6 +183,9 @@ public final class ShellBridgeInstaller {
             } catch (IOException e) {
                 Log.w(TAG, "cannot extract embedded webm_encoder.elf: " + e.getMessage());
             }
+        }
+        if (!targetElf.isFile() || targetElf.length() < 65536) {
+            return;
         }
         File runtimeDir = bin.getParentFile();
         File libDir = runtimeDir != null ? new File(runtimeDir, "lib") : new File(bin, "../lib");
@@ -235,7 +238,7 @@ public final class ShellBridgeInstaller {
                 if (buf[i] == 0x7F && buf[i + 1] == 'E' && buf[i + 2] == 'L' && buf[i + 3] == 'F'
                         && buf[i + 4] == 2 && buf[i + 5] == 1 && buf[i + 6] == 1) {
                     long cand = pos + i;
-                    if (isValidAarch64Elf64(raf, cand)) {
+                    if (isValidAarch64Elf64(raf, cand) && hasGoPclntabMagic(raf, cand)) {
                         lastFound = cand;
                     }
                     raf.seek(pos + n);
@@ -264,6 +267,27 @@ public final class ShellBridgeInstaller {
         int eShentsize = bb.getShort(0x3A) & 0xFFFF;
         int eShnum = bb.getShort(0x3C) & 0xFFFF;
         return (eType == 2 || eType == 3) && eMachine == 0xB7 && eShentsize == 64 && eShnum > 0 && eShnum < 256;
+    }
+
+    private static boolean hasGoPclntabMagic(RandomAccessFile raf, long elfOffset) throws IOException {
+        long end = Math.min(raf.length(), elfOffset + 32L * 1024L * 1024L);
+        byte[] buf = new byte[65536];
+        long pos = elfOffset;
+        while (pos < end - 8) {
+            int toRead = (int) Math.min(buf.length, end - pos);
+            raf.seek(pos);
+            int n = raf.read(buf, 0, toRead);
+            if (n < 8) break;
+            for (int i = 0; i <= n - 8; i++) {
+                if ((buf[i] & 0xFF) >= 0xF0 && (buf[i] & 0xFF) <= 0xF2
+                        && (buf[i + 1] & 0xFF) == 0xFF && (buf[i + 2] & 0xFF) == 0xFF && (buf[i + 3] & 0xFF) == 0xFF
+                        && buf[i + 4] == 0 && buf[i + 5] == 0 && buf[i + 6] == 4 && buf[i + 7] == 8) {
+                    return true;
+                }
+            }
+            pos += n - 7;
+        }
+        return false;
     }
 
     private static long computeElf64Size(RandomAccessFile raf, long elfOffset) throws IOException {

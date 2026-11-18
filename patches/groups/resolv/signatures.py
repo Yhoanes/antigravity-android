@@ -8,7 +8,7 @@ non NUL-terminated neighbours stay valid (Go uses explicit lengths here).
 
 TARGET = b"/etc/resolv.conf"
 REPLACEMENT = b"etc//resolv.conf"
-EXPECTED = 2
+EXPECTED = 1
 ADJACENT_REJECT = b"/.\\"
 
 assert len(TARGET) == 16

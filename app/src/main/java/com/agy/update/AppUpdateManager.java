@@ -58,11 +58,13 @@ public final class AppUpdateManager {
 
     private static final String RELEASES_LATEST_URL =
             "https://api.github.com/repos/Yhoanes/antigravity-android/releases/latest";
-    private static final String USER_AGENT = "Antigravity-Android-Updater/2.32.1";
+    private static final String USER_AGENT = "Antigravity-Android-Updater/2.33.0";
     private static final long MIN_AUTO_CHECK_GAP_MS = 45_000L;
     private static final String UPDATES_CHANNEL_ID = "agy_updates_channel";
     private static final String UPDATE_NOTIFICATION_TAG = "agy_ota_ready";
     private static final int UPDATE_NOTIFICATION_ID = 2003;
+    public static final String EXTRA_OTA_NONCE = "com.agy.extra.OTA_NONCE";
+    public static final String OTA_INTENT_NONCE = java.util.UUID.randomUUID().toString();
 
     private static volatile AppUpdateManager instance;
 
@@ -222,7 +224,7 @@ public final class AppUpdateManager {
             }
         } catch (Throwable ignored) {
         }
-        return "2.32.1";
+        return "2.33.0";
     }
 
     public static String normalizeVersion(String raw) {
@@ -660,7 +662,7 @@ public final class AppUpdateManager {
                 return false;
             }
 
-            String installCmd = "nohup sh -c 'sleep 0.6; pm install -r -d " + remoteTmp
+            String installCmd = "nohup sh -c 'sleep 0.6; pm install -r " + remoteTmp
                     + " >/dev/null 2>&1; rm -f " + remoteTmp
                     + "; monkey -p " + pkg + " -c android.intent.category.LAUNCHER 1 >/dev/null 2>&1'"
                     + " </dev/null >/dev/null 2>&1 &";
@@ -754,9 +756,13 @@ public final class AppUpdateManager {
             if (iconId == 0) {
                 iconId = android.R.drawable.stat_sys_download_done;
             }
-            Intent tapIntent = new Intent(appContext, MainActivity.class);
+            Intent tapIntent = appContext.getPackageManager().getLaunchIntentForPackage(appContext.getPackageName());
+            if (tapIntent == null) {
+                tapIntent = new Intent(appContext, MainActivity.class);
+            }
             tapIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
             tapIntent.putExtra(MainActivity.EXTRA_APPLY_OTA_UPDATE, true);
+            tapIntent.putExtra(EXTRA_OTA_NONCE, OTA_INTENT_NONCE);
             int piFlags = Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
                     ? (PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE)
                     : PendingIntent.FLAG_UPDATE_CURRENT;

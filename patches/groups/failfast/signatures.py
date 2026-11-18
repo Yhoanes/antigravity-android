@@ -1,27 +1,27 @@
-"""Constants and signatures for ARMv8.0-A CPU fail-fast and preinit LSE bypass patches.
+"""Constants and invariant tails for ARMv8.0-A CPU preinit compatibility shims.
 
-1. Bypasses the preinit CPU feature check (go/sigill-fail-fast) which terminates
-   with raise(SIGILL) on ARMv8.0-A CPUs lacking hardware LSE (Snapdragon 685,
-   Snapdragon 410/625/810, Cortex-A53/A73).
-2. Patches the preinit .preinit_array[1] atomic initialization flag so it uses
-   standard ARMv8.0-A instructions instead of ldaddal before liblse_compat.so
-   registers the SIGILL handler.
+Resolves .preinit_array[0] and .preinit_array[1] dynamically via ELF section
+headers + .rela.dyn relocations (no hardcoded PC-relative adrp offsets):
+1. .preinit_array[0] + 0x10 (32 bytes): skips HWCAP_ATOMICS trap on ARMv8.0-A
+   CPUs so LD_PRELOAD liblse_compat.so can emulate LSE instructions cleanly.
+2. .preinit_array[1] + 0x08 (20 bytes): uses ARMv8.0-A load/store instead of
+   ldaddal during early preinit before liblse_compat.so registers its handler.
 """
 
-# Site 1: CPU feature check (0x85cd6b0 in v2.32.1)
-TARGET_CPU = bytes.fromhex("930301d00a609052689e40f9e903282a3f010aeae1020054e8033836e8045036")
+# Slot 0 (+0x10): trailing 20 bytes after adrp+mov+ldr (invariant across Go/GRTE builds)
+SLOT0_PATCH_OFFSET = 0x10
+SLOT0_RAW_TAIL20 = bytes.fromhex("e903282a3f010aeae1020054e8033836e8045036")
+SLOT0_EPILOGUE_AT_74 = bytes.fromhex("f30b40f9fd7bc2a8c0035fd6")
 REPLACEMENT_CPU = bytes.fromhex("190000141f2003d51f2003d51f2003d51f2003d51f2003d51f2003d51f2003d5")
 
-# Site 2: Preinit atomic flag initialization (0x86339c0 in v2.32.1)
-TARGET_ATOMIC = bytes.fromhex("480001f008a12b91290080520801e9f8480000b4c0035fd61f2003d5")
-REPLACEMENT_ATOMIC = bytes.fromhex("480001f008a12b91090140f92a008052490000b4c0035fd60a0100f9")
+# Slot 1 (+0x08): 20 bytes after adrp+add (invariant across Go/GRTE builds)
+SLOT1_PATCH_OFFSET = 0x08
+SLOT1_RAW_BODY20 = bytes.fromhex("290080520801e9f8480000b4c0035fd61f2003d5")
+REPLACEMENT_ATOMIC_BODY20 = bytes.fromhex("090140f92a008052490000b4c0035fd60a0100f9")
 
-# Backwards compatibility aliases
-TARGET = TARGET_CPU
-REPLACEMENT = REPLACEMENT_CPU
 EXPECTED = 1
 
-assert len(TARGET_CPU) == 32
+assert len(SLOT0_RAW_TAIL20) == 20
 assert len(REPLACEMENT_CPU) == 32
-assert len(TARGET_ATOMIC) == 28
-assert len(REPLACEMENT_ATOMIC) == 28
+assert len(SLOT1_RAW_BODY20) == 20
+assert len(REPLACEMENT_ATOMIC_BODY20) == 20

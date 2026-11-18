@@ -87,7 +87,8 @@ public class MainActivity extends Activity
         @Override
         public void run() {
             watchCore();
-            handler.postDelayed(this, POLL_INTERVAL_MS);
+            long delay = (appLoaded && CoreRuntimeState.lastError == null) ? 1000L : POLL_INTERVAL_MS;
+            handler.postDelayed(this, delay);
         }
     };
 
@@ -222,8 +223,12 @@ public class MainActivity extends Activity
 
     private void handleUpdateNotificationIntent(Intent intent) {
         if (intent != null && intent.getBooleanExtra(EXTRA_APPLY_OTA_UPDATE, false)) {
+            String nonce = intent.getStringExtra(com.agy.update.AppUpdateManager.EXTRA_OTA_NONCE);
             intent.removeExtra(EXTRA_APPLY_OTA_UPDATE);
-            handler.postDelayed(() -> com.agy.update.AppUpdateManager.getInstance(this).applyUpdate(), 250);
+            intent.removeExtra(com.agy.update.AppUpdateManager.EXTRA_OTA_NONCE);
+            if (com.agy.update.AppUpdateManager.OTA_INTENT_NONCE.equals(nonce)) {
+                handler.postDelayed(() -> com.agy.update.AppUpdateManager.getInstance(this).applyUpdate(), 250);
+            }
         }
     }
 
@@ -297,6 +302,7 @@ public class MainActivity extends Activity
     @Override
     protected void onStop() {
         super.onStop();
+        handler.removeCallbacks(pollServer);
         com.agy.theme.LauncherIconSwitcher.onAppBackgrounded(this);
         if (webViewHost != null) {
             AppLifecycle.pauseTimers(webViewHost.getWebView());
@@ -307,6 +313,8 @@ public class MainActivity extends Activity
     protected void onResume() {
         super.onResume();
         activeActivity = this;
+        handler.removeCallbacks(pollServer);
+        handler.post(pollServer);
         if (webViewHost != null) {
             AppLifecycle.resume(webViewHost.getWebView());
             com.agy.update.AppUpdateManager.getInstance(this)
