@@ -53,6 +53,8 @@ public class MainActivity extends Activity
     private static final int REQUEST_STORAGE = 100;
     private static final int REQUEST_FILE_CHOOSER = 1002;
     private static final int REQUEST_AUDIO_PERMISSION = 1003;
+    private static final int REQUEST_BACKUP_EXPORT = 1004;
+    private static final int REQUEST_BACKUP_RESTORE = 1005;
     private static final long SPLASH_TIMEOUT_MS = 45000;
     private static final long POLL_INTERVAL_MS = 50;
 
@@ -149,6 +151,7 @@ public class MainActivity extends Activity
         webViewHost = new WebViewHost(this, themeManager, oauthManager, androidBridge, this);
         webViewHost.setListener(this);
         com.agy.update.AppUpdateManager.getInstance(this).attachWebView(webViewHost.getWebView());
+        com.agy.backup.BackupManager.getInstance(this).attachWebView(webViewHost.getWebView());
 
         rootLayout = new FrameLayout(this);
         rootLayout.setBackgroundColor(themeManager.getBackgroundColor());
@@ -250,6 +253,53 @@ public class MainActivity extends Activity
         }
     }
 
+    /** Prepares the splash and deadline before BackupManager stops and restarts CoreServerService. */
+    public void prepareForCoreRestart() {
+        splash.clearFatal();
+        splash.showLoading();
+        splashDeadline = System.currentTimeMillis() + 120_000L;
+        handler.removeCallbacks(pollServer);
+        handler.post(pollServer);
+    }
+
+    public boolean launchBackupExportPicker(String suggestedFilename) {
+        try {
+            Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
+            intent.addCategory(Intent.CATEGORY_OPENABLE);
+            intent.setType("application/zip");
+            intent.putExtra(Intent.EXTRA_TITLE, suggestedFilename);
+            startActivityForResult(intent, REQUEST_BACKUP_EXPORT);
+            return true;
+        } catch (Throwable t) {
+            Log.w(TAG, "ACTION_CREATE_DOCUMENT unavailable: " + t.getMessage());
+            return false;
+        }
+    }
+
+    public void launchBackupRestorePicker() {
+        try {
+            Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+            intent.addCategory(Intent.CATEGORY_OPENABLE);
+            intent.setType("*/*");
+            intent.putExtra(Intent.EXTRA_MIME_TYPES, new String[]{
+                    "application/zip",
+                    "application/x-zip-compressed",
+                    "application/octet-stream"
+            });
+            startActivityForResult(intent, REQUEST_BACKUP_RESTORE);
+        } catch (Throwable t) {
+            Log.w(TAG, "ACTION_OPEN_DOCUMENT failed, falling back to GET_CONTENT: " + t.getMessage());
+            try {
+                Intent fallback = new Intent(Intent.ACTION_GET_CONTENT);
+                fallback.addCategory(Intent.CATEGORY_OPENABLE);
+                fallback.setType("*/*");
+                startActivityForResult(Intent.createChooser(fallback, "Select Backup Archive (.zip)"), REQUEST_BACKUP_RESTORE);
+            } catch (Throwable ex) {
+                Log.e(TAG, "Cannot open backup restore picker: " + ex.getMessage());
+            }
+        }
+    }
+
     @Override
     protected void onDestroy() {
         if (activeActivity == this) {
@@ -268,6 +318,7 @@ public class MainActivity extends Activity
         }
         WebView wv = getWebView();
         com.agy.update.AppUpdateManager.getInstance(this).detachWebView(wv);
+        com.agy.backup.BackupManager.getInstance(this).detachWebView(wv);
         AppLifecycle.destroy(handler);
         super.onDestroy();
     }
@@ -547,6 +598,23 @@ public class MainActivity extends Activity
                 }
                 filePathCallback.onReceiveValue(results);
                 filePathCallback = null;
+            }
+            return;
+        }
+        if (requestCode == REQUEST_BACKUP_EXPORT) {
+            if (resultCode == RESULT_OK && data != null && data.getData() != null) {
+                com.agy.backup.BackupManager.getInstance(this).startExportToUri(data.getData());
+            }
+            return;
+        }
+        if (requestCode == REQUEST_BACKUP_RESTORE) {
+            if (resultCode == RESULT_OK && data != null && data.getData() != null) {
+                Uri uri = data.getData();
+                try {
+                    getContentResolver().takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                } catch (Throwable ignored) {
+                }
+                com.agy.backup.BackupManager.getInstance(this).promptRestoreConfirmation(this, uri);
             }
         }
     }

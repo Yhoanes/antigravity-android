@@ -84,6 +84,40 @@ NEW_MP_BLOCK_V3 = (
 )
 
 
+def apply_application_tab_patch(content):
+    content = must_replace(
+        content,
+        'IIb="General Appearance Shortcuts Notifications Models Customizations Automations Browser Developer Running".split(" ")',
+        'IIb="General App Appearance Shortcuts Notifications Models Customizations Automations Browser Developer Running".split(" ")',
+        "IIb_enable_App_screen",
+    )
+    content = must_replace(
+        content,
+        'DMd={Notifications:X$,["Jetski Chat"]:X$,App:{feature:{visible:!1},applyFirst:[{runtimeGating:{host:[Fi.Electron,Fi.Web.Desktop.RemoteControl,Fi.Web.Mobile.RemoteControl]},feature:{visible:!0}}],\nimportant:[W$]}}',
+        'DMd={Notifications:X$,["Jetski Chat"]:X$,App:{feature:{visible:!0}}}',
+        "DMd_App_visible",
+    )
+    content = must_replace(
+        content,
+        'zNd={App:{feature:{visible:!1}}}',
+        'zNd={App:{feature:{visible:!0}}}',
+        "zNd_App_visible",
+    )
+    content = must_replace(
+        content,
+        'return D.createElement(ZS,{title:"Application",description:`Manage ${c} app settings.`},D.createElement(tNb,{screen:"App",sectionTitle:"General"})',
+        'return D.createElement(ZS,{title:"Application",description:`Manage ${c} app settings.`},D.createElement("div",{id:"agy-application-settings-anchor",className:"flex flex-col gap-8 w-full"}),D.createElement(tNb,{screen:"App",sectionTitle:"General"})',
+        "vNb_application_anchor",
+    )
+    content = must_replace(
+        content,
+        'var $Kb=({title:a="Notifications"})=>{var b=ld().core.notificationService,c=(0,D.useCallback)(async()=>{var d=e,f=e;try{f(await d(b.openPreferences()))}finally{d()}},[b]);',
+        'var $Kb=({title:a="Notifications"})=>{var b=ld().core.notificationService,c=(0,D.useCallback)(async()=>{try{if(window.Android&&typeof window.Android.openAppSettings==="function"){window.Android.openAppSettings();return}}catch(_e){}var d=e,f=e;try{f(await d(b.openPreferences()))}finally{d()}},[b]);',
+        "app_notifications_android_settings",
+    )
+    return content
+
+
 def patch_main(file_path):
     if not os.path.isfile(file_path):
         print(f"[web-patch-2.33.0] file not found: {file_path}", file=sys.stderr)
@@ -93,7 +127,14 @@ def patch_main(file_path):
         content = f.read()
 
     if "Android.getTheme" in content and "__agMpSmartV3" in content and "__AgRootEB" in content:
-        print("[web-patch-2.33.0] main.js already patched (v2.33.0 Android UI + Smart Marketplace V3 + RootEB)")
+        if "agy-application-settings-anchor" in content:
+            print("[web-patch-2.33.0] main.js already patched (v2.33.1 Android UI + Application Tab + Smart Marketplace V3 + RootEB)")
+            return True
+        content = apply_application_tab_patch(content)
+        assert "Desktop Mode" not in content, "Desktop Mode must not be present in Android main.js"
+        with open(file_path, "w", encoding="utf-8", newline="\n") as f:
+            f.write(content)
+        print("[web-patch-2.33.0] Upgraded patched main.js with Application settings tab!")
         return True
 
     # 1a. g1() system theme resolver via window.Android.getTheme()
@@ -452,6 +493,7 @@ def patch_main(file_path):
         'MermaidDiagramComponent:iOd,WebEffects:g.WebEffects,diagnosticsService:g.diagnosticsService,settingsSyncedState:g.settingsSyncedState}))))})();'
     )
     content = must_replace(content, old_root_render, new_root_render, "root_error_boundary")
+    content = apply_application_tab_patch(content)
 
     assert "Desktop Mode" not in content, "Desktop Mode must not be present in Android main.js"
 

@@ -319,4 +319,60 @@ public final class AndroidBridge {
         } catch (Throwable ignored) {
         }
     }
+
+    @JavascriptInterface
+    public String getBackupStateJson() {
+        try {
+            return com.agy.backup.BackupManager.getInstance(appContext).getStateJson();
+        } catch (Throwable t) {
+            return "{\"type\":\"idle\",\"message\":\"\",\"percent\":0,"
+                    + "\"conversations\":true,\"skillsPlugins\":true,\"projects\":true}";
+        }
+    }
+
+    @JavascriptInterface
+    public void setBackupOptionsAuth(String authToken,
+                                     boolean conversations,
+                                     boolean skillsPlugins,
+                                     boolean projects) {
+        if (!isAuthorized(authToken)) return;
+        try {
+            com.agy.backup.BackupManager.getInstance(appContext)
+                    .setOptions(conversations, skillsPlugins, projects);
+        } catch (Throwable ignored) {
+        }
+    }
+
+    @JavascriptInterface
+    public void exportBackupAuth(String authToken,
+                                 boolean conversations,
+                                 boolean skillsPlugins,
+                                 boolean projects) {
+        if (!isAuthorized(authToken)) return;
+        try {
+            com.agy.backup.BackupManager.getInstance(appContext)
+                    .requestExport(MainActivity.activeActivity, conversations, skillsPlugins, projects);
+        } catch (Throwable ignored) {
+        }
+    }
+
+    @JavascriptInterface
+    public void restoreBackupAuth(String authToken) {
+        if (!isAuthorized(authToken)) return;
+        try {
+            com.agy.backup.BackupManager.getInstance(appContext)
+                    .requestRestore(MainActivity.activeActivity);
+        } catch (Throwable ignored) {
+        }
+    }
+
+    @JavascriptInterface
+    public void refreshBackupStatsAuth(String authToken, boolean force) {
+        if (!isAuthorized(authToken)) return;
+        try {
+            com.agy.backup.BackupManager.getInstance(appContext)
+                    .refreshStatsAsync(force);
+        } catch (Throwable ignored) {
+        }
+    }
 }

@@ -4,7 +4,7 @@
  *   1. Mobile floating update banner (#agy-mobile-update-pill) when state is
  *      "ready" and the desktop header AppUpdateButton is not mounted/visible
  *      (e.g. mobileLayout on viewports < 640px).
- *   2. Native-styled "Application Updates" section inside Settings -> General
+ *   2. Native-styled "Application Updates" section inside Settings -> Application
  *      (#agy-settings-updates-section) for manual Check for Updates / Restart
  *      to Update on all screen sizes.
  */
@@ -43,7 +43,7 @@ function setCssIfChanged(el, css) {
 function isOwnedUpdaterNode(node) {
   var cur = node;
   while (cur && cur !== document.body && cur !== document.documentElement) {
-    if (cur.nodeType === 1 && (cur.id === 'agy-mobile-update-pill' || cur.id === 'agy-settings-updates-section')) {
+    if (cur.nodeType === 1 && (cur.id === 'agy-mobile-update-pill' || cur.id === 'agy-settings-updates-section' || cur.id === 'agy-settings-backup-section' || cur.id === 'agy-application-settings-anchor')) {
       return true;
     }
     cur = cur.parentNode;
@@ -58,7 +58,7 @@ function getInstalledAppVersion() {
       if (v) return String(v);
     }
   } catch (e) {}
-  return (CONFIG && CONFIG.appVersion) || VERSION || '2.33.0';
+  return (CONFIG && CONFIG.appVersion) || VERSION || '2.33.1';
 }
 
 function readNativeUpdaterState() {
@@ -210,9 +210,8 @@ function renderMobileUpdatePill() {
 
 function renderSettingsUpdatesSection() {
   if (typeof document === 'undefined') return;
-  var anchor = document.getElementById('agent-permissions');
-  if (!anchor || !anchor.parentElement) return;
-  var container = anchor.parentElement;
+  var container = document.getElementById('agy-application-settings-anchor');
+  if (!container) return;
 
   var sec = document.getElementById('agy-settings-updates-section');
   if (!sec) {
@@ -336,6 +335,9 @@ function scheduleUpdaterDomSync() {
     try {
       renderMobileUpdatePill();
       renderSettingsUpdatesSection();
+      if (typeof renderSettingsBackupSection === 'function') {
+        renderSettingsBackupSection();
+      }
     } catch (e) {
       warn('updater.domSync', e);
     }
@@ -434,11 +436,13 @@ function installUpdaterDomWatchers() {
   window.addEventListener('resize', scheduleUpdaterDomSync, { passive: true });
   window.addEventListener('agy:host-resume', function() {
     readNativeUpdaterState();
+    if (typeof readNativeBackupState === 'function') readNativeBackupState();
     scheduleUpdaterDomSync();
   });
   document.addEventListener('visibilitychange', function() {
     if (document.visibilityState === 'visible') {
       readNativeUpdaterState();
+      if (typeof readNativeBackupState === 'function') readNativeBackupState();
       scheduleUpdaterDomSync();
     }
   });
