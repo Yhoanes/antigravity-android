@@ -4,7 +4,7 @@
     "bin/chromium": "4b105b35b5905ce2b011dea9d6b13269964f62e54127d9aabf43034fb408385e",
     "bin/gnome-open": "8258a78e342dd041a0257a48df9bf96d9941848b06cc00d09b7c94acf0db8cc4",
     "bin/google-chrome": "4b105b35b5905ce2b011dea9d6b13269964f62e54127d9aabf43034fb408385e",
-    "bin/liblanguage_server.so": "f7143472c9b010fe69d9ae9c3c8f151d408255d2aec89b696027b00331ae0c20",
+    "bin/liblanguage_server.so": "03d371102d75a4711b0df3ae719165c6d0ca7e6daa0c82410be889a6dded0202",
     "bin/libloader.so": "ca4af7c4022222bb405b0b601d818506ea608a2242f3cce43bd0b56b71f94530",
     "bin/open": "8258a78e342dd041a0257a48df9bf96d9941848b06cc00d09b7c94acf0db8cc4",
     "bin/open_helper": "8258a78e342dd041a0257a48df9bf96d9941848b06cc00d09b7c94acf0db8cc4",
@@ -27,11 +27,11 @@
     "lib/libpthread.so.0": "adf2a3b38694cdd6b8e6c08f56a64786420cb20d736ceece48c3871147357ff2",
     "lib/libresolv.so.2": "490093f15e8f6a5966e89f61c01887657ababeb154b755c48d91a6e2ab9888f2",
     "lib/librt.so.1": "a941a6c9eb45597c47597e7711e8cd24b039eb488f20337d2a96e35c22daf327",
-    "seed/AGENTS.md": "57f4056e6badc119522b873c9d333badaa21a02bb0f381a23e01742219ec273b",
+    "seed/AGENTS.md": "c7aed8523a2f8f039a5ef7e20cdeb54e16f655ffa64b2accb0721a194f880d7a",
     "seed/antigravity_state.gemini.pbtxt": "d0771e8da9b2cbcba7d993e391acc7e7e6ee4797b0f660dd51dd65ae5f6159cf",
     "seed/antigravity_state.pbtxt": "ab5ba94e0414d5379d38722ad60849e9801a1fc21ca862ed7caec84cf2f9da3e",
     "seed/jetski_state.pbtxt": "ab5ba94e0414d5379d38722ad60849e9801a1fc21ca862ed7caec84cf2f9da3e"
   },
-  "generated_at": "2026-11-20T19:28:53Z",
+  "generated_at": "2026-11-20T23:23:33Z",
   "schema": 1
 }

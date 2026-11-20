@@ -16,8 +16,8 @@ function scan() {
   state.groups = groups.length;
   for (var i = 0; i < groups.length; i++) {
     var group = groups[i];
-    var row = (group.closest && group.closest(CONFIG.menuItemRole)) || group.parentElement || group;
-    registerRow(row);
+    var row = group.closest ? group.closest(CONFIG.menuItemRole) : null;
+    if (row) registerRow(row);
   }
 }
 

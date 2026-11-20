@@ -28,7 +28,7 @@ SIG_VOICE_RELAY = re.compile(rb"\xe4\x00\x00\xb4\x84\x04\x40\x39\xa4\x00\x00\x36
 PATCHED_VOICE_RELAY = re.compile(rb"(?<!\xe3\x2b\x00\xf9)(\x1f\x20\x03\xd5){3}" + _VOICE_RET_TAIL, re.S)
 REPL_VOICE_RELAY = b"\x1f\x20\x03\xd5" * 3
 
-SIG_VOICE_ALLOWED = re.compile(rb"\xe3\x2b\x00\xf9\x64\x00\x00\xb4\x05[\x60\x6c\x80]\x42\xf9\xa5\x00\x00\xb5" + _VOICE_RET_TAIL, re.S)
+SIG_VOICE_ALLOWED = re.compile(rb"\xe3\x2b\x00\xf9\x64\x00\x00\xb4\x05[\x60\x6c\x80\x9c]\x42\xf9\xa5\x00\x00\xb5" + _VOICE_RET_TAIL, re.S)
 PATCHED_VOICE_ALLOWED = re.compile(rb"\xe3\x2b\x00\xf9(\x1f\x20\x03\xd5){3}" + _VOICE_RET_TAIL, re.S)
 REPL_VOICE_ALLOWED = b"\xe3\x2b\x00\xf9" + (b"\x1f\x20\x03\xd5" * 3)
 
@@ -59,5 +59,5 @@ PATCHED_SBOX_INIT = re.compile(re.escape(REPL_SBOX_INIT), re.S)
 # 3. command.prepareSandbox @ 0x69db628 (28 bytes):
 #    unconditionally set cfg.NoSandbox = 1 (strb w1, [x0])
 REPL_SBOX_PREP = bytes.fromhex("e10340b20120033901000039e16740f9a10000b41f2003d51f2003d5")
-SIG_SBOX_PREP = re.compile(re.escape(bytes.fromhex("e10340b201200339e16740f9c10000b422204239420040d202000039")), re.S)
+SIG_SBOX_PREP = re.compile(rb"\xe1\x03\x40\xb2\x01\x20\x03\x39\xe1\x67\x40\xf9\xc1\x00\x00\xb4\x22[\x00\x20]\x42\x39\x42\x00\x40\xd2\x02\x00\x00\x39", re.S)
 PATCHED_SBOX_PREP = re.compile(re.escape(REPL_SBOX_PREP), re.S)

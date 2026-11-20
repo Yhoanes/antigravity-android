@@ -42,8 +42,8 @@ public final class LogExporter {
         StringBuilder sb = new StringBuilder();
         sb.append("=== Antigravity Diagnostics ===\n");
         sb.append("Timestamp: ").append(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US).format(new Date())).append("\n");
-        String verName = "2.33.2";
-        long verCode = 39;
+        String verName = "2.34.0";
+        long verCode = 40;
         if (context != null) {
             try {
                 android.content.pm.PackageInfo pi = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);

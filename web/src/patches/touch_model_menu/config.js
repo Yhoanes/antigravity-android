@@ -13,8 +13,8 @@ var CONFIG = {
   // selectors
   trigger: '[data-testid="model-selector-trigger"]',
   panel: '[data-testid="model-selector-panel"]',
-  effortGroup: '[data-testid="model-selector-effort-group"]',
-  effortOption: '[data-testid="model-selector-effort-option"]',
+  effortGroup: '[data-testid="model-selector-effort-group"],[data-testid="model-selector-orchestrator"],[data-testid="orchestrator-picker-row"][data-model-base]',
+  effortOption: '[data-testid="model-selector-effort-option"],[data-testid="orchestrator-picker-row"]',
   modelItem: '[data-testid="model-selector-item"]',
   menuItemRole: '[role="menuitem"]',
   // observer root
