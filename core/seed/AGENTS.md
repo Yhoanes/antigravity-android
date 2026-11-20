@@ -1,7 +1,7 @@
 # Antigravity Android Agent Rules & Environment Guidelines
 
 > [!NOTE]
-> This rule is automatically loaded into every conversation in Antigravity for Android (v2.33.1).
+> This rule is automatically loaded into every conversation in Antigravity for Android (v2.33.2).
 > It defines the operating environment, execution rules, package management, and elevated permissions.
 
 ---

@@ -58,7 +58,7 @@ function getInstalledAppVersion() {
       if (v) return String(v);
     }
   } catch (e) {}
-  return (CONFIG && CONFIG.appVersion) || VERSION || '2.33.1';
+  return (CONFIG && CONFIG.appVersion) || VERSION || '2.33.2';
 }
 
 function readNativeUpdaterState() {

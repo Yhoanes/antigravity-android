@@ -15,7 +15,7 @@ check_tools() {
     [ -f "$CORE_SRC" ] || [ -f "${CORE_SRC}.tar.gz" ] || die "core not found: $CORE_SRC (or ${CORE_SRC}.tar.gz)"
     [ -f "$ANDROID_JAR" ]        || die "android.jar not found: $ANDROID_JAR"
     [ -f "$R8_JAR" ]             || die "r8.jar not found: $R8_JAR"
-    [ -f "$KEYSTORE" ]           || die "keystore not found: $KEYSTORE"
+    [ -f "$KEYSTORE" ] || [ "${KEY_ALIAS:-}" = "androiddebugkey" ] || die "keystore not found: $KEYSTORE"
     [ -f "$MANIFEST_XML" ]       || die "manifest not found: $MANIFEST_XML"
     [ -d "$WEB_DIR" ]            || die "web/ not found: $WEB_DIR"
     [ -f "$GEN_ANDROID_CONFIG" ] || die "gen_android_config.py not found: $GEN_ANDROID_CONFIG"
