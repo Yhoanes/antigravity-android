@@ -1,5 +1,6 @@
 /**
- * patches/ui_i18n/engine.js - React-safe WeakMap DOM translation & RTL/LTR isolator.
+ * patches/ui_i18n/engine.js - React-safe WeakMap DOM translation, case/punctuation
+ * tolerant lookup, and Arabic RTL typography & code-block LTR isolator.
  */
 
 var origTextMap = typeof WeakMap !== 'undefined' ? new WeakMap() : null;
@@ -18,6 +19,7 @@ var SKIP_TAGS = {
   TEXTAREA: 1
 };
 
+var lowerDictCache = { es: null, ar: null };
 var isMutatingDom = false;
 var i18nObserver = null;
 var pendingRoots = [];
@@ -29,9 +31,77 @@ function getActiveDict(lang) {
   return null;
 }
 
+function getLowerDict(lang) {
+  if (lang !== 'es' && lang !== 'ar') return null;
+  if (lowerDictCache[lang]) return lowerDictCache[lang];
+  var src = getActiveDict(lang);
+  if (!src) return null;
+  var map = Object.create(null);
+  var keys = Object.keys(src);
+  for (var i = 0; i < keys.length; i++) {
+    var k = keys[i];
+    if (k.length >= 4) {
+      var lk = k.toLowerCase();
+      if (map[lk] === undefined) {
+        map[lk] = src[k];
+      }
+    }
+  }
+  lowerDictCache[lang] = map;
+  return map;
+}
+
 function getActivePatterns(lang) {
   if (lang === 'es') return PATTERNS_ES;
   if (lang === 'ar') return PATTERNS_AR;
+  return null;
+}
+
+function lookupCore(core, dict, lowerDict, patterns) {
+  if (Object.prototype.hasOwnProperty.call(dict, core)) {
+    return dict[core];
+  }
+  if (lowerDict && core.length >= 4) {
+    var lc = core.toLowerCase();
+    if (lowerDict[lc] !== undefined) {
+      return lowerDict[lc];
+    }
+  }
+  // Ellipsis normalization (... <-> …)
+  if (core.slice(-3) === '...') {
+    var ell1 = core.slice(0, -3) + '\u2026';
+    if (Object.prototype.hasOwnProperty.call(dict, ell1)) return dict[ell1];
+  } else if (core.slice(-1) === '\u2026') {
+    var ell3 = core.slice(0, -1) + '...';
+    if (Object.prototype.hasOwnProperty.call(dict, ell3)) return dict[ell3];
+  }
+  // Trailing period / colon tolerance
+  var lastCh = core.charAt(core.length - 1);
+  if ((lastCh === '.' || lastCh === ':') && core.length > 4) {
+    var stem = core.slice(0, -1);
+    if (Object.prototype.hasOwnProperty.call(dict, stem)) {
+      return dict[stem] + lastCh;
+    }
+    if (lowerDict && lowerDict[stem.toLowerCase()] !== undefined) {
+      return lowerDict[stem.toLowerCase()] + lastCh;
+    }
+  } else if (core.length > 4) {
+    var withDot = core + '.';
+    if (Object.prototype.hasOwnProperty.call(dict, withDot)) {
+      var td = dict[withDot];
+      return td.charAt(td.length - 1) === '.' ? td.slice(0, -1) : td;
+    }
+  }
+
+  if (patterns) {
+    for (var i = 0; i < patterns.length; i++) {
+      var re = patterns[i][0];
+      var repl = patterns[i][1];
+      if (re.test(core)) {
+        return core.replace(re, repl);
+      }
+    }
+  }
   return null;
 }
 
@@ -51,21 +121,8 @@ function translateStringForLang(raw, lang) {
   var core = raw.slice(lead.length, raw.length - trail.length);
   if (!core) return raw;
 
-  if (Object.prototype.hasOwnProperty.call(dict, core)) {
-    return lead + dict[core] + trail;
-  }
-
-  var patterns = getActivePatterns(lang);
-  if (patterns) {
-    for (var i = 0; i < patterns.length; i++) {
-      var re = patterns[i][0];
-      var repl = patterns[i][1];
-      if (re.test(core)) {
-        return lead + core.replace(re, repl) + trail;
-      }
-    }
-  }
-  return raw;
+  var hit = lookupCore(core, dict, getLowerDict(lang), getActivePatterns(lang));
+  return hit !== null ? (lead + hit + trail) : raw;
 }
 
 function translateString(raw) {
@@ -135,7 +192,6 @@ function processTextNode(node) {
   } else if (val === rec.trans) {
     orig = rec.orig;
   } else {
-    // React updated the underlying English text dynamically!
     orig = val;
   }
 
@@ -251,10 +307,19 @@ function applyLangDocumentStyles() {
         'html[data-agy-lang="ar"] body {',
         '  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans Arabic", Tahoma, Arial, sans-serif;',
         '}',
-        'html[data-agy-lang="ar"] h1, html[data-agy-lang="ar"] h2, html[data-agy-lang="ar"] h3,',
-        'html[data-agy-lang="ar"] p, html[data-agy-lang="ar"] label, html[data-agy-lang="ar"] option,',
-        'html[data-agy-lang="ar"] #agy-application-settings-anchor span {',
+        'html[data-agy-lang="ar"] h1, html[data-agy-lang="ar"] h2, html[data-agy-lang="ar"] h3, html[data-agy-lang="ar"] h4 {',
+        '  line-height: 1.5 !important;',
+        '  padding-top: 2px;',
         '  unicode-bidi: plaintext;',
+        '}',
+        'html[data-agy-lang="ar"] p, html[data-agy-lang="ar"] label, html[data-agy-lang="ar"] option,',
+        'html[data-agy-lang="ar"] span:not(.google-symbols):not(.material-symbols-outlined):not(.codicon),',
+        'html[data-agy-lang="ar"] div[class*="text-muted-foreground"],',
+        'html[data-agy-lang="ar"] div[class*="font-medium"] {',
+        '  unicode-bidi: plaintext;',
+        '}',
+        'html[data-agy-lang="ar"] [class*="truncate"] {',
+        '  line-height: 1.45 !important;',
         '}',
         'html[data-agy-lang="ar"] pre, html[data-agy-lang="ar"] code, html[data-agy-lang="ar"] kbd,',
         'html[data-agy-lang="ar"] .monaco-editor, html[data-agy-lang="ar"] .xterm, html[data-agy-lang="ar"] .cm-editor,',

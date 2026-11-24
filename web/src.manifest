@@ -56,6 +56,7 @@ bundle iife patches/ui_i18n.js
 src/patches/ui_i18n/config.js
 src/patches/ui_i18n/dict-es.js
 src/patches/ui_i18n/dict-ar.js
+src/patches/ui_i18n/patterns.js
 src/patches/ui_i18n/engine.js
 src/patches/ui_i18n/settings-ui.js
 src/patches/ui_i18n/public-api.js
