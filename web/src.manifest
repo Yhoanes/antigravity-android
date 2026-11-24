@@ -52,6 +52,14 @@ src/patches/theme_sync/notify.js
 src/patches/theme_sync/install.js
 src/patches/theme_sync/public-api.js
 
+bundle iife patches/ui_i18n.js
+src/patches/ui_i18n/config.js
+src/patches/ui_i18n/dict-es.js
+src/patches/ui_i18n/dict-ar.js
+src/patches/ui_i18n/engine.js
+src/patches/ui_i18n/settings-ui.js
+src/patches/ui_i18n/public-api.js
+
 bundle iife patches/startup_ready.js
 src/patches/startup_ready/signal.js
 src/patches/startup_ready/error-capture.js

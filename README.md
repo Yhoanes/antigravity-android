@@ -9,7 +9,7 @@
   <p><font color="#7d8590">Standalone <b>Google Antigravity</b> autonomous coding IDE &amp; native <b>ARM64 Bionic</b> reverse-engineering APK for Android — engineered by <a href="https://github.com/Yhoanes"><b>Yhoanes</b></a> (zero PRoot/Termux virtualization overhead).</font></p>
 
   <p>
-    <code>v2.34.0</code> &nbsp;&bull;&nbsp;
+    <code>v2.34.1</code> &nbsp;&bull;&nbsp;
     <code>Android 7.0+</code> &nbsp;&bull;&nbsp;
     <code>ARM64 v8.0-A+</code> &nbsp;&bull;&nbsp;
     <code>Native Rust agy-box Engine</code> &nbsp;&bull;&nbsp;
@@ -17,21 +17,22 @@
     <code>AGY Video Studio (GPU)</code> &nbsp;&bull;&nbsp;
     <code>Craft Anything + Ghidra 12.1.4</code> &nbsp;&bull;&nbsp;
     <code>Live Voice Mode</code> &nbsp;&bull;&nbsp;
+    <code>Multi-Language UI (EN / ES / AR)</code> &nbsp;&bull;&nbsp;
     <code>Backup &amp; Restore + OTA</code> &nbsp;&bull;&nbsp;
     <code>BY-NC / Apache 2.0</code>
   </p>
 
   <p>
     <a href="https://yhoanes.github.io/antigravity-android/"><b>Official Website &amp; Benchmarks</b></a> &nbsp;&bull;&nbsp;
-    <a href="https://github.com/Yhoanes/antigravity-android/releases/latest"><b>Download Signed APK (v2.34.0)</b></a> &nbsp;&bull;&nbsp;
+    <a href="https://github.com/Yhoanes/antigravity-android/releases/latest"><b>Download Signed APK (v2.34.1)</b></a> &nbsp;&bull;&nbsp;
     <a href="https://github.com/Yhoanes/antigravity-android-plugins"><b>ARM64 Plugin Marketplace</b></a>
   </p>
 
   <br/>
 
   <!-- Hero Visual -->
-  <img alt="Antigravity for Android v2.34.0 Standalone Autonomous Agent IDE Interface" src="docs/assets/hero_home.jpg" width="100%" style="border-radius: 14px; border: 1px solid rgba(128, 128, 128, 0.2); box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);" />
-  <p align="center"><font size="2" color="#7d8590">Antigravity v2.34.0 autonomous agent workspace on Android with custom Orchestrator/Executor model selection, Gemini 4 (Neon/Carbon/Argon/Hydrogen) &amp; Live Voice Mode</font></p>
+  <img alt="Antigravity for Android v2.34.1 Standalone Autonomous Agent IDE Interface" src="docs/assets/hero_home.jpg" width="100%" style="border-radius: 14px; border: 1px solid rgba(128, 128, 128, 0.2); box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);" />
+  <p align="center"><font size="2" color="#7d8590">Antigravity v2.34.1 autonomous agent workspace on Android with custom Orchestrator/Executor model selection, Gemini 4 (Neon/Carbon/Argon/Hydrogen), multi-language UI (English, Español, العربية) &amp; Live Voice Mode</font></p>
 
 </div>
 
@@ -39,7 +40,7 @@
 
 ## Architectural Overview
 
-**Antigravity for Android (`v2.34.0`)** by **[Yhoanes](https://github.com/Yhoanes)** brings Google's autonomous agentic coding engine (`Google Antigravity` IDE & CLI) and a full native binary reverse-engineering suite directly to Android phones and tablets as a standalone APK.
+**Antigravity for Android (`v2.34.1`)** by **[Yhoanes](https://github.com/Yhoanes)** brings Google's autonomous agentic coding engine (`Google Antigravity` IDE & CLI) and a full native binary reverse-engineering suite directly to Android phones and tablets as a standalone APK.
 
 Unlike terminal-based chat wrappers or virtualized Linux containers (`PRoot`, `QEMU`, `chroot`, `Termux proot-distro`), Antigravity executes **natively inside Android userspace (Bionic)** within the application process. Powered by next-generation models (**Gemini 4 Neon**, **Gemini 4 Carbon**, **Gemini 4 Argon**, **Gemini 4 Hydrogen**, **Orchestrator (Neon)**, **Orchestrator (Carbon)**, **Orchestrator (Argon)**, **Gemini 3.8 Flash**, **Claude Opus 5.5**, **Claude Sonnet 5.5**, and **GPT-OSS 120B**), the agent autonomously inspects codebases, decompiles multi-architecture binaries, edits project trees, executes build tools, and validates results directly on physical mobile hardware.
 
@@ -217,7 +218,7 @@ Real-world test: the agent authored a custom Python I/O benchmark and executed m
     <td width="33%" valign="top" style="border: 1px solid rgba(128, 128, 128, 0.2); border-radius: 12px; padding: 16px;">
       <p><font size="4"><b>1. Download APK</b></font></p>
       <p><font color="#7d8590">Releases are available under <a href="https://github.com/Yhoanes/antigravity-android/releases">Releases</a>:<br/><br/>
-      &bull; <b><code>Antigravity-v2.34.0.apk</code></b> — production-signed RSA-4096 release with native Rust <code>agy-box</code> engine, bundled Bionic toolchain, Smart Android Marketplace, portable Backup &amp; Restore, and in-app OTA updater.<br/><br/>
+      &bull; <b><code>Antigravity-v2.34.1.apk</code></b> — production-signed RSA-4096 release with native Rust <code>agy-box</code> engine, bundled Bionic toolchain, multi-language UI (English, Español, العربية), Smart Android Marketplace, portable Backup &amp; Restore, and in-app OTA updater.<br/><br/>
       <i>Seamless 1-tap in-app OTA updates (<b>Restart to Update</b>) and in-place upgrades are supported across versions.</i></font></p>
     </td>
     <td width="33%" valign="top" style="border: 1px solid rgba(128, 128, 128, 0.2); border-radius: 12px; padding: 16px;">
@@ -311,7 +312,7 @@ antigravity-android/
 
 ## Acknowledgments & Attribution
 
-This project builds upon the foundational Android Bionic host architecture originally created by [werdio325-png/antigravity-android](https://github.com/werdio325-png/antigravity-android), with major architectural upgrades and expansions in this repository (`v2.34.0`), including:
+This project builds upon the foundational Android Bionic host architecture originally created by [werdio325-png/antigravity-android](https://github.com/werdio325-png/antigravity-android), with major architectural upgrades and expansions in this repository (`v2.34.1`), including:
 
 * **Core Engine & Workbench Upgrade (`v2.34.0`):** Updated ARM64 `language_server` (`go1.28-RC01`, Agent Plugins Spec 1.1, Subagent Hub, and `Gemini 4 Neon/Hydrogen` model metadata), Workbench UI bundle with custom **Orchestrator & Executor** model/effort selection, **Gemini 4 (Neon/Carbon/Argon/Hydrogen)** & **Claude 5.5**, HTTP/2 & WebSocket `StreamAgentStateUpdates` + `JetboxSubscribeToSummaries` background resume guard (`agy:host-resume` & multi-window `window-focus` recovery), OAuth redirect & touch input trigger fixes, and native `webp_encoder` / `webm_encoder` binaries.
 * **Smart Android Marketplace Fusion & `AGY Video Studio`:** Live OTA plugin fusion via [`antigravity-android-plugins`](https://github.com/Yhoanes/antigravity-android-plugins) (`Built for Android` shelf), native GPU `h264_mediacodec` video studio (`AGY Video Studio`), native 91-tool `GitHub MCP` server, headless ARM64 Chromium MCP (`Chrome DevTools`), on-device `android` CLI bridge, and 16 KB-aligned `libagy-go-dns.so` Bionic DNS resolution for Go plugin CLIs.
@@ -323,11 +324,11 @@ This project builds upon the foundational Android Bionic host architecture origi
 
 ## License, Copyright & Attribution Terms
 
-**Copyright &copy; 2026 [Yhoanes](https://github.com/Yhoanes)** (`v2.29.0` – `v2.34.0` modifications, reverse-engineering suite integration, voice relay, runtime optimizations, documentation, and compiled APK distributions).
+**Copyright &copy; 2026 [Yhoanes](https://github.com/Yhoanes)** (`v2.29.0` – `v2.34.1` modifications, reverse-engineering suite integration, voice relay, runtime optimizations, documentation, and compiled APK distributions).
 
 Pursuant to **Section 4 of the Apache License, Version 2.0**, all modifications, additions, and the derivative distribution in this repository are licensed under the **Non-Commercial &amp; Mandatory Attribution License** (see [`LICENSE`](LICENSE) and [`NOTICE`](NOTICE)):
 
-* **Mandatory Attribution (`BY`):** Any fork, redistribution, modified version, or binary/APK distribution **must** retain the [`LICENSE`](LICENSE) and [`NOTICE`](NOTICE) files intact, credit **Yhoanes** as the author of the `v2.29.0` – `v2.34.0` engineering and expansions, and link back to [https://github.com/Yhoanes/antigravity-android](https://github.com/Yhoanes/antigravity-android).
+* **Mandatory Attribution (`BY`):** Any fork, redistribution, modified version, or binary/APK distribution **must** retain the [`LICENSE`](LICENSE) and [`NOTICE`](NOTICE) files intact, credit **Yhoanes** as the author of the `v2.29.0` – `v2.34.1` engineering and expansions, and link back to [https://github.com/Yhoanes/antigravity-android](https://github.com/Yhoanes/antigravity-android).
 * **Non-Commercial Use Only (`NC`):** Commercial sale, paid redistribution, paid bundling, or commercial monetization of this derivative work, its modifications, or its compiled APK binaries is **strictly prohibited** without prior written permission from **Yhoanes**.
 * **Upstream Foundation:** The foundational Android Bionic host code derived from [werdio325-png/antigravity-android](https://github.com/werdio325-png/antigravity-android) remains licensed under the [Apache License 2.0](LICENSE).
 

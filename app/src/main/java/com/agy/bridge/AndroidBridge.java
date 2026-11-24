@@ -375,4 +375,20 @@ public final class AndroidBridge {
         } catch (Throwable ignored) {
         }
     }
+
+    @JavascriptInterface
+    public String getAppLanguage() {
+        return com.agy.i18n.AppLanguageManager.getMode(appContext);
+    }
+
+    @JavascriptInterface
+    public String getResolvedAppLanguage() {
+        return com.agy.i18n.AppLanguageManager.resolveLanguage(appContext);
+    }
+
+    @JavascriptInterface
+    public boolean setAppLanguageAuth(String authToken, String mode) {
+        if (!isAuthorized(authToken)) return false;
+        return com.agy.i18n.AppLanguageManager.setMode(appContext, mode);
+    }
 }

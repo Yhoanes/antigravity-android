@@ -1,6 +1,9 @@
 package com.agy.ui.splash;
 
+import android.content.Context;
 import android.webkit.WebView;
+
+import com.agy.i18n.AppLanguageManager;
 
 /** Renders status/failure overlays whose Retry button calls window.SplashRetry. */
 public final class SplashOverlayHtml {
@@ -14,25 +17,33 @@ public final class SplashOverlayHtml {
         if (splashView == null) {
             return;
         }
+        Context ctx = splashView.getContext();
         splashView.loadDataWithBaseURL("https://app.antigravity.local/",
-                getOverlayHtml(title, message, foregroundColor, backgroundColor, retryable),
+                getOverlayHtml(ctx, title, message, foregroundColor, backgroundColor, retryable),
                 "text/html", "utf-8", null);
     }
 
-    public static String getOverlayHtml(String title, String message,
+    public static String getOverlayHtml(Context ctx, String title, String message,
                                         String foregroundColor, String backgroundColor,
                                         boolean retryable) {
+        boolean rtl = AppLanguageManager.isRtl(ctx);
+        String lang = AppLanguageManager.resolveLanguage(ctx);
         String safeTitle = escape(title == null ? "Antigravity" : title);
-        String safe = escape(message == null ? "unknown error" : message);
+        String safe = escape(message == null
+                ? AppLanguageManager.tr(ctx, "unknown error", "error desconocido", "خطأ غير معروف")
+                : message);
+        String retryTxt = AppLanguageManager.tr(ctx, "Retry", "Reintentar", "إعادة المحاولة");
+        String copyTxt = AppLanguageManager.tr(ctx, "Copy Logs", "Copiar registros", "نسخ السجلات");
+        String saveTxt = AppLanguageManager.tr(ctx, "Save Logs", "Guardar registros", "حفظ السجلات");
         String button = retryable
                 ? "  <div class=\"btn-group\">\n"
-                + "    <button class=\"btn retry\" onclick=\"agyRetry()\">Retry</button>\n"
-                + "    <button class=\"btn sec\" onclick=\"agyCopyLogs()\">Copy Logs</button>\n"
-                + "    <button class=\"btn sec\" onclick=\"agySaveLogs()\">Save Logs</button>\n"
+                + "    <button class=\"btn retry\" onclick=\"agyRetry()\">" + retryTxt + "</button>\n"
+                + "    <button class=\"btn sec\" onclick=\"agyCopyLogs()\">" + copyTxt + "</button>\n"
+                + "    <button class=\"btn sec\" onclick=\"agySaveLogs()\">" + saveTxt + "</button>\n"
                 + "  </div>\n"
                 : "";
         return "<!DOCTYPE html>\n"
-                + "<html>\n"
+                + "<html lang=\"" + lang + "\"" + (rtl ? " dir=\"rtl\"" : "") + ">\n"
                 + "<head>\n"
                 + "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n"
                 + "<style>\n"

@@ -80,7 +80,12 @@ public final class SplashController {
         setVisible();
         if (mode != MODE_TRANSIENT) {
             mode = MODE_TRANSIENT;
-            SplashOverlayHtml.show(view, "Restarting Antigravity", message,
+            String title = com.agy.i18n.AppLanguageManager.tr(
+                    context,
+                    "Restarting Antigravity",
+                    "Reiniciando Antigravity",
+                    "جارٍ إعادة تشغيل Antigravity");
+            SplashOverlayHtml.show(view, title, message,
                     foreground(), background(), false);
         }
     }
@@ -94,7 +99,12 @@ public final class SplashController {
         mode = MODE_ERROR;
         setVisible();
         SplashRetryBridge.bind(view, context, retryListener);
-        SplashOverlayHtml.show(view, "Antigravity failed to start", message,
+        String title = com.agy.i18n.AppLanguageManager.tr(
+                context,
+                "Antigravity failed to start",
+                "Antigravity no pudo iniciar",
+                "تعذّر بدء تشغيل Antigravity");
+        SplashOverlayHtml.show(view, title, message,
                 foreground(), background(), retryListener != null);
     }
 

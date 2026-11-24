@@ -15,8 +15,11 @@ var dismissedBannerVersion = null;
 var updaterDomSyncQueued = false;
 
 function setTextIfChanged(el, text) {
-  if (el && el.textContent !== text) {
-    el.textContent = text;
+  var localized = (typeof window.__agTranslateString === 'function')
+    ? window.__agTranslateString(text)
+    : text;
+  if (el && el.textContent !== localized) {
+    el.textContent = localized;
   }
 }
 
@@ -43,7 +46,7 @@ function setCssIfChanged(el, css) {
 function isOwnedUpdaterNode(node) {
   var cur = node;
   while (cur && cur !== document.body && cur !== document.documentElement) {
-    if (cur.nodeType === 1 && (cur.id === 'agy-mobile-update-pill' || cur.id === 'agy-settings-updates-section' || cur.id === 'agy-settings-backup-section' || cur.id === 'agy-application-settings-anchor')) {
+    if (cur.nodeType === 1 && (cur.id === 'agy-mobile-update-pill' || cur.id === 'agy-settings-language-section' || cur.id === 'agy-settings-updates-section' || cur.id === 'agy-settings-backup-section' || cur.id === 'agy-application-settings-anchor')) {
       return true;
     }
     cur = cur.parentNode;
@@ -58,7 +61,7 @@ function getInstalledAppVersion() {
       if (v) return String(v);
     }
   } catch (e) {}
-  return (CONFIG && CONFIG.appVersion) || VERSION || '2.34.0';
+  return (CONFIG && CONFIG.appVersion) || VERSION || '2.34.1';
 }
 
 function readNativeUpdaterState() {
@@ -281,9 +284,16 @@ function renderSettingsUpdatesSection() {
     sec.appendChild(hdrWrap);
     sec.appendChild(card);
 
-    container.insertBefore(sec, container.firstChild);
-  } else if (sec.parentElement !== container) {
-    container.insertBefore(sec, container.firstChild);
+    var langSec0 = document.getElementById('agy-settings-language-section');
+    var afterLang0 = (langSec0 && langSec0.parentElement === container) ? langSec0.nextSibling : container.firstChild;
+    container.insertBefore(sec, afterLang0);
+  } else {
+    var langSec1 = document.getElementById('agy-settings-language-section');
+    var validLang = (langSec1 && langSec1.parentElement === container) ? langSec1 : null;
+    var desiredPos = validLang ? validLang.nextSibling : container.firstChild;
+    if (sec.parentElement !== container || (validLang && sec.previousSibling !== validLang)) {
+      container.insertBefore(sec, desiredPos);
+    }
   }
 
   var installedVer = getInstalledAppVersion();
@@ -343,6 +353,8 @@ function scheduleUpdaterDomSync() {
     }
   });
 }
+
+window.__agRefreshApplicationBridgeSections = scheduleUpdaterDomSync;
 
 readNativeUpdaterState();
 
