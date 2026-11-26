@@ -7,6 +7,7 @@ import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.util.Log;
 
+import com.agy.i18n.AppLanguageManager;
 import com.agy.ui.MainActivity;
 
 import java.util.List;
@@ -82,6 +83,12 @@ public final class CustomTabLauncher {
             Log.e(TAG, "bad url: " + url, e);
             return false;
         }
+        String scheme = uri.getScheme();
+        if (scheme == null
+                || (!"http".equalsIgnoreCase(scheme) && !"https".equalsIgnoreCase(scheme))) {
+            Log.w(TAG, "ignoring non-http(s) external url scheme=" + scheme);
+            return false;
+        }
 
         final Context target = (MainActivity.activeActivity != null)
                 ? MainActivity.activeActivity
@@ -122,7 +129,13 @@ public final class CustomTabLauncher {
 
         // 3. Fallback to system chooser
         try {
-            Intent chooser = Intent.createChooser(fallback, "Open in browser");
+            String chooserTitle = AppLanguageManager.tr(
+                    context,
+                    "Open in browser",
+                    "Abrir en el navegador",
+                    "فتح في المتصفح"
+            );
+            Intent chooser = Intent.createChooser(fallback, chooserTitle);
             chooser.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(chooser);
             Log.i(TAG, "opened chooser for url=" + uri);

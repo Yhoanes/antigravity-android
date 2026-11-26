@@ -16,6 +16,8 @@ import com.agy.bridge.AndroidBridge;
 import com.agy.oauth.OAuthManager;
 import com.agy.util.LoopbackHost;
 
+import java.util.Locale;
+
 /** WebView client: OAuth interception, loopback TLS, and static asset serving. */
 public final class AgyWebViewClient extends WebViewClient {
 
@@ -73,23 +75,58 @@ public final class AgyWebViewClient extends WebViewClient {
         return handleNavigation(v, url, true);
     }
 
+    static boolean isInternalWebViewScheme(String scheme) {
+        if (scheme == null) {
+            return false;
+        }
+        String lower = scheme.toLowerCase(Locale.US);
+        return "blob".equals(lower)
+                || "data".equals(lower)
+                || "about".equals(lower)
+                || "javascript".equals(lower);
+    }
+
+    static boolean isSandboxedSubframeHost(String host) {
+        if (host == null || host.isEmpty()) {
+            return false;
+        }
+        String lower = host.toLowerCase(Locale.US);
+        return "scf.usercontent.goog".equals(lower)
+                || lower.endsWith(".scf.usercontent.goog");
+    }
+
     private boolean handleNavigation(WebView v, String url, boolean isMainFrame) {
-        if (url == null || url.isEmpty() || url.equals("about:blank")) {
+        if (url == null || url.isEmpty()) {
             return false;
         }
         try {
             Uri uri = Uri.parse(url);
+            String scheme = uri.getScheme();
+            if (isInternalWebViewScheme(scheme)) {
+                return false;
+            }
+            if (scheme == null
+                    || (!"http".equalsIgnoreCase(scheme) && !"https".equalsIgnoreCase(scheme))) {
+                Log.w(TAG, "blocking unsupported navigation scheme=" + scheme);
+                return true;
+            }
+            if (!isMainFrame && isSandboxedSubframeHost(uri.getHost())) {
+                return false;
+            }
             if (!LoopbackHost.isLoopback(uri)) {
                 Log.i(TAG, "non-loopback navigation -> external browser: " + redactUrl(url));
-                return oauth.openInBrowser(context, url);
+                oauth.openInBrowser(context, url);
+                return true;
             }
             int enginePort = bridge.getEnginePort();
             if (isMainFrame && enginePort > 0 && uri.getPort() != enginePort) {
                 Log.i(TAG, "non-engine loopback main-frame navigation -> external browser: " + redactUrl(url));
-                return oauth.openInBrowser(context, url);
+                oauth.openInBrowser(context, url);
+                return true;
             }
         } catch (Exception e) {
             Log.w(TAG, "cannot parse navigation uri");
+            return true;
         }
         return oauth.intercept(context, url);
     }
@@ -100,9 +137,19 @@ public final class AgyWebViewClient extends WebViewClient {
      */
     @Override
     public void onPageStarted(WebView v, String url, Bitmap favicon) {
-        if (url != null && !url.equals("about:blank")) {
+        if (url != null && !url.isEmpty()) {
             try {
                 Uri uri = Uri.parse(url);
+                String scheme = uri.getScheme();
+                if (isInternalWebViewScheme(scheme)) {
+                    return;
+                }
+                if (scheme == null
+                        || (!"http".equalsIgnoreCase(scheme) && !"https".equalsIgnoreCase(scheme))) {
+                    Log.w(TAG, "onPageStarted stopped unsupported top-level scheme=" + scheme);
+                    v.stopLoading();
+                    return;
+                }
                 int enginePort = bridge.getEnginePort();
                 if (!LoopbackHost.isLoopback(uri)
                         || (enginePort > 0 && uri.getPort() != enginePort)) {
