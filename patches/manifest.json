@@ -4,7 +4,7 @@
     "name": "language_server",
     "arch": "aarch64",
     "go": "go1.28-20261102-RC01",
-    "expected_size": 215438000
+    "expected_size": 216421040
   },
   "policy": {
     "fail_closed": true,
