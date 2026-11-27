@@ -120,8 +120,8 @@ def patch_main(file_path):
     with open(file_path, "r", encoding="utf-8") as f:
         content = f.read()
 
-    if "Android.getTheme" in content and "__agMpSmartV3" in content and "__AgRootEB" in content and "agy-application-settings-anchor" in content:
-        print("[web-patch-2.35.2] main.js already patched (v2.35.2 Android UI + Application Tab + Smart Marketplace V3 + RootEB)")
+    if "Android.getTheme" in content and "__agMpSmartV3" in content and "__AgRootEB" in content and "agy-application-settings-anchor" in content and "E.createElement(Amd,null),q!==void 0" in content:
+        print("[web-patch-2.35.2] main.js already patched (v2.35.3 Android UI + Application Tab + Smart Marketplace V3 + RootEB)")
         return True
 
     # 1a. v0() system theme resolver via window.Android.getTheme()
@@ -166,7 +166,7 @@ def patch_main(file_path):
         "theme_pushUpdate",
     )
 
-    # 2. AuxPane v2 redesign + Overview [📄] popover button (Dmd) on Mobile & Desktop
+    # 2. AuxPane v2 redesign + Overview [📄] popover button (Amd) on Mobile & Desktop
     content = must_replace(
         content,
         'auxPaneComponent:{feature:{overviewPanelMode:"outputs"}}',
@@ -176,8 +176,8 @@ def patch_main(file_path):
     content = must_replace(
         content,
         '!b&&E.createElement(E.Fragment,null,\nE.createElement(hnd,{cascadeId:r}),q!==void 0&&E.createElement(ZX,{iconName:"dock_to_bottom",onClick:p,"aria-label":"Toggle Side Panel",dataTestId:"mobile-toggle-aux-sidebar",size:"icon-touch",showAttentionDot:n}))',
-        '!b&&E.createElement(E.Fragment,null,\nE.createElement(hnd,{cascadeId:r}),E.createElement(Dmd,null),q!==void 0&&E.createElement(ZX,{iconName:"dock_to_bottom",onClick:p,"aria-label":"Toggle Side Panel",dataTestId:"mobile-toggle-aux-sidebar",size:"icon-touch",showAttentionDot:n}))',
-        "mobile_header_Dmd",
+        '!b&&E.createElement(E.Fragment,null,\nE.createElement(hnd,{cascadeId:r}),E.createElement(Amd,null),q!==void 0&&E.createElement(ZX,{iconName:"dock_to_bottom",onClick:p,"aria-label":"Toggle Side Panel",dataTestId:"mobile-toggle-aux-sidebar",size:"icon-touch",showAttentionDot:n}))',
+        "mobile_header_Amd",
     )
     content = must_replace(
         content,
