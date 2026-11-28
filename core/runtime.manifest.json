@@ -1,12 +1,12 @@
 {
   "core": {
     "path": "/sdcard/IA/antigravity-android/build/staging/language_server",
-    "sha256_final": "82f1a6659480301e0d27787bdd04dd991ff30e60a0b067d8aff2d22fcab3f19e",
-    "sha256_initial": "9bb72c71c5e52ee8d13a76b694e41618f5ebae5fb28b50ae0a1e749f57255083",
-    "size": 216421040,
+    "sha256_final": "4664b763623b29264da2895f37a4d7d8fa27eb5d15b64e79c69f4d749a8460cd",
+    "sha256_initial": "55a576b25af47332e8523031d7feb44e0dbefc219289dae6c593534802e73e49",
+    "size": 222450352,
     "version": "go1.28-20261102-RC01 cl/1012564305 +298f53e483 X:fieldtrack,boringcrypto,nogolistexportnewformat"
   },
-  "generated_at": "2026-11-26T17:50:36Z",
+  "generated_at": "2026-11-28T12:51:58Z",
   "groups": [
     {
       "changed": 2,
@@ -16,8 +16,8 @@
           "elf_base": "0x0",
           "functions": {
             "syscall.faccessat2": {
-              "entry": "0x573dce0",
-              "mov_offset": "0x573de14",
+              "entry": "0x5a04ce0",
+              "mov_offset": "0x5a04e14",
               "new_count": 0,
               "old_count": 1,
               "present": true,
@@ -25,8 +25,8 @@
               "state": "patch"
             },
             "syscall.fchmodat2": {
-              "entry": "0x573df50",
-              "mov_offset": "0x573e084",
+              "entry": "0x5a04f50",
+              "mov_offset": "0x5a05084",
               "new_count": 0,
               "old_count": 1,
               "present": true,
@@ -37,23 +37,23 @@
           "is_primary": true,
           "kind": "go",
           "pclntab": {
-            "nfunc": 175621,
-            "offset": "0x16b01f0"
+            "nfunc": 181661,
+            "offset": "0x1738a48"
           },
-          "region_end": "0xaedcad3",
+          "region_end": "0xb47f570",
           "text": {
-            "offset": "0x5695000",
-            "size": "0x33c2530"
+            "offset": "0x595c000",
+            "size": "0x35d1510"
           }
         },
         {
-          "elf_base": "0xaedcad3",
+          "elf_base": "0xb47f570",
           "is_primary": false,
           "kind": "elf, no Go pclntab (skipped)",
-          "region_end": "0xce652b0",
+          "region_end": "0xd4252b0",
           "text": {
-            "offset": "0xb0fedf3",
-            "size": "0x2d5eb8"
+            "offset": "0xb6a3010",
+            "size": "0x2e3980"
           }
         }
       ],
@@ -70,14 +70,14 @@
       "group": "seccomp",
       "id": "seccomp",
       "messages": [
-        "go elf @0x0: .text@0x5695000 pclntab@0x16b01f0 nfunc=175621",
-        "syscall.faccessat2 @0x573de14: patched 439 -> 48",
-        "syscall.fchmodat2 @0x573e084: patched 452 -> 53"
+        "go elf @0x0: .text@0x595c000 pclntab@0x1738a48 nfunc=181661",
+        "syscall.faccessat2 @0x5a04e14: patched 439 -> 48",
+        "syscall.fchmodat2 @0x5a05084: patched 452 -> 53"
       ],
       "offsets": {
         "elf_0x0": {
-          "syscall.faccessat2": "0x573de14",
-          "syscall.fchmodat2": "0x573e084"
+          "syscall.faccessat2": "0x5a04e14",
+          "syscall.fchmodat2": "0x5a05084"
         }
       },
       "state": "patched"
@@ -99,7 +99,7 @@
       },
       "offsets": {
         "clean": [
-          "0x4b82392"
+          "0x4e235a1"
         ],
         "rejected": [],
         "replacement": []
@@ -122,7 +122,7 @@
       },
       "offsets": {
         "raw": [
-          "0x572a440"
+          "0x59f1440"
         ],
         "replacement": []
       },
@@ -151,11 +151,11 @@
       },
       "offsets": {
         "atomic_raw": [
-          "0x8a298a8"
+          "0x8efec4c"
         ],
         "atomic_replacement": [],
         "cpu_raw": [
-          "0x89c3ab0"
+          "0x8e91c94"
         ],
         "cpu_replacement": []
       },

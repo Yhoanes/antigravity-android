@@ -108,12 +108,12 @@ def run(target_path, verify=False, dry_run=False, allow_missing=False, log=print
         elif epilogue_ok and cur_cpu[12:32] == sig.SLOT0_RAW_TAIL20:
             raw_cpu.append(cpu_site)
 
-    if s1 is not None and s1 + 0x20 <= len(data):
+    if s1 is not None and s1 + 0x18 <= len(data):
         atomic_site = s1 + sig.SLOT1_PATCH_OFFSET
-        cur_atomic = bytes(data[atomic_site:atomic_site + 20])
-        if cur_atomic == sig.REPLACEMENT_ATOMIC_BODY20:
+        cur_atomic = bytes(data[atomic_site:atomic_site + 16])
+        if cur_atomic == sig.REPLACEMENT_ATOMIC_BODY16:
             repl_atomic.append(atomic_site)
-        elif cur_atomic == sig.SLOT1_RAW_BODY20:
+        elif cur_atomic == sig.SLOT1_RAW_BODY16:
             raw_atomic.append(atomic_site)
 
     report["observed_counts"] = {
@@ -164,7 +164,7 @@ def run(target_path, verify=False, dry_run=False, allow_missing=False, log=print
         changed += 1
 
     for pos in raw_atomic:
-        data[pos:pos + len(sig.REPLACEMENT_ATOMIC_BODY20)] = sig.REPLACEMENT_ATOMIC_BODY20
+        data[pos:pos + len(sig.REPLACEMENT_ATOMIC_BODY16)] = sig.REPLACEMENT_ATOMIC_BODY16
         changed += 1
 
     report["changed"] = changed
